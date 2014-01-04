@@ -1,0 +1,87 @@
+librariesDirectory = ./lib
+includesDirectory = ./include
+sourcesDirectory = ./source
+testsDirectory = ./tests
+applicationName = remigame
+debugMaxLevel = 3
+
+compiler = g++
+compilerOptions = -Wall -I $(includesDirectory) -c `sdl-config --cflags` $(debugFlag)
+
+linker = g++
+linkerOptions = `sdl-config --libs`
+libraries = $(librariesDirectory)/*.o
+
+all: $(applicationName)
+
+$(applicationName): main.o
+	$(linker) main.o -o $(applicationName) `find $(librariesDirectory) -name '*.o' -type f` $(linkerOptions)
+
+main.o: libraries
+	$(compiler) $(compilerOptions) main.cpp -o main.o
+	
+libraries:
+	@( for source in `cd $(sourcesDirectory); find . -name '*.cpp' -type f`; \
+	do \
+		mkdir -p $(librariesDirectory)/`dirname $$source` ; \
+		if [ ! -e $(librariesDirectory)/$$source.o -o $(sourcesDirectory)/$$source -nt $(librariesDirectory)/$$source.o ] ; then \
+			echo "$(compiler) $(compilerOptions) $(sourcesDirectory)/$$source -o $(librariesDirectory)/$$source.o" ; \
+			$(compiler) $(compilerOptions) $(sourcesDirectory)/$$source -o $(librariesDirectory)/$$source.o ; \
+			if [ $$? -eq 1 ] ; then \
+				exit 1 ; \
+			fi ; \
+		fi ; \
+	done )
+
+run: all
+	@( ./$(applicationName) $(applicationParams) )
+	
+test_%: libraries
+	@( test="$@"; \
+	test="./tests/$${test#test_}"; \
+	if [ ! -e "$$test.cpp" ] ; then \
+		echo "Test \"$$test.cpp\" does not exist." ; \
+		exit 1 ; \
+	else \
+		rm -f $$test.o $$test ; \
+		echo "Compilation of test: $$test" ; \
+		$(compiler) $(compilerOptions) $$test.cpp -o $$test.o ; \
+		if [ -e "$$test.o" ] ; then \
+			$(linker) $$test.o -o $$test `find $(librariesDirectory) -name '*.o' -type f` $(linkerOptions) ; \
+			if [ -e "$$test" ] ; then \
+				echo "Running test: $$test" ; \
+				$$test ; \
+			else \
+				echo "Link failed." ; \
+			fi ; \
+		else \
+			echo "Compilation failed." ; \
+		fi ; \
+	fi )
+
+tests: libraries
+	@( for test in `find $(testsDirectory) -name '*.cpp' -type f`; \
+	do \
+		test=`basename "$${test%.*}"` ; \
+		make --no-print-directory test_$$test ; \
+	done )
+
+debug: 
+	@( make --no-print-directory debug0 )
+
+debug%:
+	@( target="$@"; \
+	target=$${target#debug}; \
+	for level in `seq $$target $(debugMaxLevel)`; \
+	do \
+		flags="-DDEBUG$$level $$flags"; \
+	done ; \
+	make --no-print-directory run debugFlag="$$flags -g" )
+
+cleanlib:
+	rm -rf $(librariesDirectory)/*
+	
+clean:
+	find . -name '*~' | xargs rm -f
+	rm -f main.o $(applicationName)
+
