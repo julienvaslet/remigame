@@ -5,11 +5,17 @@ testsDirectory = ./tests
 applicationName = remigame
 debugMaxLevel = 3
 
-compiler = g++
-compilerOptions = -Wall -I $(includesDirectory) -c `sdl-config --cflags` $(debugFlag)
+windowsSDLConfig = /usr/i686-w64-mingw32/sys-root/mingw/bin/sdl2-config
+windowsCompiler = i686-w64-mingw32-g++ -static-libgcc -static-libstdc++
+windowsCompilerOptions = -Wall -I $(includesDirectory) -c `$(windowsSDLConfig) --cflags` $(debugFlag)
+windowsLinker = i686-w64-mingw32-g++ -static-libgcc -static-libstdc++
+windowsLinkerOptions = `$(windowsSDLConfig) --libs` -lopengl32 -lglu32
+windowsLibraries = ./windowslib
 
+compiler = g++
+compilerOptions = -Wall -I $(includesDirectory) -c `sdl2-config --cflags` $(debugFlag)
 linker = g++
-linkerOptions = `sdl-config --libs`
+linkerOptions = `sdl2-config --libs` -lGL -lGLU
 libraries = $(librariesDirectory)/*.o
 
 all: $(applicationName)
@@ -80,8 +86,12 @@ debug%:
 
 cleanlib:
 	rm -rf $(librariesDirectory)/*
+	rm -rf $(windowsLibraries)/*
 	
 clean:
 	find . -name '*~' | xargs rm -f
 	rm -f main.o $(applicationName)
+	rm -f main.o $(applicationName).exe
 
+windows:
+	@( make --no-print-directory compiler="$(windowsCompiler)" compilerOptions="$(windowsCompilerOptions)" linker="$(windowsLinker)" linkerOptions="$(windowsLinkerOptions)" librariesDirectory="$(windowsLibraries)" applicationName=$(applicationName).exe)
