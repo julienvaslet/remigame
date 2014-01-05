@@ -20,11 +20,11 @@ libraries = $(librariesDirectory)/*.o
 
 all: $(applicationName)
 
-$(applicationName): main.o
-	$(linker) main.o -o $(applicationName) `find $(librariesDirectory) -name '*.o' -type f` $(linkerOptions)
+$(applicationName): $(applicationName).o
+	$(linker) $(applicationName).o -o $(applicationName) `find $(librariesDirectory) -name '*.o' -type f` $(linkerOptions)
 
-main.o: libraries
-	$(compiler) $(compilerOptions) main.cpp -o main.o
+$(applicationName).o: libraries
+	$(compiler) $(compilerOptions) main.cpp -o $(applicationName).o
 	
 libraries:
 	@( for source in `cd $(sourcesDirectory); find . -name '*.cpp' -type f`; \
@@ -90,8 +90,8 @@ cleanlib:
 	
 clean:
 	find . -name '*~' | xargs rm -f
-	rm -f main.o $(applicationName)
-	rm -f main.o $(applicationName).exe
+	rm -f $(applicationName).o $(applicationName) $(applicationName).exe.o $(applicationName).exe
 
 windows:
 	@( make --no-print-directory compiler="$(windowsCompiler)" compilerOptions="$(windowsCompilerOptions)" linker="$(windowsLinker)" linkerOptions="$(windowsLinkerOptions)" librariesDirectory="$(windowsLibraries)" applicationName=$(applicationName).exe)
+	
