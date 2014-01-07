@@ -1,8 +1,9 @@
 librariesDirectory = ./lib
 includesDirectory = ./include
 sourcesDirectory = ./source
+applicationSuffix = 
+applicationDirectory = ./apps
 testsDirectory = ./tests
-applicationName = remigame
 debugMaxLevel = 3
 
 windowsSDLConfig = /usr/i686-w64-mingw32/sys-root/mingw/bin/sdl2-config
@@ -18,13 +19,23 @@ linker = g++
 linkerOptions = `sdl2-config --libs` -lGL -lGLU
 libraries = $(librariesDirectory)/*.o
 
-all: $(applicationName)
+all: applications
 
-$(applicationName): $(applicationName).o
-	$(linker) $(applicationName).o -o $(applicationName) `find $(librariesDirectory) -name '*.o' -type f` $(linkerOptions)
+applications:
+	@( for app in `find $(applicationDirectory) -name '*.cpp' -type f`; \
+	do \
+		app=`basename "$${app%.*}"` ; \
+		make --no-print-directory app_$$app ; \
+	done )
 
-$(applicationName).o: libraries
-	$(compiler) $(compilerOptions) main.cpp -o $(applicationName).o
+run_%: app_%
+	@( ./$< )
+
+app_%: $(applicationDirectory)/%.o$(applicationSuffix)
+	$(linker) $< -o $@$(applicationSuffix) `find $(librariesDirectory) -name '*.o' -type f` $(linkerOptions)
+
+$(applicationDirectory)/%.o$(applicationSuffix): $(applicationDirectory)/%.cpp libraries
+	$(compiler) $(compilerOptions) $< -o $@
 	
 libraries:
 	@( for source in `cd $(sourcesDirectory); find . -name '*.cpp' -type f`; \
@@ -38,9 +49,6 @@ libraries:
 			fi ; \
 		fi ; \
 	done )
-
-run: all
-	@( ./$(applicationName) $(applicationParams) )
 	
 test_%: libraries
 	@( test="$@"; \
@@ -90,8 +98,8 @@ cleanlib:
 	
 clean:
 	find . -name '*~' | xargs rm -f
-	rm -f $(applicationName).o $(applicationName) $(applicationName).exe.o $(applicationName).exe
+	rm -f $(applicationDirectory)/*.o
 
 windows:
-	@( make --no-print-directory compiler="$(windowsCompiler)" compilerOptions="$(windowsCompilerOptions)" linker="$(windowsLinker)" linkerOptions="$(windowsLinkerOptions)" librariesDirectory="$(windowsLibraries)" applicationName=$(applicationName).exe)
+	@( make --no-print-directory applicationSuffix=".exe" compiler="$(windowsCompiler)" compilerOptions="$(windowsCompilerOptions)" linker="$(windowsLinker)" linkerOptions="$(windowsLinkerOptions)" librariesDirectory="$(windowsLibraries)" applicationName=$(applicationName).exe)
 	
