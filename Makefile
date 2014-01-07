@@ -5,6 +5,7 @@ applicationSuffix =
 applicationDirectory = ./apps
 testsDirectory = ./tests
 debugMaxLevel = 3
+debugFlag = -g -DDEBUG0 -DDEBUG1 -DDEBUG2 -DDEBUG3
 
 windowsSDLConfig = /usr/i686-w64-mingw32/sys-root/mingw/bin/sdl2-config
 windowsCompiler = i686-w64-mingw32-g++ -static-libgcc -static-libstdc++
@@ -99,7 +100,15 @@ cleanlib:
 clean:
 	find . -name '*~' | xargs rm -f
 	rm -f $(applicationDirectory)/*.o
+	@( for app in `find $(applicationDirectory) -name '*.cpp' -type f`; \
+	do \
+		app=app_`basename "$${app%.*}"` ; \
+		echo "rm -f $${app}"; \
+		rm -f $${app} ; \
+		echo "rm -f $${app}.exe"; \
+		rm -f $${app}.exe ; \
+	done )
 
 windows:
 	@( make --no-print-directory applicationSuffix=".exe" compiler="$(windowsCompiler)" compilerOptions="$(windowsCompilerOptions)" linker="$(windowsLinker)" linkerOptions="$(windowsLinkerOptions)" librariesDirectory="$(windowsLibraries)" applicationName=$(applicationName).exe)
-	
+
