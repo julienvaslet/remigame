@@ -23,7 +23,7 @@ int main( int argc, char ** argv )
 	SDL_Event lastEvent;
 	unsigned int lastDrawTicks = 0;
 	
-	//SDL_EventState( SDL_DROPFILE, SDL_ENABLE );
+	SDL_EventState( SDL_DROPFILE, SDL_ENABLE );
 
 	while( running )
 	{
@@ -41,20 +41,16 @@ int main( int argc, char ** argv )
 				{
 					Sprite * nSprite = new Sprite( lastEvent.drop.file );
 					
-					if( nSprite.isLoaded() )
+					if( nSprite->isLoaded() )
 					{
-						sprite->move( (800 - 512) / 2, (600 - 512) / 2 );
-						sprite->resize( 512, 512 );
-						sprite->setView( 0, 0, 512, 512 );
+						nSprite->move( (800 - 512) / 2, (600 - 512) / 2 );
+						nSprite->resize( 512, 512 );
+						nSprite->setView( 0, 0, 512, 512 );
 						
 						if( sprite != NULL )
-						{
-							Sprite * oSprite = sprite;
-							sprite = nSprite;
-							delete oSprite;
-						}
-						else
-							sprite = nSprite;
+							delete sprite;
+
+						sprite = nSprite;
 					}
 					else
 					{
@@ -62,14 +58,25 @@ int main( int argc, char ** argv )
 						cout << "Unable to load the sprite. Keeping old one." << endl;
 					}
 					
-					SDL_Free( lastEvent.drop.file );
+					SDL_free( lastEvent.drop.file );
 					break;
 				}
 			
 				case SDL_KEYDOWN:
 				{
 					if( lastEvent.key.keysym.sym == SDLK_ESCAPE )
-					running = false;
+						running = false;
+						
+					else if( lastEvent.key.keysym.sym == SDLK_KP_PLUS || lastEvent.key.keysym.sym ==  SDLK_PLUS )
+					{
+						if( speed > 50 )
+							speed -= 50;					
+					}
+					
+					else if( lastEvent.key.keysym.sym == SDLK_KP_MINUS || lastEvent.key.keysym.sym == SDLK_MINUS )
+					{
+						speed += 50;
+					}
 
 					break;
 				}
