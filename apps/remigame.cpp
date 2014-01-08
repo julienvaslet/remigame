@@ -14,20 +14,7 @@ int main( int argc, char ** argv )
 		return 1;
 	}
 
-	Sprite * sprite = new Sprite( "texture2.bmp" );
-	
-	if( !sprite->isLoaded() )
-	{
-		cout << "Unable to load the sprite. Exiting." << endl;
-		delete sprite;
-		Screen::destroy();
-		
-		return 1;
-	}
-	
-	sprite->move( (800 - 512) / 2, (600 - 512) / 2 );
-	sprite->resize( 512, 512 );
-	sprite->setView( 512, 0, 512, 512 );
+	Sprite * sprite = NULL;
 	
 	unsigned int speed = 500;
 	unsigned int lastChangedSprite = 0;
@@ -47,11 +34,40 @@ int main( int argc, char ** argv )
 					running = false;
 					break;
 				}
+				
+				case SDL_DROPFILE:
+				{
+					Sprite * nSprite = new Sprite( lastEvent.drop.file );
+					
+					if( nSprite.isLoaded() )
+					{
+						sprite->move( (800 - 512) / 2, (600 - 512) / 2 );
+						sprite->resize( 512, 512 );
+						sprite->setView( 0, 0, 512, 512 );
+						
+						if( sprite != NULL )
+						{
+							Sprite * oSprite = sprite;
+							sprite = nSprite;
+							delete oSprite;
+						}
+						else
+							sprite = nSprite;
+					}
+					else
+					{
+						delete nSprite;
+						cout << "Unable to load the sprite. Keeping old one." << endl;
+					}
+					
+					SDL_Free( lastEvent.drop.file );
+					break;
+				}
 			
 				case SDL_KEYDOWN:
 				{
-		            if( lastEvent.key.keysym.sym == SDLK_ESCAPE )
-		                running = false;
+					if( lastEvent.key.keysym.sym == SDLK_ESCAPE )
+					running = false;
 
 					break;
 				}
@@ -60,7 +76,7 @@ int main( int argc, char ** argv )
 
 		unsigned int ticks = SDL_GetTicks();
 		
-		if( ticks - lastChangedSprite > speed )
+		if( sprite != NULL && ticks - lastChangedSprite > speed )
 		{
 			if( sprite->getViewX() + 512 >= sprite->getSpriteWidth() )
 				sprite->setView( 0, 0, 512, 512 );
@@ -73,14 +89,19 @@ int main( int argc, char ** argv )
 		if( ticks - lastDrawTicks > 15 )
 		{
 			Screen::get()->clear();
-			sprite->render();
+			
+			if( sprite != NULL )
+				sprite->render();
+
 			Screen::get()->render();
 			
 			lastDrawTicks = ticks;
 		}
 	}
 	
-	delete sprite;
+	if( sprite != NULL )
+		delete sprite;
+
 	Screen::destroy();
 	
 	return 0;
