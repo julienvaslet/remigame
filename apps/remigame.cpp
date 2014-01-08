@@ -1,9 +1,10 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 
-#include <Screen.h>
-#include <Sprite.h>
+#include <graphics/Screen.h>
+#include <graphics/Sprite.h>
 
+using namespace graphics;
 using namespace std;
 
 int main( int argc, char ** argv )
