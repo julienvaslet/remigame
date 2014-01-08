@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <graphics/Screen.h>
+#include <graphics/Object.h>
 #include <graphics/Sprite.h>
 
 using namespace graphics;
@@ -14,6 +15,9 @@ int main( int argc, char ** argv )
 		cout << "Unable to initialize screen. Exiting." << endl;
 		return 1;
 	}
+	
+	Object * object = new Object( "object.xml" );
+	delete object;
 
 	Sprite * sprite = NULL;
 	

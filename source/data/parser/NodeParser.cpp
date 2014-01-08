@@ -125,20 +125,6 @@ namespace data
 			#ifdef DEBUG0
 			cout << "[NodeParser] Packed, " << this->symbols.size() << " symbols." << endl;
 			#endif
-			
-			// Adding default inline tags
-			this->addSelfClosedTag( "area" );
-			this->addSelfClosedTag( "base" );
-			this->addSelfClosedTag( "basefont" );
-			this->addSelfClosedTag( "br" );
-			this->addSelfClosedTag( "col" );
-			this->addSelfClosedTag( "frame" );
-			this->addSelfClosedTag( "hr" );
-			this->addSelfClosedTag( "input" );
-			this->addSelfClosedTag( "img" );
-			this->addSelfClosedTag( "link" );
-			this->addSelfClosedTag( "meta" );
-			this->addSelfClosedTag( "param" );
 		}
 		
 		NodeParser::~NodeParser()
