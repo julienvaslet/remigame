@@ -22,6 +22,8 @@ int main( int argc, char ** argv )
 	bool running = true;
 	SDL_Event lastEvent;
 	unsigned int lastDrawTicks = 0;
+	
+	//SDL_EventState( SDL_DROPFILE, SDL_ENABLE );
 
 	while( running )
 	{
