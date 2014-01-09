@@ -11,6 +11,15 @@ namespace graphics
 {
 	class Sprite
 	{
+		public:
+			struct Frame
+			{
+				int x;
+				int y;
+				int width;
+				int height;
+			};
+		
 		protected:
 			SDL_Texture * texture;
 			int x;

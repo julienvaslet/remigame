@@ -31,11 +31,14 @@ namespace graphics
 	
 	Object::~Object()
 	{
+		for( map<string, Animation *>::iterator it = this->animations.begin() ; it != this->animations.end() ; it++ )
+			delete it->second;
+			
 		if( this->sprite != NULL )
 			delete sprite;
 
 		#ifdef DEBUG0
-		cout << "[Object#" << this << "] Destroyed object (" << this << ")." << endl;
+		cout << "[Object#" << this << "] Destroyed object." << endl;
 		#endif
 	}
 	
@@ -59,46 +62,60 @@ namespace graphics
 			
 			if( root != NULL )
 			{
-				if( root->getName() == "object" )
+				node::Node * object = root->find( "object" );
+				
+				if( object != NULL )
 				{
-					if( root->hasAttr( "sprite" ) )
+					if( object->hasAttr( "sprite" ) )
 					{
-						this->sprite = new Sprite( root->attr( "sprite" ) );
+						this->sprite = new Sprite( object->attr( "sprite" ) );
 						
 						if( this->sprite->isLoaded() )
 						{
 							// Browse animations
-							node::Node * animation = root->childAt( 0 );
+							node::Node * animation = object->childAt( 0 );
 							
 							while( animation != NULL )
 							{
-								if( animation->getName() == "animation" )
+								if( animation->getType() == node::Node::Tag && animation->getName() == "animation" )
 								{
-									// Attribute name
-									cout << "name = " << animation->attr( "name" ) << endl;
-									
-									// Attribute speed
-									cout << "speed = " << animation->attr( "speed" ) << endl;
+									Animation * anim = new Animation();
+									//anim->setSpeed( animation->attr( "speed" ) );
+									anim->setSpeed( 100 );
 									
 									// Browse frames
 									node::Node * frame = animation->childAt( 0 );
 									
+									int iFrame = 0;
+									
 									while( frame != NULL )
 									{
-										if( frame->getName() == "frame" )
+										if( frame->getType() == node::Node::Tag && frame->getName() == "frame" )
 										{
-											// Attribute x
-											cout << "x = " << frame->attr( "x" ) << endl;
+											/*animation.addFrame(
+												frame->hasAttr( "x" ) ? frame->attr( "x" ) : 0,
+												frame->hasAttr( "y" ) ? frame->attr( "y" ) : 0,
+												frame->hasAttr( "width" ) ? frame->attr( "width" ) : 0,
+												frame->hasAttr( "height" ) ? frame->attr( "height" ) : 0
+											);*/
 											
-											// Attribute y
-											cout << "y = " << frame->attr( "y" ) << endl;
-											
-											// Attribute width
-											cout << "width = " << frame->attr( "width" ) << endl;
-											
-											// Attribute height
-											cout << "height = " << frame->attr( "height" ) << endl;
+											iFrame++;
 										}
+										
+										frame = frame->next();
+									}
+									
+									if( iFrame > 0 )
+									{
+										this->animations[ animation->attr( "name" ) ] = anim;
+										
+										#ifdef DEBUG0
+										cout << "[Object#" << this << "] Animation \"" << animation->attr( "name" ) << "\" loaded." << endl;
+										#endif
+									}
+									else
+									{
+										delete anim;
 									}
 								}
 								

@@ -4,6 +4,9 @@
 #include <SDL2/SDL.h>
 #include <string>
 #include <graphics/Sprite.h>
+#include <graphics/Animation.h>
+
+#include <map>
 
 using namespace std;
 
@@ -13,6 +16,7 @@ namespace graphics
 	{
 		protected:
 			Sprite * sprite;
+			map<string, Animation *> animations;
 	
 		public:
 			Object();

@@ -24,11 +24,11 @@ namespace graphics
 	{
 		if( this->texture != NULL )
 		{
-			#ifdef DEBUG0
-			cout << "[Sprite] Destroying texture (" << this->texture << ")" << endl;
-			#endif
-		
 			SDL_DestroyTexture( this->texture );
+			
+			#ifdef DEBUG0
+			cout << "[Sprite] Destroyed texture (" << this->texture << ")." << endl;
+			#endif
 		}
 	}
 
