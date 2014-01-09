@@ -68,13 +68,42 @@ namespace graphics
 						if( this->sprite->isLoaded() )
 						{
 							// Browse animations
-								// Attribute name
-								// Attribute speed
-								// Browse frames
-									// Attribute x
-									// Attribute y
-									// Attribute width
-									// Attribute height
+							node::Node * animation = root->childAt( 0 );
+							
+							while( animation != NULL )
+							{
+								if( animation->getName() == "animation" )
+								{
+									// Attribute name
+									cout << "name = " << animation->attr( "name" ) << endl;
+									
+									// Attribute speed
+									cout << "speed = " << animation->attr( "speed" ) << endl;
+									
+									// Browse frames
+									node::Node * frame = animation->childAt( 0 );
+									
+									while( frame != NULL )
+									{
+										if( frame->getName() == "frame" )
+										{
+											// Attribute x
+											cout << "x = " << frame->attr( "x" ) << endl;
+											
+											// Attribute y
+											cout << "y = " << frame->attr( "y" ) << endl;
+											
+											// Attribute width
+											cout << "width = " << frame->attr( "width" ) << endl;
+											
+											// Attribute height
+											cout << "height = " << frame->attr( "height" ) << endl;
+										}
+									}
+								}
+								
+								animation = animation->next();
+							}
 						}
 						else
 						{
