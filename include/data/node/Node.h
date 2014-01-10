@@ -43,6 +43,7 @@ namespace data
 				void attr( const string& name, const string& value );
 				const bool hasAttr( const string& name ) const;
 				const string& attr( const string& name );
+				int attr attrAsInteger( const string& name ) const;
 		
 				Node * parent();
 		
