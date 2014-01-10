@@ -83,6 +83,73 @@ namespace data
 			else
 				throw "Attribute does not exist.";
 		}
+		
+		const bool Node::isIntegerAttr( const string& name ) const
+		{
+			bool isInteger = true;
+			
+			if( this->hasAttr( name ) )
+			{
+				string txt = this->attributes[ name ];
+				bool firstDigit = true;
+				
+				for( string::iterator it = txt.begin() ; it != txt.end() ; it++ )
+				{
+					if( firstDigit )
+					{
+						firstDigit = false;
+						
+						if( *it == '+' || *it == '-' )
+							continue;
+					}
+					
+					if( *it < '0' || *it > '9' )
+					{
+						isInteger = false;
+						break;
+					}
+				}
+			}
+			else
+				isInteger = false;
+			
+			return isInteger;
+		}
+		
+		int Node::integerAttr( const string& name ) const
+		{
+			int value = 0;
+			int decimal = 1;
+			
+			if( this->hasAttr( name ) )
+			{
+				string txt = this->attributes[ name ];
+				
+				for( string::reverse_iterator rit = txt.rbegin() ; rit != txt.rend() ; rit++ )
+				{
+					if( *rit >= '0' && *rit <= '9' )
+					{
+						value += (*rit - '0') * decimal;
+					}
+					else if( irt + 1 == txt.rend() && *rit == '-' || *rit == '+' )
+					{
+						if( *rit == '-' )
+							value *= -1;
+					}
+					else
+					{
+						value = "0";
+						throw "Attribute is not a valid integer.";
+					}
+					
+					decimal *= 10;
+				}
+			}
+			else
+				throw "Attribute does not exist.";
+				
+			return value;
+		}
 
 		const string& Node::getName() const
 		{
