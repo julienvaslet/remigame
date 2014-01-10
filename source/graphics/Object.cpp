@@ -80,8 +80,7 @@ namespace graphics
 								if( animation->getType() == node::Node::Tag && animation->getName() == "animation" )
 								{
 									Animation * anim = new Animation();
-									//anim->setSpeed( animation->attr( "speed" ) );
-									anim->setSpeed( 100 );
+									anim->setSpeed( animation->isIntegerAttr( "speed" ) ? animation->integerAttr( "speed" ) : 100 );
 									
 									// Browse frames
 									node::Node * frame = animation->childAt( 0 );
@@ -92,12 +91,12 @@ namespace graphics
 									{
 										if( frame->getType() == node::Node::Tag && frame->getName() == "frame" )
 										{
-											/*animation.addFrame(
-												frame->hasAttr( "x" ) ? frame->attr( "x" ) : 0,
-												frame->hasAttr( "y" ) ? frame->attr( "y" ) : 0,
-												frame->hasAttr( "width" ) ? frame->attr( "width" ) : 0,
-												frame->hasAttr( "height" ) ? frame->attr( "height" ) : 0
-											);*/
+											animation.addFrame(
+												frame->isIntegerAttr( "x" ) ? frame->integerAttr( "x" ) : 0,
+												frame->isIntegerAttr( "y" ) ? frame->integerAttr( "y" ) : 0,
+												frame->isIntegerAttr( "width" ) ? frame->integerAttr( "width" ) : 0,
+												frame->isIntegerAttr( "height" ) ? frame->integerAttr( "height" ) : 0
+											);
 											
 											iFrame++;
 										}
