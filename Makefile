@@ -7,6 +7,8 @@ testsDirectory = ./tests
 debugMaxLevel = 3
 debugFlag = -g -DDEBUG0 -DDEBUG1 -DDEBUG2 -DDEBUG3
 
+
+# windows options to test:  -MD -Os -s
 windowsSDLConfig = /usr/i686-w64-mingw32/sys-root/mingw/bin/sdl2-config
 windowsCompiler = i686-w64-mingw32-g++ -static-libgcc -static-libstdc++
 windowsCompilerOptions = -Wall -I $(includesDirectory) -c `$(windowsSDLConfig) --cflags` $(debugFlag)
