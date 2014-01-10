@@ -91,7 +91,7 @@ namespace graphics
 									{
 										if( frame->getType() == node::Node::Tag && frame->getName() == "frame" )
 										{
-											animation.addFrame(
+											anim->addFrame(
 												frame->isIntegerAttr( "x" ) ? frame->integerAttr( "x" ) : 0,
 												frame->isIntegerAttr( "y" ) ? frame->integerAttr( "y" ) : 0,
 												frame->isIntegerAttr( "width" ) ? frame->integerAttr( "width" ) : 0,

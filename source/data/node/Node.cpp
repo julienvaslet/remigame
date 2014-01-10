@@ -87,13 +87,14 @@ namespace data
 		const bool Node::isIntegerAttr( const string& name ) const
 		{
 			bool isInteger = true;
+			map<string,string>::const_iterator it = this->attributes.find( name );
 			
-			if( this->hasAttr( name ) )
+			if( it != this->attributes.end() )
 			{
-				string txt = this->attributes[ name ];
+				string txt = it->second;
 				bool firstDigit = true;
 				
-				for( string::iterator it = txt.begin() ; it != txt.end() ; it++ )
+				for( string::const_iterator it = txt.begin() ; it != txt.end() ; it++ )
 				{
 					if( firstDigit )
 					{
@@ -116,7 +117,7 @@ namespace data
 			return isInteger;
 		}
 		
-		int Node::integerAttr( const string& name ) const
+		int Node::integerAttr( const string& name )
 		{
 			int value = 0;
 			int decimal = 1;
@@ -131,14 +132,14 @@ namespace data
 					{
 						value += (*rit - '0') * decimal;
 					}
-					else if( irt + 1 == txt.rend() && *rit == '-' || *rit == '+' )
+					else if( rit + 1 == txt.rend() && (*rit == '-' || *rit == '+') )
 					{
 						if( *rit == '-' )
 							value *= -1;
 					}
 					else
 					{
-						value = "0";
+						value = 0;
 						throw "Attribute is not a valid integer.";
 					}
 					
