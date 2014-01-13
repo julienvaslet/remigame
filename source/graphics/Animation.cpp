@@ -24,7 +24,6 @@ namespace graphics
 			
 			if( step > 0 )
 			{
-				cout << step << endl;
 				this->lastFrameRendered = (this->lastFrameRendered + step) % this->frames.size();
 				this->lastRender = time;
 			}
