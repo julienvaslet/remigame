@@ -1,4 +1,5 @@
 *~
 *.o
+*.d
 /app_remigame
 /app_remigame.exe
