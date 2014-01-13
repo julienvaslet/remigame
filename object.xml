@@ -4,4 +4,9 @@
 		<frame x="512" y="0" width="512" height="512" />
 		<frame x="1024" y="0" width="512" height="512" />
 	</animation>
+	<animation name="run" speed="100">
+		<frame x="0" y="0" width="512" height="512" />
+		<frame x="512" y="0" width="512" height="512" />
+		<frame x="1024" y="0" width="512" height="512" />
+	</animation>
 </object>

@@ -12,18 +12,22 @@ namespace graphics
 	class Animation
 	{
 		protected:
-			int speed;
+			unsigned int speed;
+			unsigned int lastRender;
+			unsigned int lastFrameRendered;
 			vector<Sprite::Frame> frames;
 	
 		public:
 			Animation();
 			~Animation();
 			
-			const Sprite::Frame * getFrame();
-			int getSpeed();
+			const Sprite::Frame * getFrame( unsigned int time );
+			unsigned int getSpeed();
 			
-			void setSpeed( int speed );
+			void setSpeed( unsigned int speed );
 			void addFrame( int x, int y, int width, int height );
+			
+			void reset();
 	};
 }
 

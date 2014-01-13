@@ -22,18 +22,9 @@ namespace graphics
 		
 		protected:
 			SDL_Texture * texture;
-			int x;
-			int y;
 			int width;
 			int height;
-		
-			int viewX;
-			int viewY;
-			int viewWidth;
-			int viewHeight;
-		
-			int spriteWidth;
-			int spriteHeight;
+			Frame view;
 	
 		public:
 			Sprite();
@@ -45,23 +36,17 @@ namespace graphics
 			void render();
 			bool isLoaded();
 		
-			void move( int x, int y );
-			void resize( int width, int height );
-		
 			void setView( int x, int y, int width, int height );
-		
-			int getX();
-			int getY();
-			int getWidth();
-			int getHeight();
 		
 			int getViewX();
 			int getViewY();
 			int getViewWidth();
 			int getViewHeight();
 		
-			int getSpriteWidth();
-			int getSpriteHeight();
+			int getWidth();
+			int getHeight();
+			
+			SDL_Texture * getTexture();
 	};
 }
 

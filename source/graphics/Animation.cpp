@@ -6,7 +6,7 @@
 
 namespace graphics
 {
-	Animation::Animation() : speed(0)
+	Animation::Animation() : speed(0), lastRender(0), lastFrameRendered(0)
 	{
 	}
 	
@@ -14,19 +14,41 @@ namespace graphics
 	{
 	}
 	
-	const Sprite::Frame * Animation::getFrame()
+	const Sprite::Frame * Animation::getFrame( unsigned int time )
 	{
-		return NULL;
+		const Sprite::Frame * frame = NULL;
+		
+		if( !this->frames.empty() )
+		{
+			unsigned int step = (time - lastRender) / this->speed;
+			
+			if( step > 0 )
+			{
+				cout << step << endl;
+				this->lastFrameRendered = (this->lastFrameRendered + step) % this->frames.size();
+				this->lastRender = time;
+			}
+		
+			frame = &(this->frames[this->lastFrameRendered]);
+		}
+		
+		return frame;
 	}
 	
-	int Animation::getSpeed()
+	unsigned int Animation::getSpeed()
 	{
 		return this->speed;
 	}
 	
-	void Animation::setSpeed( int speed )
+	void Animation::setSpeed( unsigned int speed )
 	{
 		this->speed = speed;
+	}
+	
+	void Animation::reset()
+	{
+		this->lastRender = 0;
+		this->lastFrameRendered = 0;
 	}
 	
 	void Animation::addFrame( int x, int y, int width, int height )

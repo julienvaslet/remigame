@@ -15,7 +15,13 @@ namespace graphics
 	class Object
 	{
 		protected:
+			int x;
+			int y;
+			int width;
+			int height;
+			
 			Sprite * sprite;
+			Animation * currentAnimation;
 			map<string, Animation *> animations;
 	
 		public:
@@ -24,7 +30,18 @@ namespace graphics
 			Object( const string& filename );
 			~Object();
 		
+			void move( int x, int y );
+			void resize( int width, int height );
+			
+			int getX();
+			int getY();
+			int getWidth();
+			int getHeight();
+		
 			bool load( const char * filename );
+			void render( unsigned int time );
+			
+			bool setAnimation( const string& name );
 	};
 }
 

@@ -15,16 +15,16 @@ using namespace std;
 
 namespace graphics
 {
-	Object::Object() : sprite(NULL)
+	Object::Object() : x(0), y(0), width(0), height(0), sprite(NULL), currentAnimation(NULL)
 	{
 	}
 	
-	Object::Object( const char * filename ) : sprite(NULL)
+	Object::Object( const char * filename ) : x(0), y(0), width(0), height(0), sprite(NULL), currentAnimation(NULL)
 	{
 		this->load( filename );
 	}
 	
-	Object::Object( const string& filename ) : sprite(NULL)
+	Object::Object( const string& filename ) : x(0), y(0), width(0), height(0), sprite(NULL), currentAnimation(NULL)
 	{
 		this->load( filename.c_str() );
 	}
@@ -80,7 +80,7 @@ namespace graphics
 								if( animation->getType() == node::Node::Tag && animation->getName() == "animation" )
 								{
 									Animation * anim = new Animation();
-									anim->setSpeed( animation->isIntegerAttr( "speed" ) ? animation->integerAttr( "speed" ) : 100 );
+									anim->setSpeed( animation->isIntegerAttr( "speed" ) ? static_cast<unsigned int>( animation->integerAttr( "speed" ) ): 100 );
 									
 									// Browse frames
 									node::Node * frame = animation->childAt( 0 );
@@ -172,7 +172,116 @@ namespace graphics
 			success = false;
 		}
 		
+		// If the object has been successfully loaded
+		// "idle" animation is selected or, if absent, the first one.
+		if( success )
+		{
+			if( !this->setAnimation( "idle" ) )
+			{
+				if( this->animations.empty() )
+				{
+					map<string, Animation *>::iterator it = this->animations.begin();
+					this->currentAnimation = it->second;
+					this->currentAnimation->reset();
+					
+					#ifdef DEBUG0
+					cout << "[Object#" << this << "] First animation selected: \"" << it->first << "\"." << endl;
+					#endif
+				}
+				else
+				{
+					#ifdef DEBUG0
+					cout << "[Object#" << this << "] There is no animation for this object." << endl;
+					#endif
+				}
+			}
+		}
+		
 		return success;
+	}
+		
+	bool Object::setAnimation( const string& name )
+	{
+		bool changed = true;
+		
+		map<string, Animation *>::const_iterator it = this->animations.find( name );
+		
+		if( it != this->animations.end() )
+		{
+			this->currentAnimation = it->second;
+			this->currentAnimation->reset();
+			
+			#ifdef DEBUG0
+			cout << "[Object#" << this << "] Animation \"" << it->first << "\" selected." << endl;
+			#endif
+		}
+		else
+		{
+			changed = false;
+			
+			#ifdef DEBUG0
+			cout << "[Object#" << this << "] Animation \"" << name << "\" does not exist." << endl;
+			#endif
+		}
+		
+		return changed;
+	}
+	
+	void Object::render( unsigned int time )
+	{
+		if( currentAnimation != NULL )
+		{
+			const Sprite::Frame * frame = this->currentAnimation->getFrame( time );
+			
+			if( frame != NULL )
+			{
+				SDL_Rect dstRect;
+				dstRect.x = this->x;
+				dstRect.y = this->y;
+				dstRect.w = this->width;
+				dstRect.h = this->height;
+	
+				SDL_Rect srcRect;
+				srcRect.x = frame->x;
+				srcRect.y = frame->y;
+				srcRect.w = frame->width;
+				srcRect.h = frame->height;
+	
+				SDL_RenderCopy( Screen::get()->getRenderer(), this->sprite->getTexture(), &srcRect, &dstRect );
+			}
+		}
+	}
+	
+	int Object::getX()
+	{
+		return this->x;
+	}
+
+	int Object::getY()
+	{
+		return this->y;
+	}
+
+	int Object::getWidth()
+	{
+		return this->width;
+	}
+
+	int Object::getHeight()
+	{
+		return this->height;
+	}
+
+	void Object::move( int x, int y )
+	{
+		this->x = x;
+		this->y = y;
+	}
+
+	void Object::resize( int width, int height )
+	{
+		this->width = width;
+		this->height = height;
 	}
 }
 

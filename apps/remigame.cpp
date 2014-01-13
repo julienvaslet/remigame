@@ -17,12 +17,8 @@ int main( int argc, char ** argv )
 	}
 	
 	Object * object = new Object( "object.xml" );
-	delete object;
-
-	Sprite * sprite = NULL;
-	
-	unsigned int speed = 500;
-	unsigned int lastChangedSprite = 0;
+	object->move( (800 - 512) / 2, (600 - 512) / 2 );
+	object->resize( 512, 512 );
 
 	bool running = true;
 	SDL_Event lastEvent;
@@ -44,7 +40,7 @@ int main( int argc, char ** argv )
 				
 				case SDL_DROPFILE:
 				{
-					Sprite * nSprite = new Sprite( lastEvent.drop.file );
+					/*Sprite * nSprite = new Sprite( lastEvent.drop.file );
 					
 					if( nSprite->isLoaded() )
 					{
@@ -61,7 +57,7 @@ int main( int argc, char ** argv )
 					{
 						delete nSprite;
 						cout << "Unable to load the sprite. Keeping old one." << endl;
-					}
+					}*/
 					
 					SDL_free( lastEvent.drop.file );
 					break;
@@ -74,13 +70,15 @@ int main( int argc, char ** argv )
 						
 					else if( lastEvent.key.keysym.sym == SDLK_KP_PLUS || lastEvent.key.keysym.sym ==  SDLK_PLUS )
 					{
+						/*
 						if( speed > 50 )
-							speed -= 50;					
+							speed -= 50;*/
 					}
 					
 					else if( lastEvent.key.keysym.sym == SDLK_KP_MINUS || lastEvent.key.keysym.sym == SDLK_MINUS )
 					{
-						speed += 50;
+						/*
+						speed += 50;*/
 					}
 
 					break;
@@ -90,22 +88,12 @@ int main( int argc, char ** argv )
 
 		unsigned int ticks = SDL_GetTicks();
 		
-		if( sprite != NULL && ticks - lastChangedSprite > speed )
-		{
-			if( sprite->getViewX() + 512 >= sprite->getSpriteWidth() )
-				sprite->setView( 0, 0, 512, 512 );
-			else
-				sprite->setView( sprite->getViewX() + 512, 0, 512, 512 );
-				
-			lastChangedSprite = ticks;
-		}
-		
 		if( ticks - lastDrawTicks > 15 )
 		{
 			Screen::get()->clear();
 			
-			if( sprite != NULL )
-				sprite->render();
+			if( object != NULL )
+				object->render( ticks );
 
 			Screen::get()->render();
 			
@@ -113,8 +101,8 @@ int main( int argc, char ** argv )
 		}
 	}
 	
-	if( sprite != NULL )
-		delete sprite;
+	if( object != NULL )
+		delete object;
 
 	Screen::destroy();
 	
