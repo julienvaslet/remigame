@@ -37,7 +37,8 @@ namespace graphics
 			int getY();
 			int getWidth();
 			int getHeight();
-		
+			
+			bool isLoaded();
 			bool load( const char * filename );
 			void render( unsigned int time );
 			
