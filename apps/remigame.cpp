@@ -16,9 +16,7 @@ int main( int argc, char ** argv )
 		return 1;
 	}
 	
-	Object * object = new Object( "object.xml" );
-	object->move( (800 - 512) / 2, (600 - 512) / 2 );
-	object->resize( 512, 512 );
+	Object * object = NULL;
 
 	bool running = true;
 	SDL_Event lastEvent;
@@ -40,24 +38,24 @@ int main( int argc, char ** argv )
 				
 				case SDL_DROPFILE:
 				{
-					/*Sprite * nSprite = new Sprite( lastEvent.drop.file );
 					
-					if( nSprite->isLoaded() )
+					Object * nObject = new Object( "object.xml" );
+					
+					if( nObject->isLoaded() )
 					{
-						nSprite->move( (800 - 512) / 2, (600 - 512) / 2 );
-						nSprite->resize( 512, 512 );
-						nSprite->setView( 0, 0, 512, 512 );
+						nObject->move( (800 - 512) / 2, (600 - 512) / 2 );
+						nObject->resize( 512, 512 );
 						
-						if( sprite != NULL )
-							delete sprite;
-
-						sprite = nSprite;
+						if( object != NULL )
+							delete object;
+							
+						object = nObject;
 					}
 					else
 					{
-						delete nSprite;
-						cout << "Unable to load the sprite. Keeping old one." << endl;
-					}*/
+						delete nObject;
+						cout << "Unable to load the object. Keeping old one." << endl;
+					}
 					
 					SDL_free( lastEvent.drop.file );
 					break;
