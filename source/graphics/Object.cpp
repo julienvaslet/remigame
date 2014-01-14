@@ -199,6 +199,11 @@ namespace graphics
 		
 		return success;
 	}
+	
+	bool Object::isLoaded()
+	{
+		return this->sprite->isLoaded();
+	}
 		
 	bool Object::setAnimation( const string& name )
 	{
