@@ -28,10 +28,10 @@ int main( int argc, char ** argv )
 	
 	unsigned int currentAnimation = 0;
 	vector<string> animations;
-	animation.push_back( "idle" );
-	animation.push_back( "walk" );
-	animation.push_back( "run" );
-	animation.push_back( "jump" );
+	animations.push_back( "idle" );
+	animations.push_back( "walk" );
+	animations.push_back( "run" );
+	animations.push_back( "jump" );
 
 	while( running )
 	{
@@ -99,7 +99,7 @@ int main( int argc, char ** argv )
 						case SDLK_TAB:
 						{
 							// Switch animation
-							currentAnimation = currentAnimation + 1 % animations.size();
+							currentAnimation = (currentAnimation + 1) % animations.size();
 							
 							if( object != NULL )
 								object->setAnimation( animations.at( currentAnimation ) );
