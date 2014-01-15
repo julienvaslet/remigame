@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include <graphics/Screen.h>
 #include <graphics/Object.h>
@@ -23,6 +25,13 @@ int main( int argc, char ** argv )
 	unsigned int lastDrawTicks = 0;
 	
 	SDL_EventState( SDL_DROPFILE, SDL_ENABLE );
+	
+	unsigned int currentAnimation = 0;
+	vector<string> animations;
+	animation.push_back( "idle" );
+	animation.push_back( "walk" );
+	animation.push_back( "run" );
+	animation.push_back( "jump" );
 
 	while( running )
 	{
@@ -50,6 +59,7 @@ int main( int argc, char ** argv )
 							delete object;
 							
 						object = nObject;
+						currentAnimation = 0;
 					}
 					else
 					{
@@ -63,20 +73,39 @@ int main( int argc, char ** argv )
 			
 				case SDL_KEYDOWN:
 				{
-					if( lastEvent.key.keysym.sym == SDLK_ESCAPE )
-						running = false;
+					switch( lastEvent.key.keysym.sym )
+					{
+						case SDLK_ESCAPE:
+						{
+							running = false;
+							break;
+						}
 						
-					else if( lastEvent.key.keysym.sym == SDLK_KP_PLUS || lastEvent.key.keysym.sym ==  SDLK_PLUS )
-					{
-						/*
-						if( speed > 50 )
-							speed -= 50;*/
-					}
-					
-					else if( lastEvent.key.keysym.sym == SDLK_KP_MINUS || lastEvent.key.keysym.sym == SDLK_MINUS )
-					{
-						/*
-						speed += 50;*/
+						case SDLK_KP_PLUS:
+						case SDLK_PLUS:
+						{
+							// Increase animation speed
+							break;
+						}
+						
+						case SDLK_KP_MINUS:
+						case SDLK_MINUS:
+						{
+							// Decrease animation speed
+							break;
+						}
+						
+						case SDLK_KP_TAB:
+						case SDLK_TAB:
+						{
+							// Switch animation
+							currentAnimation = currentAnimation + 1 % animations.size();
+							
+							if( object != NULL )
+								object->setAnimation( animations.at( currentAnimation ) );
+							
+							break;
+						}
 					}
 
 					break;
