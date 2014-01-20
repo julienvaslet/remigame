@@ -1,5 +1,6 @@
 *~
 *.o
 *.d
-/app_remigame
-/app_remigame.exe
+/linux32/ObjectViewer
+/windows32/ObjectViewer_i686.exe
+/windows64/ObjectViewer_x86_64.exe

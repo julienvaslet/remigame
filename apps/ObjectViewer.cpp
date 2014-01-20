@@ -48,7 +48,7 @@ int main( int argc, char ** argv )
 				case SDL_DROPFILE:
 				{
 					
-					Object * nObject = new Object( "object.xml" );
+					Object * nObject = new Object( lastEvent.drop.file );
 					
 					if( nObject->isLoaded() )
 					{

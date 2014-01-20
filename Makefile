@@ -6,13 +6,23 @@ applicationDirectory = ./apps
 testsDirectory = ./tests
 debugMaxLevel = 3
 debugFlag = -g -DDEBUG0 -DDEBUG1 -DDEBUG2 -DDEBUG3
+binDirectory = ./linux32
 
-windowsSDLConfig = /usr/i686-w64-mingw32/sys-root/mingw/bin/sdl2-config
-windowsCompiler = i686-w64-mingw32-g++ -static-libgcc -static-libstdc++ -MD -Os -s
-windowsCompilerOptions = -Wall -I $(includesDirectory) -c `$(windowsSDLConfig) --cflags` $(debugFlag)
-windowsLinker = i686-w64-mingw32-g++ -static-libgcc -static-libstdc++
-windowsLinkerOptions = `$(windowsSDLConfig) --libs` -lopengl32 -lglu32 -MD -Os -s
-windowsLibraries = ./windowslib
+windowsSDLConfig32 = /usr/i686-w64-mingw32/sys-root/mingw/bin/sdl2-config
+windowsCompiler32 = i686-w64-mingw32-g++ -static-libgcc -static-libstdc++ -MD -Os -s
+windowsCompilerOptions32 = -Wall -I $(includesDirectory) -c `$(windowsSDLConfig32) --cflags` $(debugFlag)
+windowsLinker32 = i686-w64-mingw32-g++ -static-libgcc -static-libstdc++
+windowsLinkerOptions32 = `$(windowsSDLConfig32) --libs` -lopengl32 -lglu32 -MD -Os -s
+windowsLibraries32 = ./windowslib32
+windowsDirectory32 = ./windows32
+
+windowsSDLConfig64 = /usr/x86_64-w64-mingw32/sys-root/mingw/bin/sdl2-config
+windowsCompiler64 = x86_64-w64-mingw32-g++ -static-libgcc -static-libstdc++ -MD -Os -s
+windowsCompilerOptions64 = -Wall -I $(includesDirectory) -c `$(windowsSDLConfig64) --cflags` $(debugFlag)
+windowsLinker64 = x86_64-w64-mingw32-g++ -static-libgcc -static-libstdc++
+windowsLinkerOptions64 = `$(windowsSDLConfig64) --libs` -lopengl32 -lglu32 -MD -Os -s
+windowsLibraries64 = ./windowslib64
+windowsDirectory64 = ./windows64
 
 compiler = g++
 compilerOptions = -Wall -I $(includesDirectory) -c `sdl2-config --cflags` $(debugFlag)
@@ -26,16 +36,18 @@ applications:
 	@( for app in `find $(applicationDirectory) -name '*.cpp' -type f`; \
 	do \
 		app=`basename "$${app%.*}"` ; \
-		make --no-print-directory app_$$app ; \
+		make --no-print-directory $(binDirectory)/$$app ; \
 	done )
 
-run_%: app_%
-	@( ./$< )
+run_%: $(binDirectory)/%
+	@( app="$@"; \
+	app="$${app#run_}" ; \
+	$(binDirectory)/$${app} )
 
-app_%: $(applicationDirectory)/%.o$(applicationSuffix)
+$(binDirectory)/%: $(binDirectory)/%.o
 	$(linker) $< -o $@$(applicationSuffix) `find $(librariesDirectory) -name '*.o' -type f` $(linkerOptions)
 
-$(applicationDirectory)/%.o$(applicationSuffix): $(applicationDirectory)/%.cpp libraries
+$(binDirectory)/%.o: $(applicationDirectory)/%.cpp libraries
 	$(compiler) $(compilerOptions) $< -o $@
 	
 libraries:
@@ -95,21 +107,30 @@ debug%:
 
 cleanlib:
 	rm -rf $(librariesDirectory)/*
-	rm -rf $(windowsLibraries)/*
+	rm -rf $(windowsLibraries32)/*
+	rm -rf $(windowsLibraries64)/*
 	
 clean:
 	find . -name '*~' | xargs rm -f
-	rm -f $(applicationDirectory)/*.o
-	rm -f $(applicationDirectory)/*.d
+	rm -f $(binDirectory)/*.o
+	rm -f $(windowsDirectory32)/*.{o,d}
+	rm -f $(windowsDirectory64)/*.{o,d}
 	@( for app in `find $(applicationDirectory) -name '*.cpp' -type f`; \
 	do \
-		app=app_`basename "$${app%.*}"` ; \
-		echo "rm -f $${app}"; \
-		rm -f $${app} ; \
-		echo "rm -f $${app}.exe"; \
-		rm -f $${app}.exe ; \
+		app=`basename "$${app%.*}"` ; \
+		echo "rm -f $(binDirectory)/$${app}"; \
+		rm -f $(binDirectory)/$${app} ; \
+		echo "rm -f $(windowsDirectory64)/$${app}_x86_64.exe"; \
+		rm -f $(windowsDirectory64)/$${app}_x86_64.exe ; \
+		echo "rm -f $(windowsDirectory32)/$${app}_i686.exe"; \
+		rm -f $(windowsDirectory32)/$${app}_i686.exe ; \
 	done )
+	
+windows: windows_x86_64 windows_i686
 
-windows:
-	@( make --no-print-directory applicationSuffix=".exe" compiler="$(windowsCompiler)" compilerOptions="$(windowsCompilerOptions)" linker="$(windowsLinker)" linkerOptions="$(windowsLinkerOptions)" librariesDirectory="$(windowsLibraries)" applicationName=$(applicationName).exe)
+windows_x86_64:
+	@( make --no-print-directory applicationSuffix="_x86_64.exe" binDirectory="$(windowsDirectory64)" compiler="$(windowsCompiler64)" compilerOptions="$(windowsCompilerOptions64)" linker="$(windowsLinker64)" linkerOptions="$(windowsLinkerOptions64)" librariesDirectory="$(windowsLibraries64)" applicationName="$(applicationName)_x86_64.exe")
+	
+windows_i686:
+	@( make --no-print-directory applicationSuffix="_i686.exe" binDirectory="$(windowsDirectory32)" compiler="$(windowsCompiler32)" compilerOptions="$(windowsCompilerOptions32)" linker="$(windowsLinker32)" linkerOptions="$(windowsLinkerOptions32)" librariesDirectory="$(windowsLibraries32)" applicationName="$(applicationName)_i686.exe")
 
