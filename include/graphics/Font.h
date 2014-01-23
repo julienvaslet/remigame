@@ -13,7 +13,7 @@ namespace graphics
 	class Font
 	{
 		protected:
-			static Font * fonts;
+			static map<string,Font *> fonts;
 			Sprite * image;
 			map<char,Sprite::Frame> characters;
 			
