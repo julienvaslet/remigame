@@ -124,7 +124,7 @@ namespace graphics
 						else
 						{
 							#ifdef DEBUG0
-							cout << "[Object#" << this << "] Unable to load sprite \"" << root->attr( "sprite" ) << "\"." << endl;
+							cout << "[Object#" << this << "] Unable to load sprite \"" << object->attr( "sprite" ) << "\"." << endl;
 							#endif
 							
 							delete this->sprite;

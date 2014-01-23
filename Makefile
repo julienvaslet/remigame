@@ -42,7 +42,8 @@ applications:
 run_%: $(binDirectory)/%
 	@( app="$@"; \
 	app="$${app#run_}" ; \
-	$(binDirectory)/$${app} )
+	cd data ; \
+	../$(binDirectory)/$${app} )
 
 $(binDirectory)/%: $(binDirectory)/%.o
 	$(linker) $< -o $@$(applicationSuffix) `find $(librariesDirectory) -name '*.o' -type f` $(linkerOptions)

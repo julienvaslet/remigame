@@ -6,6 +6,7 @@
 #include <graphics/Screen.h>
 #include <graphics/Object.h>
 #include <graphics/Sprite.h>
+#include <graphics/Font.h>
 
 using namespace graphics;
 using namespace std;
@@ -15,6 +16,13 @@ int main( int argc, char ** argv )
 	if( !Screen::initialize() )
 	{
 		cout << "Unable to initialize screen. Exiting." << endl;
+		return 1;
+	}
+	
+	if( !Font::load( "font.xml" ) )
+	{
+		cout << "Unable to load main font. Exiting." << endl;
+		Screen::destroy();
 		return 1;
 	}
 	
@@ -119,6 +127,8 @@ int main( int argc, char ** argv )
 		{
 			Screen::get()->clear();
 			
+			Font::get( "font0" )->render( 0, 0, "Drop an *.xml file in this windows to load it." );
+			
 			if( object != NULL )
 				object->render( ticks );
 
@@ -130,7 +140,8 @@ int main( int argc, char ** argv )
 	
 	if( object != NULL )
 		delete object;
-
+		
+	Font::destroy( "font0" );
 	Screen::destroy();
 	
 	return 0;
