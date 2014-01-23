@@ -12,7 +12,7 @@ namespace graphics
             
 	bool Font::load( const string& filename )
 	{
-		return this->load( filename.c_str() );
+		return Font::load( filename.c_str() );
 	}
 	
 	bool Font::load( const char * filename )
@@ -33,7 +33,7 @@ namespace graphics
 	
 	Font * Font::get( const char * name )
 	{
-		return this->get( string( name ) );
+		return Font::get( string( name ) );
 	}
 	
 	void Font::destroy( const string& name )
@@ -42,7 +42,7 @@ namespace graphics
 	
 	void Font::destroy( const char * name )
 	{
-		this->destroy( string( name ) );
+		Font::destroy( string( name ) );
 	}
 			
 	void Font::render( int x, int y, const string& text )
@@ -84,7 +84,7 @@ namespace graphics
 				dstRect.x += dstRect.w;
 			}
 			else if( text[i] == '\n' )
-				dstRect.y += dstRect.height;
+				dstRect.y += dstRect.h;
 			
 			i++;
 		}
