@@ -10,34 +10,37 @@ namespace graphics
 	{
 	}
             
-	static bool Font::load( const string& filename )
+	bool Font::load( const string& filename )
 	{
 		return this->load( filename.c_str() );
 	}
 	
-	static bool Font::load( const char * filename )
+	bool Font::load( const char * filename )
 	{
 		bool success = false;
+		
+		//if success store it in map<string,Font*> fonts
+		
 		return success;
 	}
 	
-	static Font * Font::get( const string& name )
+	Font * Font::get( const string& name )
 	{
 		Font * font = NULL;
 		
 		return font;
 	}
 	
-	static Font * Font::get( const char * name )
+	Font * Font::get( const char * name )
 	{
 		return this->get( string( name ) );
 	}
 	
-	static void Font::destroy( const string& name )
+	void Font::destroy( const string& name )
 	{
 	}
 	
-	static void Font::destroy( const char * name )
+	void Font::destroy( const char * name )
 	{
 		this->destroy( string( name ) );
 	}
