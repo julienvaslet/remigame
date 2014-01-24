@@ -242,4 +242,51 @@ namespace graphics
 			i++;
 		}
 	}
+	
+	void Font::renderSize( int * x, int * y, const string& text )
+	{
+		this->renderSize( x, y, text.c_str() );
+	}
+	
+	void Font::renderSize( int * x, int * y, const char * text )
+	{
+		int i = 0;
+		
+		while( text[i] != 0 )
+		{
+			map<char,Sprite::Frame>::iterator it = this->characters.find( text[i] );
+			
+			if( it != this->characters.end() )
+				x += it->second.width;
+
+			else if( text[i] == '\n' )
+				y += it->second.height;
+			
+			i++;
+		}
+	}
+	
+	int Font::renderWidth( int x, int y, const string& text )
+	{
+		this->renderSize( &x, &y, text.c_str() );
+		return x;
+	}
+	
+	int Font::renderWidth( int x, int y, const char * text )
+	{
+		this->renderSize( &x, &y, text );
+		return x;
+	}
+	
+	int Font::renderHeight( int x, int y, const string& text )
+	{
+		this->renderSize( &x, &y, text.c_str() );
+		return y;
+	}
+	
+	int Font::renderHeight( int x, int y, const char * text )
+	{
+		this->renderSize( &x, &y, text );
+		return y;
+	}
 }
