@@ -266,26 +266,34 @@ namespace graphics
 		}
 	}
 	
-	int Font::renderWidth( int x, int y, const string& text )
+	int Font::renderWidth( const string& text )
 	{
+		int x = 0;
+		int y = 0;
 		this->renderSize( &x, &y, text.c_str() );
 		return x;
 	}
 	
-	int Font::renderWidth( int x, int y, const char * text )
+	int Font::renderWidth( const char * text )
 	{
+		int x = 0;
+		int y = 0;
 		this->renderSize( &x, &y, text );
 		return x;
 	}
 	
-	int Font::renderHeight( int x, int y, const string& text )
+	int Font::renderHeight( const string& text )
 	{
+		int x = 0;
+		int y = 0;
 		this->renderSize( &x, &y, text.c_str() );
 		return y;
 	}
 	
-	int Font::renderHeight( int x, int y, const char * text )
+	int Font::renderHeight( const char * text )
 	{
+		int x = 0;
+		int y = 0;
 		this->renderSize( &x, &y, text );
 		return y;
 	}
