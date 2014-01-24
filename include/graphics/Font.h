@@ -31,10 +31,12 @@ namespace graphics
 			
 			void render( int x, int y, const string& text );
 			void render( int x, int y, const char * text );
-			int renderWidth( int x, int y, const string& text );
-			int renderWidth( int x, int y, const char * text );
-			int renderHeight( int x, int y, const string& text );
-			int renderHeight( int x, int y, const char * text );
+			void renderSize( int * x, int * y, const string& text );
+			void renderSize( int * x, int * y, const char * text );
+			int renderWidth( const string& text );
+			int renderWidth( const char * text );
+			int renderHeight( const string& text );
+			int renderHeight( const char * text );
 	};
 }
 
