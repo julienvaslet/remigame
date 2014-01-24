@@ -127,10 +127,33 @@ int main( int argc, char ** argv )
 		{
 			Screen::get()->clear();
 			
-			Font::get( "font0" )->render( 0, 0, "Drop an *.xml file in this windows to load it." );
 			
 			if( object != NULL )
+			{
+				int animationX = Font::get( "font0" )->renderWidth( 10, 10, "Animation: " );;
+				int speedTextWidth = Font::get( "font0" )->renderWidth( 0, 0, "Speed: " );
+				int speedWidth = Font::get( "font0" )->renderWidth( 0, 0, "?" );
+				
+				Font::get( "font0" )->render( 10, 10, "Animation: " );
+				Font::get( "font0" )->render( 590 - speedWidth - speedTextWidth, 10, "Speed: " );
+				Font::get( "font0" )->render( animationX, 10, animations[currentAnimation] );
+				Font::get( "font0" )->render( 590 - speedWidth, 10, "?" );
+				
 				object->render( ticks );
+			}
+			else
+			{
+				// Show "drop file" message
+				// window height & width are hardcoded
+				int firstMessageX = 0;
+				int firstMessageY = 0;
+				int firstMessageWidth = 0;
+				int firstMessageHeight = 0;
+				Font::get( "font0" )->renderSize( firstMessageWidth, firstMessageHeight, "Drop an object XML file here" );
+				firstMessageX = (firstMessageWidth - 800) / 2;
+				firstMessageY = (firstMessageHeight - 600) / 2;
+				Font::get( "font0" )->render( firstMessageX, firstMessageY, "Drop an object XML file here" );
+			}
 
 			Screen::get()->render();
 			
