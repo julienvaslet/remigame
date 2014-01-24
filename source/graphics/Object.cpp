@@ -15,16 +15,16 @@ using namespace std;
 
 namespace graphics
 {
-	Object::Object() : x(0), y(0), width(0), height(0), sprite(NULL), currentAnimation(NULL)
+	Object::Object() : x(0), y(0), width(0), height(0), speedModulation(0), sprite(NULL), currentAnimation(NULL)
 	{
 	}
 	
-	Object::Object( const char * filename ) : x(0), y(0), width(0), height(0), sprite(NULL), currentAnimation(NULL)
+	Object::Object( const char * filename ) : x(0), y(0), width(0), height(0), speedModulation(0), sprite(NULL), currentAnimation(NULL)
 	{
 		this->load( filename );
 	}
 	
-	Object::Object( const string& filename ) : x(0), y(0), width(0), height(0), sprite(NULL), currentAnimation(NULL)
+	Object::Object( const string& filename ) : x(0), y(0), width(0), height(0), speedModulation(0), sprite(NULL), currentAnimation(NULL)
 	{
 		this->load( filename.c_str() );
 	}
@@ -215,6 +215,7 @@ namespace graphics
 		{
 			this->currentAnimation = it->second;
 			this->currentAnimation->reset();
+			this->currentAnimation->setSpeedModulation( this->speedModulation );
 			
 			#ifdef DEBUG0
 			cout << "[Object#" << this << "] Animation \"" << it->first << "\" selected." << endl;
@@ -287,6 +288,22 @@ namespace graphics
 	{
 		this->width = width;
 		this->height = height;
+	}
+	
+	void Object::setSpeedModulation( int modulation )
+	{
+		this->speedModulation = modulation;
+		this->currentAnimation->setSpeedModulation( this->speedModulation );
+	}
+	
+	int Object::getSpeedModulation()
+	{
+		return this->speedModulation;
+	}
+	
+	int Object::getAnimationSpeed()
+	{
+		return this->currentAnimation->getSpeed();
 	}
 }
 

@@ -251,17 +251,25 @@ namespace graphics
 	void Font::renderSize( int * x, int * y, const char * text )
 	{
 		int i = 0;
+		bool first = true;
 		
 		while( text[i] != 0 )
 		{
 			map<char,Sprite::Frame>::iterator it = this->characters.find( text[i] );
 			
 			if( it != this->characters.end() )
-				x += it->second.width;
-
+			{
+				*x += it->second.width;
+				
+				if( first )
+				{
+					first = false;
+					*y += it->second.height;
+				}
+			}
 			else if( text[i] == '\n' )
-				y += it->second.height;
-			
+				first = true;
+
 			i++;
 		}
 	}
@@ -296,5 +304,22 @@ namespace graphics
 		int y = 0;
 		this->renderSize( &x, &y, text );
 		return y;
+	}
+	
+	void Font::render( int x, int y, int number )
+	{
+		this->render( x, y, this->toString( number ) );
+	}
+	
+	int Font::renderWidth( int number )
+	{
+		return this->renderWidth( toString( number ) );
+	}
+	
+	string Font::toString( int number )
+	{
+		stringstream ss;
+		ss << number;
+		return ss.str();
 	}
 }

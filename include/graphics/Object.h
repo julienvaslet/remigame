@@ -19,6 +19,7 @@ namespace graphics
 			int y;
 			int width;
 			int height;
+			int speedModulation;
 			
 			Sprite * sprite;
 			Animation * currentAnimation;
@@ -43,6 +44,9 @@ namespace graphics
 			void render( unsigned int time );
 			
 			bool setAnimation( const string& name );
+			void setSpeedModulation( int modulation );
+			int getSpeedModulation();
+			int getAnimationSpeed();
 	};
 }
 

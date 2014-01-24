@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -19,7 +20,7 @@ int main( int argc, char ** argv )
 		return 1;
 	}
 	
-	if( !Font::load( "font.xml" ) )
+	if( !Font::load( "data/font.xml" ) )
 	{
 		cout << "Unable to load main font. Exiting." << endl;
 		Screen::destroy();
@@ -31,6 +32,10 @@ int main( int argc, char ** argv )
 	bool running = true;
 	SDL_Event lastEvent;
 	unsigned int lastDrawTicks = 0;
+
+	stringstream framesPerSecondText;
+	int framesPerSecond = 0;
+	unsigned int lastSecond = 0;
 	
 	SDL_EventState( SDL_DROPFILE, SDL_ENABLE );
 	
@@ -55,7 +60,6 @@ int main( int argc, char ** argv )
 				
 				case SDL_DROPFILE:
 				{
-					
 					Object * nObject = new Object( lastEvent.drop.file );
 					
 					if( nObject->isLoaded() )
@@ -93,6 +97,8 @@ int main( int argc, char ** argv )
 						case SDLK_PLUS:
 						{
 							// Increase animation speed
+							if( object != NULL && object->getAnimationSpeed() + object->getSpeedModulation() > 10 )
+								 object->setSpeedModulation( object->getSpeedModulation() - 10 );
 							break;
 						}
 						
@@ -100,6 +106,8 @@ int main( int argc, char ** argv )
 						case SDLK_MINUS:
 						{
 							// Decrease animation speed
+							if( object != NULL )
+								 object->setSpeedModulation( object->getSpeedModulation() + 10 );
 							break;
 						}
 						
@@ -110,7 +118,10 @@ int main( int argc, char ** argv )
 							currentAnimation = (currentAnimation + 1) % animations.size();
 							
 							if( object != NULL )
+							{
 								object->setAnimation( animations.at( currentAnimation ) );
+								object->setSpeedModulation( 0 );
+							}
 							
 							break;
 						}
@@ -125,19 +136,31 @@ int main( int argc, char ** argv )
 		
 		if( ticks - lastDrawTicks > 15 )
 		{
+			if( ticks - lastSecond >= 1000 )
+			{
+				lastSecond = ticks;
+				framesPerSecondText.str("");
+				framesPerSecondText << framesPerSecond << " FPS";
+				framesPerSecond = 0;
+			}
+			else
+				framesPerSecond++;
+				
 			Screen::get()->clear();
 			
+			int fpsX = (800 - Font::get( "font0" )->renderWidth( framesPerSecondText.str() )) / 2;
+			Font::get( "font0" )->render( fpsX, 10, framesPerSecondText.str() );
 			
 			if( object != NULL )
 			{
-				int animationX = Font::get( "font0" )->renderWidth( "Animation: " );;
+				int animationX = Font::get( "font0" )->renderWidth( "Animation: " );
 				int speedTextWidth = Font::get( "font0" )->renderWidth( "Speed: " );
-				int speedWidth = Font::get( "font0" )->renderWidth( "?" );
+				int speedWidth = Font::get( "font0" )->renderWidth( object->getAnimationSpeed() + object->getSpeedModulation() );
 				
 				Font::get( "font0" )->render( 10, 10, "Animation: " );
-				Font::get( "font0" )->render( 590 - speedWidth - speedTextWidth, 10, "Speed: " );
+				Font::get( "font0" )->render( 790 - speedWidth - speedTextWidth, 10, "Speed: " );
 				Font::get( "font0" )->render( animationX, 10, animations[currentAnimation] );
-				Font::get( "font0" )->render( 590 - speedWidth, 10, "?" );
+				Font::get( "font0" )->render( 790 - speedWidth, 10, object->getAnimationSpeed() + object->getSpeedModulation() );
 				
 				object->render( ticks );
 			}
@@ -149,9 +172,9 @@ int main( int argc, char ** argv )
 				int firstMessageY = 0;
 				int firstMessageWidth = 0;
 				int firstMessageHeight = 0;
-				Font::get( "font0" )->renderSize( firstMessageWidth, firstMessageHeight, "Drop an object XML file here" );
-				firstMessageX = (firstMessageWidth - 800) / 2;
-				firstMessageY = (firstMessageHeight - 600) / 2;
+				Font::get( "font0" )->renderSize( &firstMessageWidth, &firstMessageHeight, "Drop an object XML file here" );
+				firstMessageX = (800 - firstMessageWidth) / 2;
+				firstMessageY = (600 - firstMessageHeight) / 2;
 				Font::get( "font0" )->render( firstMessageX, firstMessageY, "Drop an object XML file here" );
 			}
 

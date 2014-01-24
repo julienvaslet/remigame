@@ -37,6 +37,11 @@ namespace graphics
 			int renderWidth( const char * text );
 			int renderHeight( const string& text );
 			int renderHeight( const char * text );
+			
+			void render( int x, int y, int number );
+			int renderWidth( int number );
+			
+			string toString( int number );
 	};
 }
 

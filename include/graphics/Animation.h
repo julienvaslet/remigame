@@ -13,6 +13,7 @@ namespace graphics
 	{
 		protected:
 			unsigned int speed;
+			int speedModulation;
 			unsigned int lastRender;
 			unsigned int lastFrameRendered;
 			vector<Sprite::Frame> frames;
@@ -25,6 +26,7 @@ namespace graphics
 			unsigned int getSpeed();
 			
 			void setSpeed( unsigned int speed );
+			void setSpeedModulation( int modulation );
 			void addFrame( int x, int y, int width, int height );
 			
 			void reset();

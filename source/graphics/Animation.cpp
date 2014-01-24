@@ -6,7 +6,7 @@
 
 namespace graphics
 {
-	Animation::Animation() : speed(0), lastRender(0), lastFrameRendered(0)
+	Animation::Animation() : speed(0), speedModulation(0), lastRender(0), lastFrameRendered(0)
 	{
 	}
 	
@@ -20,7 +20,7 @@ namespace graphics
 		
 		if( !this->frames.empty() )
 		{
-			unsigned int step = (time - lastRender) / this->speed;
+			unsigned int step = (time - lastRender) / (this->speed + this->speedModulation);
 			
 			if( step > 0 )
 			{
@@ -44,10 +44,16 @@ namespace graphics
 		this->speed = speed;
 	}
 	
+	void Animation::setSpeedModulation( int modulation )
+	{
+		this->speedModulation = modulation;
+	}
+	
 	void Animation::reset()
 	{
 		this->lastRender = 0;
 		this->lastFrameRendered = 0;
+		this->speedModulation = 0;
 	}
 	
 	void Animation::addFrame( int x, int y, int width, int height )

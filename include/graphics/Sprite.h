@@ -33,7 +33,6 @@ namespace graphics
 			~Sprite();
 		
 			bool load( const char * filename );
-			void render();
 			bool isLoaded();
 		
 			void setView( int x, int y, int width, int height );
