@@ -130,9 +130,9 @@ int main( int argc, char ** argv )
 			
 			if( object != NULL )
 			{
-				int animationX = Font::get( "font0" )->renderWidth( 10, 10, "Animation: " );;
-				int speedTextWidth = Font::get( "font0" )->renderWidth( 0, 0, "Speed: " );
-				int speedWidth = Font::get( "font0" )->renderWidth( 0, 0, "?" );
+				int animationX = Font::get( "font0" )->renderWidth( "Animation: " );;
+				int speedTextWidth = Font::get( "font0" )->renderWidth( "Speed: " );
+				int speedWidth = Font::get( "font0" )->renderWidth( "?" );
 				
 				Font::get( "font0" )->render( 10, 10, "Animation: " );
 				Font::get( "font0" )->render( 590 - speedWidth - speedTextWidth, 10, "Speed: " );
