@@ -14,7 +14,7 @@ using namespace std;
 
 int main( int argc, char ** argv )
 {
-	if( !Screen::initialize() )
+	if( !Screen::initialize( "Object Viewer" ) )
 	{
 		cout << "Unable to initialize screen. Exiting." << endl;
 		return 1;

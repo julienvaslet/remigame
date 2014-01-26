@@ -1,0 +1,17 @@
+<controller name="generic">
+	<button id="0" action="BTNUP" />
+	<button id="1" action="BTNRIGHT" />
+	<button id="2" action="BTNDOWN" />
+	<button id="3" action="BTNLEFT" />
+	<button id="4" action="LT1" />
+	<button id="5" action="RT1" />
+	<button id="6" action="LT2" />
+	<button id="7" action="RT2" />
+	<button id="8" action="SELECT" />
+	<button id="9" action="START" />
+	<button id="10" action="LT3" />
+	<button id="11" action="RT3" />
+	<axis id="0" action="AXH" />
+	<axis id="1" action="AXV" />
+	<axis id="2" action="AXH" />
+</controller>

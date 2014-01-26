@@ -35,15 +35,15 @@ namespace graphics
 		}
 	}
 		
-	bool Screen::initialize()
+	bool Screen::initialize( const char * title )
 	{
 		bool success = true;
-		SDL_Init( SDL_INIT_VIDEO );
+		SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK );
 	
 		Screen * screen = new Screen();
 
 		screen->window = SDL_CreateWindow(
-			"Remigame",
+			title,
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
 			800,
