@@ -21,7 +21,7 @@ namespace controller
 		return this->mapping.size() > 0;
 	}
 
-	Button Mapping::getButton( short int value )
+	Button Mapping::getButton( int value )
 	{
 		return Controller::BTNUP;
 	}
