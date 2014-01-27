@@ -1,9 +1,9 @@
 *~
 *.o
 *.d
-/linux32/ObjectViewer
-/linux32/ControllerManager
-/windows32/ObjectViewer_i686.exe
-/windows32/ControllerManager_i686.exe
-/windows64/ObjectViewer_x86_64.exe
-/windows64/ControllerManager_x86_64.exe
+linux32/ObjectViewer
+linux32/ControllerManager
+windows32/ObjectViewer_i686.exe
+windows32/ControllerManager_i686.exe
+windows64/ObjectViewer_x86_64.exe
+windows64/ControllerManager_x86_64.exe
