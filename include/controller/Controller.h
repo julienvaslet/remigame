@@ -13,37 +13,17 @@ namespace controller
 {
 	class Controller
 	{
-		public:
-			// enum class Button : short int ?
-			enum Button
-			{
-				BTNUP,
-				BTNRIGHT,
-				BTNDOWN,
-				BTNLEFT,
-				LT1,
-				RT1,
-				LT2,
-				RT2,
-				LT3,
-				RT3,
-				SELECT,
-				START,
-				AXH,
-				AXV
-			};
-		
 		protected:
 			static map<SDL_JoystickID, Controller *> controllers;
 			static map<string, Mapping *> mappings;
 			
 			SDL_Joystick * joystick;
 			SDL_JoystickID id;
-			string mapping;
+			Mapping * mapping;
 			
 			//Event manager? Event *, Action *
 			
-			map<Button, short int value> states;
+			map<Mapping::Button, short int value> states;
 			
 			Controller( SDL_Joystick * joystick );
 			~Controller();
