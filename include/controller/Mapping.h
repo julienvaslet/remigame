@@ -34,7 +34,7 @@ namespace controller
 			};
 			
 		protected:
-			map<short int value, Button> mapping;
+			map<int value, Button> mapping;
 		
 		public:
 			Mapping( const string& filename );
@@ -42,7 +42,7 @@ namespace controller
 			~Mapping();
 			
 			bool isLoaded();
-			Button getButton( short int value );
+			Button getButton( int value );
 	};
 }
 
