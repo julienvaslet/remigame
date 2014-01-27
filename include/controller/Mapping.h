@@ -14,9 +14,9 @@ namespace controller
 	class Mapping
 	{
 		public:
-			// enum class Button : short int ?
 			enum Button
 			{
+				NOBTN,
 				BTNUP,
 				BTNRIGHT,
 				BTNDOWN,
@@ -34,15 +34,16 @@ namespace controller
 			};
 			
 		protected:
-			map<int value, Button> mapping;
+			map<int, Button> mapping;
 		
 		public:
 			Mapping( const string& filename );
 			Mapping( const char * filename );
 			~Mapping();
 			
+			bool load( const char * filename );
 			bool isLoaded();
-			Button getButton( int value );
+			Mapping::Button getButton( int value );
 	};
 }
 

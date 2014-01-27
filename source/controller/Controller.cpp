@@ -1,11 +1,17 @@
 #include <controller/Controller.h>
-#include <vector>
+#include <data/parser/NodeParser.h>
 
 #ifdef DEBUG0
 #include <iostream>
 #endif
 
+#include <vector>
+#include <string>
+#include <fstream>
+#include <sstream>
+
 using namespace std;
+using namespace data;
 
 namespace controller
 {
@@ -15,8 +21,7 @@ namespace controller
 	Controller::Controller( SDL_Joystick * joystick ) : joystick(joystick), id(0), mapping(NULL)
 	{
 		this->id = SDL_JoystickInstanceID( this->joystick );
-		
-		// todo: mapping loading
+		this->loadMapping( SDL_JoystickName( this->joystick ) );
 		
 		#ifdef DEBUG0
 		cout << "[Controller#" << this->id << "] Initialized." << endl;
@@ -85,6 +90,106 @@ namespace controller
 		}
 	}
 	
+	void Controller::loadMapping( const char * name )
+	{
+		#ifdef DEBUG0
+		cout << "[Controller#" << this->id << "] Loading file \"data/controller/mappings.xml\"..." << endl;
+		#endif
+		
+		ifstream file( "data/controller/mappings.xml" );
+		
+		if( file.is_open() )
+		{
+			stringstream ss;
+			ss << file.rdbuf();
+			
+			parser::NodeParser nParser( ss.str() );
+			node::Node * root = nParser.parse();
+			
+			if( root != NULL )
+			{
+				node::Node * nMappings = root->find( "mappings" );
+				
+				if( nMappings != NULL )
+				{
+					string mapping = "";
+					node::Node * nMapping = nMappings->childAt( 0 );
+					
+					while( nMapping != NULL )
+					{
+						if( nMapping->getType() == node::Node::Tag && nMapping->getName() == "mapping" )
+						{
+							if( nMapping->hasAttr( "name" ) && nMapping->hasAttr( "file" ) )
+							{
+								// Loading generic mapping by default
+								if( mapping == "" && nMapping->attr( "name" ) == "generic" )
+								{
+									mapping = nMapping->attr( "file" );
+								}
+								
+								// Loading matching mapping
+								else if( false )
+								{
+								}
+							}
+						}
+						
+						nMapping = nMapping->next();
+					}
+					
+					if( mapping != "" )
+					{
+						map<string, Mapping *>::iterator itMapping = Controller::mappings.find( mapping );
+						
+						if( itMapping == Controller::mappings.end() )
+						{
+							Mapping * m = new Mapping( mapping );
+							
+							if( m->isLoaded() )
+							{
+								this->mapping = m;
+								Controller::mappings[mapping] = m;
+							}
+							else
+							{
+								delete m;
+								this->mapping = NULL;
+							}
+						}
+						else
+							this->mapping = itMapping->second;
+					}
+					else
+					{
+						this->mapping = NULL;
+
+						#ifdef DEBUG0
+						cout << "[Controller#" << this->id << "] Unable to find a suitable mapping." << endl;
+						#endif
+					}
+				}
+				else
+				{
+					#ifdef DEBUG0
+					cout << "[Controller#" << this->id << "] Unable to find \"mappings\" tag." << endl;
+					#endif
+				}
+			}
+			else
+			{
+				#ifdef DEBUG0
+				cout << "[Controller#" << this->id << "] Unable to parse file." << endl;
+				#endif
+			}
+		}
+		else
+		{
+			#ifdef DEBUG0
+			cout << "[Controller#" << this->id << "] Unable to open file \"data/controller/mappings.xml\"." << endl;
+			#endif
+		}
+	}
+	
 	void Controller::handleEvent( const SDL_Event * event )
 	{
 		map<SDL_JoystickID, Controller *>::iterator itController = Controller::controllers.end();
@@ -97,7 +202,11 @@ namespace controller
 				
 				if( itController != Controller::controllers.end() )
 				{
-					cout << "Controller#" << static_cast<int>( event->jbutton.which ) << " released button " << static_cast<int>( event->jbutton.button ) << endl;
+					if( itController->second->mapping != NULL )
+					{
+						cout << "[Controller#" << itController->second->id << "] Action \"" << itController->second->mapping->getButton( event->jbutton.button ) << "\" released." << endl;
+						//cout << "Controller#" << static_cast<int>( event->jbutton.which ) << " released button " << static_cast<int>( event->jbutton.button ) << endl;
+					}
 				}
 				
 				break;
@@ -109,7 +218,11 @@ namespace controller
 				
 				if( itController != Controller::controllers.end() )
 				{
-					cout << "Controller#" << static_cast<int>( event->jbutton.which ) << " pushed button " << static_cast<int>( event->jbutton.button ) << endl;
+					if( itController->second->mapping != NULL )
+					{
+						cout << "[Controller#" << itController->second->id << "] Action \"" << itController->second->mapping->getButton( event->jbutton.button ) << "\" pushed." << endl;
+						//cout << "Controller#" << static_cast<int>( event->jbutton.which ) << " pushed button " << static_cast<int>( event->jbutton.button ) << endl;
+					}
 				}
 				
 				break;
@@ -121,7 +234,7 @@ namespace controller
 				
 				if( itController != Controller::controllers.end() )
 				{
-					cout << "Controller#" << static_cast<int>( event->jaxis.which ) << " set axis " << static_cast<int>( event->jaxis.axis ) << " at " << static_cast<int>( event->jaxis.value ) << endl;
+					//cout << "Controller#" << static_cast<int>( event->jaxis.which ) << " set axis " << static_cast<int>( event->jaxis.axis ) << " at " << static_cast<int>( event->jaxis.value ) << endl;
 				}
 				
 				break;

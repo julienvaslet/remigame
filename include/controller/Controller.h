@@ -23,14 +23,14 @@ namespace controller
 			
 			//Event manager? Event *, Action *
 			
-			map<Mapping::Button, short int value> states;
+			map<Mapping::Button, short int> states;
 			
 			Controller( SDL_Joystick * joystick );
 			~Controller();
+			
+			void loadMapping( const char * name );
 		
 		public:
-			
-			
 			static void initialize();
 			static void destroy();
 			static void handleEvent( const SDL_Event * event );

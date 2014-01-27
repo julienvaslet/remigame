@@ -1,4 +1,4 @@
-<controller name="generic">
+<mapping>
 	<button id="0" action="BTNUP" />
 	<button id="1" action="BTNRIGHT" />
 	<button id="2" action="BTNDOWN" />
@@ -14,4 +14,4 @@
 	<axis id="0" action="AXH" />
 	<axis id="1" action="AXV" />
 	<axis id="2" action="AXH" />
-</controller>
+</mapping>
