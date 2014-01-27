@@ -41,6 +41,7 @@ namespace controller
 			Mapping( const char * filename );
 			~Mapping();
 			
+			bool isLoaded();
 			Button getButton( short int value );
 	};
 }
