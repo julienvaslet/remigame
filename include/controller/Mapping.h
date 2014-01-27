@@ -34,6 +34,7 @@ namespace controller
 			};
 			
 		protected:
+			// mapping should handle default values... for axis correct management
 			map<int, Button> mapping;
 		
 		public:
