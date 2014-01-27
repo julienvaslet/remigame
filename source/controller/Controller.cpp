@@ -10,11 +10,13 @@ using namespace std;
 namespace controller
 {
 	map<SDL_JoystickID, Controller *> Controller::controllers;
+	map<string, Mapping *> Controller::mappings;
 	
-	Controller::Controller( SDL_Joystick * joystick )
+	Controller::Controller( SDL_Joystick * joystick ) : joystick(joystick), id(0), mapping(NULL)
 	{
-		this->joystick = joystick;
 		this->id = SDL_JoystickInstanceID( this->joystick );
+		
+		// todo: mapping loading
 		
 		#ifdef DEBUG0
 		cout << "[Controller#" << this->id << "] Initialized." << endl;
@@ -74,6 +76,12 @@ namespace controller
 		{
 			delete itCtrl->second;
 			Controller::controllers.erase( itCtrl++ );
+		}
+		
+		for( map<string, Mapping *>::iterator itMapping = Controller::mappings.begin() ; itMapping != Controller::mappings.end() ; )
+		{
+			delete itMapping->second;
+			Controller::mappings.erase( itMapping++ );
 		}
 	}
 	
