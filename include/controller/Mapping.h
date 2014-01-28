@@ -34,8 +34,8 @@ namespace controller
 			};
 			
 		protected:
-			// mapping should handle default values... for axis correct management
-			map<int, Button> mapping;
+			// Button ID => ( Button Action, default value )
+			map<int, pair<Button,short int> > mapping;
 		
 		public:
 			Mapping( const string& filename );
