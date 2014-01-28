@@ -80,7 +80,7 @@ namespace controller
 									
 									if( itBtn != internalValues.end() )
 									{
-										this->mapping[node->integerAttr( "id" )] = internalValues[node->attr( "action" )];
+										this->mapping[node->integerAttr( "id" )] = pair( internalValues[node->attr( "action" )], node->isIntegerAttr( "value" ) ? static_cast<short int>( node->integerAttr( "value" ) ) : Mapping::STATE_PUSHED );
 										
 										#ifdef DEBUG0
 										cout << "[Mapping#" << this << "] Button #" << node->integerAttr( "id" ) << " triggers action \"" << node->attr( "action" ) << "\"." << endl;
@@ -96,7 +96,23 @@ namespace controller
 							}
 							else if( node->getName() == "axis" )
 							{
-								// ignoring...
+								map<string, Mapping::Button>::iterator itBtn = internalValues.find( node->attr( "action" ) );
+									
+								if( itBtn != internalValues.end() )
+								{
+									//this->mapping[node->integerAttr( "id" )] = pair( internalValues[node->attr( "action" )], Mapping::STATE_RELEASED );
+									
+									#ifdef DEBUG0
+									cout << "Warning: axis could not be pushed in mapping map (identified will be dupes)!!" << endl;
+									cout << "[Mapping#" << this << "] Axis #" << node->integerAttr( "id" ) << " triggers action \"" << node->attr( "action" ) << "\"." << endl;
+									#endif
+								}
+								else
+								{
+									#ifdef DEBUG0
+									cout << "[Mapping#" << this << "] Ignoring action \"" << node->attr( "action" ) << "\"." << endl;
+									#endif
+								}
 							}
 						}
 						
