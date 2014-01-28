@@ -33,6 +33,13 @@ namespace controller
 				AXV
 			};
 			
+			enum State
+			{
+				STATE_RPUSHED	= -32768,
+				STATE_PUSHED	= 32767,
+				STATE_RELEASED	= 0
+			};
+			
 		protected:
 			// Button ID => ( Button Action, default value )
 			map<int, pair<Button,short int> > mapping;
