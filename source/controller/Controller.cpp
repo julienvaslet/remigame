@@ -268,5 +268,16 @@ namespace controller
 		cout << "[Controller#" << this->id << "] Button#" << button << " set with value " << static_cast<int>( value ) << "." << endl;
 		// Pop action?
 	}
+	
+	short int Controller::getState( Mapping::Button button )
+	{
+		short int value = Mapping::BTN_RELEASED;
+		map<Mapping::Button, short int>::iterator it = this->states.find( button );
+		
+		if( it != this->states.end() )
+			value = it->second;
+		
+		return value;
+	}
 }
 
