@@ -44,7 +44,7 @@ namespace controller
 		internalValues["SELECT"] = Mapping::SELECT;
 		internalValues["START"] = Mapping::START;
 		internalValues["AXH"] = Mapping::AXH;
-		internalValues["AHV"] = Mapping::AXV;
+		internalValues["AXV"] = Mapping::AXV;
 		
 		#ifdef DEBUG0
 		cout << "[Mapping#" << this << "] Loading file \"" << filename << "\"..." << endl;

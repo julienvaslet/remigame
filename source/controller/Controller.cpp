@@ -24,20 +24,20 @@ namespace controller
 		this->loadMapping( SDL_JoystickName( this->joystick ) );
 		
 		// Initialize buttons states
-		this->states[Mapping::BTNUP] = Mapping::BTN_RELEASED;
-		this->states[Mapping::BTNRIGHT] = Mapping::BTN_RELEASED;
-		this->states[Mapping::BTNDOWN] = Mapping::BTN_RELEASED;
-		this->states[Mapping::BTNLEFT] = Mapping::BTN_RELEASED;
-		this->states[Mapping::LT1] = Mapping::BTN_RELEASED;
-		this->states[Mapping::LT2] = Mapping::BTN_RELEASED;
-		this->states[Mapping::LT3] = Mapping::BTN_RELEASED;
-		this->states[Mapping::RT1] = Mapping::BTN_RELEASED;
-		this->states[Mapping::RT2] = Mapping::BTN_RELEASED;
-		this->states[Mapping::RT3] = Mapping::BTN_RELEASED;
-		this->states[Mapping::SELECT] = Mapping::BTN_RELEASED;
-		this->states[Mapping::START] = Mapping::BTN_RELEASED;
-		this->states[Mapping::AXH] = Mapping::BTN_RELEASED;
-		this->states[Mapping::AXV] = Mapping::BTN_RELEASED;
+		this->states[Mapping::BTNUP] = Mapping::STATE_RELEASED;
+		this->states[Mapping::BTNRIGHT] = Mapping::STATE_RELEASED;
+		this->states[Mapping::BTNDOWN] = Mapping::STATE_RELEASED;
+		this->states[Mapping::BTNLEFT] = Mapping::STATE_RELEASED;
+		this->states[Mapping::LT1] = Mapping::STATE_RELEASED;
+		this->states[Mapping::LT2] = Mapping::STATE_RELEASED;
+		this->states[Mapping::LT3] = Mapping::STATE_RELEASED;
+		this->states[Mapping::RT1] = Mapping::STATE_RELEASED;
+		this->states[Mapping::RT2] = Mapping::STATE_RELEASED;
+		this->states[Mapping::RT3] = Mapping::STATE_RELEASED;
+		this->states[Mapping::SELECT] = Mapping::STATE_RELEASED;
+		this->states[Mapping::START] = Mapping::STATE_RELEASED;
+		this->states[Mapping::AXH] = Mapping::STATE_RELEASED;
+		this->states[Mapping::AXV] = Mapping::STATE_RELEASED;
 		
 		#ifdef DEBUG0
 		cout << "[Controller#" << this->id << "] Initialized." << endl;
@@ -220,7 +220,7 @@ namespace controller
 				{
 					if( itController->second->mapping != NULL )
 					{
-						itController->second->updateState( itController->second->mapping->getButtonFromButton( event->jbutton.button ), Mapping::BTN_RELEASED );
+						itController->second->updateState( itController->second->mapping->getButtonFromButton( event->jbutton.button ), Mapping::STATE_RELEASED );
 						//cout << "[Controller#" << itController->second->id << "] Action \"" << itController->second->mapping->getButtonFromButton( event->jbutton.button ) << "\" released." << endl;
 						//cout << "Controller#" << static_cast<int>( event->jbutton.which ) << " released button " << static_cast<int>( event->jbutton.button ) << endl;
 					}
@@ -237,7 +237,7 @@ namespace controller
 				{
 					if( itController->second->mapping != NULL )
 					{
-						itController->second->updateState( itController->second->mapping->getButtonFromButton( event->jbutton.button ), Mapping::BTN_PUSHED );
+						itController->second->updateState( itController->second->mapping->getButtonFromButton( event->jbutton.button ), Mapping::STATE_PUSHED );
 						//cout << "[Controller#" << itController->second->id << "] Action \"" << itController->second->mapping->getButtonFromButton( event->jbutton.button ) << "\" pushed." << endl;
 						//cout << "Controller#" << static_cast<int>( event->jbutton.which ) << " pushed button " << static_cast<int>( event->jbutton.button ) << endl;
 					}
@@ -271,7 +271,7 @@ namespace controller
 	
 	short int Controller::getState( Mapping::Button button )
 	{
-		short int value = Mapping::BTN_RELEASED;
+		short int value = Mapping::STATE_RELEASED;
 		map<Mapping::Button, short int>::iterator it = this->states.find( button );
 		
 		if( it != this->states.end() )
