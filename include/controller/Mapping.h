@@ -41,8 +41,7 @@ namespace controller
 			};
 			
 		protected:
-			// Button ID => ( Button Action, default value )
-			map<int, pair<Button,short int> > buttons;
+			map<int, Button> buttons;
 			map<int, Button> axes;
 		
 		public:
