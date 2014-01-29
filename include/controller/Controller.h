@@ -30,6 +30,7 @@ namespace controller
 			
 			void loadMapping( const char * name );
 			void updateState( Mapping::Button button, short int value );
+			short int getState( Mapping::Button button );
 		
 		public:
 			static void initialize();
