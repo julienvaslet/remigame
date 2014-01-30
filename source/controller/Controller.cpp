@@ -265,7 +265,7 @@ namespace controller
 	void Controller::updateState( Mapping::Button button, short int value )
 	{
 		this->states[button] = value;
-		cout << "[Controller#" << this->id << "] Button#" << button << " set with value " << static_cast<int>( value ) << "." << endl;
+		//cout << "[Controller#" << this->id << "] Button#" << button << " set with value " << static_cast<int>( value ) << "." << endl;
 		// Pop action?
 	}
 	

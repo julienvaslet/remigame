@@ -5,6 +5,7 @@ applicationSuffix =
 applicationDirectory = ./apps
 testsDirectory = ./tests
 debugMaxLevel = 3
+#debugFlag =
 debugFlag = -g -DDEBUG0 -DDEBUG1 -DDEBUG2 -DDEBUG3
 binDirectory = ./linux32
 
