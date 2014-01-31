@@ -14,10 +14,8 @@
  <button action="BTNLEFT" id="12" value="32767" />
  <button action="BTNUP" id="13" value="32767" />
  <button action="START" id="14" value="32767" />
- <axis action="AXV" id="0" />
+ <axis action="AXH" id="0" />
  <axis action="AXV" id="1" />
- <axis action="AXH" id="2" />
- <axis action="AXH" id="3" />
  <axis action="LT2" id="4" />
  <axis action="RT2" id="5" />
 </mapping>

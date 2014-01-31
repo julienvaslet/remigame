@@ -126,7 +126,7 @@ int main( int argc, char ** argv )
 					else
 					{
 						// Added sensisivity for old controllers
-						if( lastEvent.type == SDL_JOYAXISMOTION && ( lastEvent.jaxis.value == Mapping::STATE_PUSHED || lastEvent.jaxis.value == Mapping::STATE_RPUSHED ) )
+						if( lastEvent.type == SDL_JOYAXISMOTION && ( lastEvent.jaxis.value >= Mapping::STATE_PUSHED / 2 || lastEvent.jaxis.value <= Mapping::STATE_RPUSHED / 2 ) )
 						{
 							currentAxes.insert( lastEvent.jaxis.axis );
 						}
