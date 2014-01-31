@@ -95,7 +95,7 @@ int main( int argc, char ** argv )
 	unsigned int orderIndex = 0;
 	set<int> currentButtons;
 	set<int> currentAxes;
-	map<int, Mapping::Button> buttons;
+	map<int, pair<Mapping::Button,Mapping::State> > buttons;
 	map<int, Mapping::Button> axes;
 
 	while( running )
@@ -131,7 +131,7 @@ int main( int argc, char ** argv )
 						}
 						else if( lastEvent.type == SDL_JOYBUTTONDOWN )
 						{
-							currentButtons.insert( lastEvent.jbutton.button );
+							currentButtons.insert( make_pair( lastEvent.jbutton.button, internalValuesOrder[orderIndex].second ) );
 						}
 					}
 					
@@ -178,14 +178,15 @@ int main( int argc, char ** argv )
 									node::Node * mapping = new node::Node( node::Node::Tag, "mapping" );
 									mapping->attr( "name", filename );
 									
-									for( map<int, Mapping::Button>::iterator itBtn = buttons.begin() ; itBtn != buttons.end() ; itBtn++ )
+									for( map<int, pair<Mapping::Button, Mapping::State> >::iterator itBtn = buttons.begin() ; itBtn != buttons.end() ; itBtn++ )
 									{
 										stringstream ss;
 										ss << itBtn->first;
 										
 										node::Node * nButton = new node::Node( node::Node::Tag, "button" );
 										nButton->attr( "id", ss.str() );
-										nButton->attr( "action", internalActions[ itBtn->second ] );
+										nButton->attr( "action", internalActions[ itBtn->second.first ] );
+										nButton->attr( "value", internalActions[ itBtn->second.second ] );
 										
 										mapping->append( nButton );
 									}
