@@ -1,4 +1,5 @@
 <mappings>
 	<mapping name="generic" file="data/controller/generic.xml" />
 	<mapping name="XInput Controller" file="data/controller/xbox.xml" />
+	<mapping name="Xbox Gamepad (userspace driver)" file="data/controller/ps3xboxdrv.xml" />
 </mappings>
