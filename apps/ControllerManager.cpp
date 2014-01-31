@@ -95,7 +95,7 @@ int main( int argc, char ** argv )
 	unsigned int orderIndex = 0;
 	set<int> currentButtons;
 	set<int> currentAxes;
-	map<int, pair<Mapping::Button,Mapping::State> > buttons;
+	map<int, pair<Mapping::Button,short int> > buttons;
 	map<int, Mapping::Button> axes;
 
 	while( running )
@@ -131,7 +131,7 @@ int main( int argc, char ** argv )
 						}
 						else if( lastEvent.type == SDL_JOYBUTTONDOWN )
 						{
-							currentButtons.insert( make_pair( lastEvent.jbutton.button, internalValuesOrder[orderIndex].second ) );
+							currentButtons.insert( lastEvent.jbutton.button );
 						}
 					}
 					
@@ -160,7 +160,7 @@ int main( int argc, char ** argv )
 							if( controllerId != -1 )
 							{
 								for( set<int>::const_iterator itBtn = currentButtons.begin() ; itBtn != currentButtons.end() ; itBtn++ )
-									buttons[ *itBtn ] = internalValuesOrder[orderIndex].first;
+									buttons[ *itBtn ] = make_pair( internalValuesOrder[orderIndex].first, internalValuesOrder[orderIndex].second );
 								
 								for( set<int>::const_iterator itAxis = currentAxes.begin() ; itAxis != currentAxes.end() ; itAxis++ )
 									axes[ *itAxis ] = internalValuesOrder[orderIndex].first;
@@ -178,15 +178,19 @@ int main( int argc, char ** argv )
 									node::Node * mapping = new node::Node( node::Node::Tag, "mapping" );
 									mapping->attr( "name", filename );
 									
-									for( map<int, pair<Mapping::Button, Mapping::State> >::iterator itBtn = buttons.begin() ; itBtn != buttons.end() ; itBtn++ )
+									for( map<int, pair<Mapping::Button, short int> >::iterator itBtn = buttons.begin() ; itBtn != buttons.end() ; itBtn++ )
 									{
 										stringstream ss;
 										ss << itBtn->first;
 										
 										node::Node * nButton = new node::Node( node::Node::Tag, "button" );
 										nButton->attr( "id", ss.str() );
+										
+										ss.str( "" );
+										ss << itBtn->second.second;
+										
 										nButton->attr( "action", internalActions[ itBtn->second.first ] );
-										nButton->attr( "value", internalActions[ itBtn->second.second ] );
+										nButton->attr( "value", ss.str() );
 										
 										mapping->append( nButton );
 									}
@@ -210,9 +214,11 @@ int main( int argc, char ** argv )
 											*it = '_';
 									}
 									
-									ofstream file( filename );
+									filename += ".xml";
 									
-									if( file.open() )
+									ofstream file( filename.c_str() );
+									
+									if( file.is_open() )
 									{
 										file << mapping->text( true );
 										file.close();

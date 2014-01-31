@@ -1,0 +1,23 @@
+<mapping name="XInput Controller">
+ <button action="AXV" id="0" value="-32768" />
+ <button action="AXV" id="1" value="32767" />
+ <button action="AXH" id="2" value="-32768" />
+ <button action="AXH" id="3" value="32767" />
+ <button action="START" id="4" value="32767" />
+ <button action="SELECT" id="5" value="32767" />
+ <button action="LT3" id="6" value="32767" />
+ <button action="RT3" id="7" value="32767" />
+ <button action="LT1" id="8" value="32767" />
+ <button action="RT1" id="9" value="32767" />
+ <button action="BTNDOWN" id="10" value="32767" />
+ <button action="BTNRIGHT" id="11" value="32767" />
+ <button action="BTNLEFT" id="12" value="32767" />
+ <button action="BTNUP" id="13" value="32767" />
+ <button action="START" id="14" value="32767" />
+ <axis action="AXV" id="0" />
+ <axis action="AXV" id="1" />
+ <axis action="AXH" id="2" />
+ <axis action="AXH" id="3" />
+ <axis action="LT2" id="4" />
+ <axis action="RT2" id="5" />
+</mapping>

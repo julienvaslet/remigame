@@ -144,8 +144,10 @@ namespace controller
 								}
 								
 								// Loading matching mapping
-								else if( false )
+								else if( nMapping->attr( "name" ).compare( 0, strlen( name ), name ) == 0 )
 								{
+									mapping = nMapping->attr( "file" );
+									break;
 								}
 							}
 						}
@@ -265,7 +267,7 @@ namespace controller
 	void Controller::updateState( Mapping::Button button, short int value )
 	{
 		this->states[button] = value;
-		//cout << "[Controller#" << this->id << "] Button#" << button << " set with value " << static_cast<int>( value ) << "." << endl;
+		cout << "[Controller#" << this->id << "] Button#" << button << " set with value " << static_cast<int>( value ) << "." << endl;
 		// Pop action?
 	}
 	
