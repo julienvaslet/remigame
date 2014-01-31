@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <set>
@@ -171,7 +172,11 @@ int main( int argc, char ** argv )
 								
 								if( orderIndex >= internalValuesOrder.size() )
 								{
+									string filename = SDL_JoystickNameForIndex( controllerId );
+									
+									// XML Nodes creation
 									node::Node * mapping = new node::Node( node::Node::Tag, "mapping" );
+									mapping->attr( "name", filename );
 									
 									for( map<int, Mapping::Button>::iterator itBtn = buttons.begin() ; itBtn != buttons.end() ; itBtn++ )
 									{
@@ -197,8 +202,26 @@ int main( int argc, char ** argv )
 										mapping->append( nAxis );
 									}
 									
-									cout << "<!-- \"" << SDL_JoystickNameForIndex( controllerId ) << "\" -->" << endl;
-									cout << mapping->text( true );
+									// Filename special characters replacement
+									for( string::iterator it = filename.begin() ; it != filename.end() ; it++ )
+									{
+										if( !( *it >= 'a' && *it <= 'z' ) && !( *it >= 'A' && *it <= 'Z' ) )
+											*it = '_';
+									}
+									
+									ofstream file( filename );
+									
+									if( file.open() )
+									{
+										file << mapping->text( true );
+										file.close();
+									}
+									else
+									{
+										cout << "The file could not be opened. XML content is:" << endl;
+										cout << mapping->text( true );
+									}
+									
 									delete mapping;
 									
 									orderIndex = 0;
