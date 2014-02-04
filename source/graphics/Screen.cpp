@@ -7,7 +7,6 @@ using namespace std;
 
 namespace graphics
 {
-
 	Screen * Screen::instance = NULL;
 
 	Screen::Screen() : window(NULL), renderer(NULL)
@@ -35,7 +34,7 @@ namespace graphics
 		}
 	}
 		
-	bool Screen::initialize( const char * title )
+	bool Screen::initialize( const char * title, int width, int height )
 	{
 		bool success = true;
 		SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK );
@@ -46,8 +45,8 @@ namespace graphics
 			title,
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
-			800,
-			600,
+			width,
+			height,
 			0
 		);
 	
