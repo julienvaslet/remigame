@@ -47,7 +47,7 @@ namespace graphics
 			SDL_WINDOWPOS_CENTERED,
 			width,
 			height,
-			0
+			( width == 0 || height == 0 ) ? SDL_WINDOW_FULLSCREEN : 0
 		);
 	
 		// do no specify width & height and put in fullscreen
