@@ -20,12 +20,15 @@ namespace graphics
 		
 		if( !this->frames.empty() )
 		{
-			unsigned int step = (time - lastRender) / (this->speed + this->speedModulation);
-			
-			if( step > 0 )
+			if( this->speed != 0 )
 			{
-				this->lastFrameRendered = (this->lastFrameRendered + step) % this->frames.size();
-				this->lastRender = time;
+				unsigned int step = (time - lastRender) / (this->speed + this->speedModulation);
+			
+				if( step > 0 )
+				{
+					this->lastFrameRendered = (this->lastFrameRendered + step) % this->frames.size();
+					this->lastRender = time;
+				}
 			}
 		
 			frame = &(this->frames[this->lastFrameRendered]);
