@@ -3,11 +3,13 @@
 
 #include <SDL2/SDL.h>
 #include <controller/Mapping.h>
+#include <game/Player.h>
 
 #include <map>
 #include <string>
 
 using namespace std;
+using namespace game;
 
 namespace controller
 {
@@ -21,7 +23,7 @@ namespace controller
 			SDL_JoystickID id;
 			Mapping * mapping;
 			
-			//Event manager? Event *, Action *
+			Player * player;
 			
 			map<Mapping::Button, short int> states;
 			
@@ -33,9 +35,11 @@ namespace controller
 			short int getState( Mapping::Button button );
 		
 		public:
-			static void initialize();
+			static void scan();
 			static void destroy();
 			static void handleEvent( const SDL_Event * event );
+			static unsigned int getControllersCount();
+			static Controller * getFreeController();
 	};
 };
 
