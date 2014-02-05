@@ -77,6 +77,21 @@ int main( int argc, char ** argv )
 
 					break;
 				}
+				
+				case SDL_JOYDEVICEADDED:
+				{
+					Controller::scan();
+					break;
+				}
+				
+				case SDL_JOYBUTTONDOWN:
+				case SDL_JOYBUTTONUP:
+				case SDL_JOYAXISMOTION:
+				case SDL_JOYDEVICEREMOVED:
+				{
+					Controller::handleEvent( &lastEvent );
+					break;
+				}
 			}
 		}
 

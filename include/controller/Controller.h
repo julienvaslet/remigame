@@ -3,6 +3,12 @@
 
 #include <SDL2/SDL.h>
 #include <controller/Mapping.h>
+
+namespace controller
+{
+	class Controller;
+}
+
 #include <game/Player.h>
 
 #include <map>

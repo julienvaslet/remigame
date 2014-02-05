@@ -1,16 +1,22 @@
 #ifndef _GAME_PLAYER_H
 #define _GAME_PLAYER_H	1
 
+namespace game
+{
+	class Player;
+}
+
 #include <controller/Controller.h>
-#include <controller/Mapping.h>
+
 
 #include <string>
 
 #ifdef DEBUG0
-#include <iostream.h>
+#include <iostream>
 #endif
 
 using namespace std;
+using namespace controller;
 
 namespace game
 {

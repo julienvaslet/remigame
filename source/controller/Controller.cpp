@@ -256,6 +256,19 @@ namespace controller
 				
 				break;
 			}
+			
+			case SDL_JOYDEVICEREMOVED:
+			{
+				itController = Controller::controllers.find( event->jbutton.which );
+				
+				if( itController != Controller::controllers.end() )
+				{
+					delete itController->second;
+					Controller::controllers.erase( itController );
+				}
+				
+				break;
+			}
 		}
 	}
 	
@@ -302,7 +315,7 @@ namespace controller
 		return controller;
 	}
 	
-	void setPlayer( Player * player )
+	void Controller::setPlayer( Player * player )
 	{
 		this->player = player;
 	}

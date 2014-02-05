@@ -5,6 +5,7 @@
 #endif
 
 using namespace std;
+using namespace controller;
 
 namespace game
 {
