@@ -40,7 +40,7 @@ int main( int argc, char ** argv )
 	}
 	
 	// Controller & character assignment
-	Controller::initialize();
+	Controller::scan();
 	
 	
 
