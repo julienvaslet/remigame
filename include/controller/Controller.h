@@ -32,7 +32,6 @@ namespace controller
 			
 			void loadMapping( const char * name );
 			void updateState( Mapping::Button button, short int value );
-			short int getState( Mapping::Button button );
 		
 		public:
 			static void scan();
@@ -40,6 +39,9 @@ namespace controller
 			static void handleEvent( const SDL_Event * event );
 			static unsigned int getControllersCount();
 			static Controller * getFreeController();
+			
+			short int getState( Mapping::Button button );
+			void setPlayer( Player * player );
 	};
 };
 
