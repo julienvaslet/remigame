@@ -32,7 +32,7 @@ int main( int argc, char ** argv )
 		return 1;
 	}
 	
-	Controller::initialize();
+	Controller::scan();
 	
 	bool running = true;
 	SDL_Event lastEvent;
