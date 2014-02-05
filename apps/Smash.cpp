@@ -5,9 +5,11 @@
 #include <graphics/Screen.h>
 #include <graphics/Object.h>
 #include <graphics/Font.h>
+#include <controller/Controller.h>
 
 using namespace graphics;
 using namespace std;
+using namespace controller;
 
 int main( int argc, char ** argv )
 {
@@ -36,6 +38,11 @@ int main( int argc, char ** argv )
 		Screen::destroy();
 		return 1;
 	}
+	
+	// Controller & character assignment
+	Controller::initialize();
+	
+	
 
 	bool running = true;
 	SDL_Event lastEvent;
@@ -102,6 +109,7 @@ int main( int argc, char ** argv )
 		}
 	}
 
+	Controller::destroy();
 	Font::destroy( "font0" );
 	Screen::destroy();
 	
