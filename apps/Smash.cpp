@@ -24,7 +24,10 @@ int main( int argc, char ** argv )
 		return 1;
 	}
 	
+	// Background initialization
 	Object * background = new Object( "data/background.xml" );
+	background->move( 0, 0 );
+	background->resize( 800, 600 );
 	
 	if( !background->isLoaded() )
 	{
