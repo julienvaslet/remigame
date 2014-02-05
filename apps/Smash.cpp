@@ -23,6 +23,16 @@ int main( int argc, char ** argv )
 		Screen::destroy();
 		return 1;
 	}
+	
+	Object * background = new Object( "data/background.xml" );
+	
+	if( !background->isLoaded() )
+	{
+		cout << "Unable to load background object. Exiting." << endl;
+		Font::destroy( "font0" );
+		Screen::destroy();
+		return 1;
+	}
 
 	bool running = true;
 	SDL_Event lastEvent;
@@ -76,6 +86,10 @@ int main( int argc, char ** argv )
 				
 			Screen::get()->clear();
 			
+			// Show background
+			background->render( ticks );
+			
+			// Show FPS
 			int fpsX = (800 - Font::get( "font0" )->renderWidth( framesPerSecondText.str() )) / 2;
 			Font::get( "font0" )->render( fpsX, 10, framesPerSecondText.str() );
 
