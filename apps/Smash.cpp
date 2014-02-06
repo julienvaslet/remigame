@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #include <graphics/Screen.h>
 #include <graphics/Object.h>
@@ -13,6 +14,8 @@ using namespace controller;
 
 int main( int argc, char ** argv )
 {
+	vector<Player *> players;
+	
 	if( !Screen::initialize( "Smash", 800, 600 ) )
 	{
 		cout << "Unable to initialize screen. Exiting." << endl;
@@ -41,7 +44,20 @@ int main( int argc, char ** argv )
 	
 	// Controller & character assignment
 	Controller::scan();
+	Controller * controller = Controller::getFreeController();
 	
+	while( controller != NULL )
+	{
+		stringstream playername;
+		playername << "Player#" << controller->getId();
+		
+		Player * player = new Player( playername.c_str() );
+		player->setController( controller );
+		
+		players.push_back( player );
+		
+		controller = Controller::getFreeController();
+	}
 	
 
 	bool running = true;
@@ -123,6 +139,12 @@ int main( int argc, char ** argv )
 			lastDrawTicks = ticks;
 		}
 	}
+	
+	// WARN: Could have some segfault when live disconnecting controller.
+	for( vector<Player *>::iterator itPlayer = players.begin() ; itPlayer != players.end() ; itPlayer++ )
+		delete *itPlayer;
+
+	players.clear();
 
 	Controller::destroy();
 	Font::destroy( "font0" );
