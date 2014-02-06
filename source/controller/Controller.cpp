@@ -61,6 +61,11 @@ namespace controller
 		}
 	}
 	
+	unsigned int Controller::getId()
+	{
+		return static_cast<unsigned int>( this->id );
+	}
+	
 	void Controller::scan()
 	{
 		#ifdef DEBUG0
