@@ -48,6 +48,9 @@ namespace controller
 	
 	Controller::~Controller()
 	{
+		if( this->player != NULL )
+			this->player->setController( NULL );
+		
 		if( this->joystick != NULL )
 		{
 			SDL_JoystickClose( this->joystick );
@@ -274,6 +277,7 @@ namespace controller
 	
 	void Controller::updateState( Mapping::Button button, short int value )
 	{
+		// TODO: states should have a start_time
 		this->states[button] = value;
 		//cout << "[Controller#" << this->id << "] Button#" << button << " set with value " << static_cast<int>( value ) << "." << endl;
 		
