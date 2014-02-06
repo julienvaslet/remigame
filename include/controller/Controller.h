@@ -46,6 +46,7 @@ namespace controller
 			static unsigned int getControllersCount();
 			static Controller * getFreeController();
 			
+			unsigned int getId();
 			short int getState( Mapping::Button button );
 			void setPlayer( Player * player );
 	};
