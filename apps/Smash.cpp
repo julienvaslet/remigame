@@ -51,7 +51,7 @@ int main( int argc, char ** argv )
 		stringstream playername;
 		playername << "Player#" << controller->getId();
 		
-		Player * player = new Player( playername.c_str() );
+		Player * player = new Player( playername.str().c_str() );
 		player->setController( controller );
 		
 		players.push_back( player );

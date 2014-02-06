@@ -25,20 +25,20 @@ namespace controller
 		this->loadMapping( SDL_JoystickName( this->joystick ) );
 		
 		// Initialize buttons states
-		this->states[Mapping::BTNUP] = Mapping::STATE_RELEASED;
-		this->states[Mapping::BTNRIGHT] = Mapping::STATE_RELEASED;
-		this->states[Mapping::BTNDOWN] = Mapping::STATE_RELEASED;
-		this->states[Mapping::BTNLEFT] = Mapping::STATE_RELEASED;
-		this->states[Mapping::LT1] = Mapping::STATE_RELEASED;
-		this->states[Mapping::LT2] = Mapping::STATE_RELEASED;
-		this->states[Mapping::LT3] = Mapping::STATE_RELEASED;
-		this->states[Mapping::RT1] = Mapping::STATE_RELEASED;
-		this->states[Mapping::RT2] = Mapping::STATE_RELEASED;
-		this->states[Mapping::RT3] = Mapping::STATE_RELEASED;
-		this->states[Mapping::SELECT] = Mapping::STATE_RELEASED;
-		this->states[Mapping::START] = Mapping::STATE_RELEASED;
-		this->states[Mapping::AXH] = Mapping::STATE_RELEASED;
-		this->states[Mapping::AXV] = Mapping::STATE_RELEASED;
+		this->states[Mapping::BTNUP] = make_pair( Mapping::STATE_RELEASED, 0 );
+		this->states[Mapping::BTNRIGHT] = make_pair( Mapping::STATE_RELEASED, 0 );
+		this->states[Mapping::BTNDOWN] = make_pair( Mapping::STATE_RELEASED, 0 );
+		this->states[Mapping::BTNLEFT] = make_pair( Mapping::STATE_RELEASED, 0 );
+		this->states[Mapping::LT1] = make_pair( Mapping::STATE_RELEASED, 0 );
+		this->states[Mapping::LT2] = make_pair( Mapping::STATE_RELEASED, 0 );
+		this->states[Mapping::LT3] = make_pair( Mapping::STATE_RELEASED, 0 );
+		this->states[Mapping::RT1] = make_pair( Mapping::STATE_RELEASED, 0 );
+		this->states[Mapping::RT2] = make_pair( Mapping::STATE_RELEASED, 0 );
+		this->states[Mapping::RT3] = make_pair( Mapping::STATE_RELEASED, 0 );
+		this->states[Mapping::SELECT] = make_pair( Mapping::STATE_RELEASED, 0 );
+		this->states[Mapping::START] = make_pair( Mapping::STATE_RELEASED, 0 );
+		this->states[Mapping::AXH] = make_pair( Mapping::STATE_RELEASED, 0 );
+		this->states[Mapping::AXV] = make_pair( Mapping::STATE_RELEASED, 0 );
 		
 		#ifdef DEBUG0
 		cout << "[Controller#" << this->id << "] Initialized." << endl;
@@ -231,7 +231,7 @@ namespace controller
 				{
 					if( itController->second->mapping != NULL )
 					{
-						itController->second->updateState( itController->second->mapping->getButtonFromButton( event->jbutton.button ), Mapping::STATE_RELEASED );
+						itController->second->updateState( itController->second->mapping->getButtonFromButton( event->jbutton.button ), Mapping::STATE_RELEASED, event->jbutton.timestamp );
 					}
 				}
 				
@@ -246,7 +246,7 @@ namespace controller
 				{
 					if( itController->second->mapping != NULL )
 					{
-						itController->second->updateState( itController->second->mapping->getButtonFromButton( event->jbutton.button ), Mapping::STATE_PUSHED );
+						itController->second->updateState( itController->second->mapping->getButtonFromButton( event->jbutton.button ), Mapping::STATE_PUSHED, event->jbutton.timestamp );
 					}
 				}
 				
@@ -259,7 +259,7 @@ namespace controller
 				
 				if( itController != Controller::controllers.end() )
 				{
-					itController->second->updateState( itController->second->mapping->getButtonFromAxis( event->jaxis.axis ), event->jaxis.value );
+					itController->second->updateState( itController->second->mapping->getButtonFromAxis( event->jaxis.axis ), event->jaxis.value, event->jaxis.timestamp );
 				}
 				
 				break;
@@ -280,27 +280,35 @@ namespace controller
 		}
 	}
 	
-	void Controller::updateState( Mapping::Button button, short int value )
+	void Controller::updateState( Mapping::Button button, short int value, unsigned int timestamp )
 	{
-		// TODO: states should have a start_time
-		this->states[button] = value;
-		//cout << "[Controller#" << this->id << "] Button#" << button << " set with value " << static_cast<int>( value ) << "." << endl;
-		
 		if( this->player != NULL )
-			this->player->handleEvent( button, value );
-		
-		
+			this->player->handleEvent( button, value, timestamp );
+
+		this->states[button] = make_pair( value, timestamp );
+		//cout << "[Controller#" << this->id << "] Button#" << button << " set with value " << static_cast<int>( value ) << "." << endl;
 	}
 	
 	short int Controller::getState( Mapping::Button button )
 	{
 		short int value = Mapping::STATE_RELEASED;
-		map<Mapping::Button, short int>::iterator it = this->states.find( button );
+		map<Mapping::Button, pair<short int, unsigned int> >::iterator it = this->states.find( button );
 		
 		if( it != this->states.end() )
-			value = it->second;
+			value = it->second.first;
 		
 		return value;
+	}
+	
+	unsigned int Controller::getStateTimestamp( Mapping::Button button )
+	{
+		unsigned int timestamp = 0;
+		map<Mapping::Button, pair<short int, unsigned int> >::iterator it = this->states.find( button );
+		
+		if( it != this->states.end() )
+			timestamp = it->second.second;
+		
+		return timestamp;
 	}
 	
 	unsigned int Controller::getControllersCount()
@@ -326,6 +334,12 @@ namespace controller
 	
 	void Controller::setPlayer( Player * player )
 	{
-		this->player = player;
+		if( this->player != player )
+		{
+			if( this->player != NULL )
+				this->player->setController( NULL );
+			
+			this->player = player;
+		}
 	}
 }

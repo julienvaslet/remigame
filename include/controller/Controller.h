@@ -31,13 +31,13 @@ namespace controller
 			
 			Player * player;
 			
-			map<Mapping::Button, short int> states;
+			map<Mapping::Button, pair<short int, unsigned int> > states;
 			
 			Controller( SDL_Joystick * joystick );
 			~Controller();
 			
 			void loadMapping( const char * name );
-			void updateState( Mapping::Button button, short int value );
+			void updateState( Mapping::Button button, short int value, unsigned int timestamp );
 		
 		public:
 			static void scan();
@@ -48,6 +48,7 @@ namespace controller
 			
 			unsigned int getId();
 			short int getState( Mapping::Button button );
+			unsigned int getStateTimestamp( Mapping::Button button );
 			void setPlayer( Player * player );
 	};
 };
