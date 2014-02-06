@@ -31,6 +31,7 @@ namespace game
 			~Player();
 			
 			void handleEvent( Mapping::Button button, short int value );
+			void setController( Controller * controller );
 	};
 }
 
