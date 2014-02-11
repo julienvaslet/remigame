@@ -18,6 +18,9 @@ namespace graphics
 				int y;
 				int width;
 				int height;
+				
+				int anchorX;
+				int anchorY;
 			};
 		
 		protected:
@@ -41,6 +44,8 @@ namespace graphics
 			int getViewY();
 			int getViewWidth();
 			int getViewHeight();
+			int getViewAnchorX();
+			int getViewAnchorY();
 		
 			int getWidth();
 			int getHeight();
