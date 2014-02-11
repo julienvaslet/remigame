@@ -15,16 +15,16 @@ using namespace std;
 
 namespace graphics
 {
-	Object::Object() : x(0), y(0), width(0), height(0), speedModulation(0), sprite(NULL), currentAnimation(NULL)
+	Object::Object() : x(0), y(0), width(0), height(0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL)
 	{
 	}
 	
-	Object::Object( const char * filename ) : x(0), y(0), width(0), height(0), speedModulation(0), sprite(NULL), currentAnimation(NULL)
+	Object::Object( const char * filename ) : x(0), y(0), width(0), height(0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL)
 	{
 		this->load( filename );
 	}
 	
-	Object::Object( const string& filename ) : x(0), y(0), width(0), height(0), speedModulation(0), sprite(NULL), currentAnimation(NULL)
+	Object::Object( const string& filename ) : x(0), y(0), width(0), height(0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL)
 	{
 		this->load( filename.c_str() );
 	}
@@ -91,13 +91,32 @@ namespace graphics
 									{
 										if( frame->getType() == node::Node::Tag && frame->getName() == "frame" )
 										{
+											int anchorX = 0;
+											int anchorY = frame->isIntegerAttr( "height" ) ? frame->integerAttr( "height" ) : 0;
+											
+											node::Node * frameChild = frame->childAt( 0 );
+											
+											while( frameChild != NULL )
+											{
+												if( frameChild->getType() == node::Node::Tag && frameChild->getName() == "anchor" )
+												{
+													if( frameChild->isIntegerAttr( "x" ) )
+														anchorX = frameChild->integerAttr( "x" );
+													
+													if( frameChild->isIntegerAttr( "y" ) )
+														anchorY = frameChild->integerAttr( "y" );
+												}
+												
+												frameChild = frameChild->next();
+											}
+											
 											anim->addFrame(
 												frame->isIntegerAttr( "x" ) ? frame->integerAttr( "x" ) : 0,
 												frame->isIntegerAttr( "y" ) ? frame->integerAttr( "y" ) : 0,
 												frame->isIntegerAttr( "width" ) ? frame->integerAttr( "width" ) : 0,
 												frame->isIntegerAttr( "height" ) ? frame->integerAttr( "height" ) : 0,
-												0,
-												frame->isIntegerAttr( "height" ) ? frame->integerAttr( "height" ) : 0
+												anchorX,
+												anchorY
 											);
 											
 											iFrame++;
@@ -246,8 +265,8 @@ namespace graphics
 				SDL_Rect dstRect;
 				dstRect.x = this->x - frame->anchorX;
 				dstRect.y = this->y - frame->anchorY;
-				dstRect.w = this->width;
-				dstRect.h = this->height;
+				dstRect.w = (this->zoom * this->width) / 100;
+				dstRect.h = (this->zoom * this->height) / 100;
 	
 				SDL_Rect srcRect;
 				srcRect.x = frame->x;
@@ -306,6 +325,16 @@ namespace graphics
 	int Object::getAnimationSpeed()
 	{
 		return this->currentAnimation->getSpeed();
+	}
+	
+	int Object::getZoom()
+	{
+		return this->zoom;
+	}
+	
+	void Object::setZoom( int zoom )
+	{
+		this->zoom = zoom;
 	}
 }
 
