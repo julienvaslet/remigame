@@ -27,7 +27,7 @@ namespace graphics
 			
 			void setSpeed( unsigned int speed );
 			void setSpeedModulation( int modulation );
-			void addFrame( int x, int y, int width, int height );
+			void addFrame( int x, int y, int width, int height, int anchorX, int anchorY );
 			
 			void reset();
 	};
