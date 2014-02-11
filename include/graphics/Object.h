@@ -20,6 +20,7 @@ namespace graphics
 			int width;
 			int height;
 			int speedModulation;
+			int zoom;
 			
 			Sprite * sprite;
 			Animation * currentAnimation;
@@ -47,6 +48,9 @@ namespace graphics
 			void setSpeedModulation( int modulation );
 			int getSpeedModulation();
 			int getAnimationSpeed();
+			
+			int getZoom();
+			void setZoom( int zoom );
 	};
 }
 
