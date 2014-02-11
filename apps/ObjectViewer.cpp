@@ -35,6 +35,15 @@ int main( int argc, char ** argv )
 
 	stringstream framesPerSecondText;
 	int framesPerSecond = 0;
+	
+	stringstream mousePositionText;
+	int mouseX = 0;
+	int mouseY = 0;
+	
+	stringstream currentZoomText;
+	int currentZoom = 100;
+	currentZoomText << currentZoom << " %";
+	
 	unsigned int lastSecond = 0;
 	
 	SDL_EventState( SDL_DROPFILE, SDL_ENABLE );
@@ -125,8 +134,45 @@ int main( int argc, char ** argv )
 							
 							break;
 						}
+						
+						case SDLK_PAGEUP:
+						{
+							currentZoom += 5;
+							
+							if( object != NULL )
+								object->setZoom( currentZoom );
+							
+							currentZoomText = "";
+							currentZoomText << currentZoom << " %";
+							break;
+						}
+						
+						case SDLK_PAGEDOWN:
+						{
+							if( currentZoom >= 10 )
+							{
+								currentZoom -= 5;
+								
+								if( object != NULL )
+									object->setZoom( currentZoom );
+								
+								currentZoomText = "";
+								currentZoomText << currentZoom << " %";
+							}
+							
+							break;
+						}
 					}
 
+					break;
+				}
+				
+				
+				case SDL_MOUSEMOTION:
+				{
+					// TODO: report position into the showed frame
+					mouseX = lastEvent.x;
+					mouseY = lastEvent.y;
 					break;
 				}
 			}
@@ -147,9 +193,6 @@ int main( int argc, char ** argv )
 				framesPerSecond++;
 				
 			Screen::get()->clear();
-			
-			int fpsX = (800 - Font::get( "font0" )->renderWidth( framesPerSecondText.str() )) / 2;
-			Font::get( "font0" )->render( fpsX, 10, framesPerSecondText.str() );
 			
 			if( object != NULL )
 			{
@@ -177,6 +220,21 @@ int main( int argc, char ** argv )
 				firstMessageY = (600 - firstMessageHeight) / 2;
 				Font::get( "font0" )->render( firstMessageX, firstMessageY, "Drop an object XML file here" );
 			}
+			
+			// Print FPS
+			int fpsX = (800 - Font::get( "font0" )->renderWidth( framesPerSecondText.str() )) / 2;
+			Font::get( "font0" )->render( fpsX, 10, framesPerSecondText.str() );
+			
+			// Print current Zoom
+			int zoomY = (600 - 10 - Font::get( "font0" )->renderHeight( currentZoomText.str() ) );
+			Font::get( "font0" )->render( 10, zoomY, currentZoomText.str() );
+			
+			// Print current mouse position
+			mousePositionText = "";
+			mousePositionText << "x: " << mouseX << ", y: " << mouseY;
+			int mousePositionX = (800 - 10 - Font::get( "font0" )->renderWidth( mousePositionText.str() ));
+			int mousePositionY = (600 - 10 - Font::get( "font0" )->renderHeight( mousePositionText.str() ));
+			Font::get( "font0" )->render( mousePositionX, mousePositionY, mousePositionText.str() );
 
 			Screen::get()->render();
 			
