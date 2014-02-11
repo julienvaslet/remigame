@@ -51,6 +51,8 @@ namespace graphics
 			this->view.y = 0;
 			this->view.width = surface->w;
 			this->view.height = surface->h;
+			this->view.anchorX = 0;
+			this->view.anchorY = surface->h;
 		
 			this->texture = SDL_CreateTextureFromSurface( Screen::get()->getRenderer(), surface );
 			SDL_FreeSurface( surface );
@@ -90,6 +92,16 @@ namespace graphics
 	int Sprite::getViewHeight()
 	{
 		return this->view.height;
+	}
+	
+	int Sprite::getViewAnchorX()
+	{
+		return this->view.anchorX;
+	}
+	
+	int Sprite::getViewAnchorY()
+	{
+		return this->view.anchorY;
 	}
 
 	int Sprite::getWidth()
