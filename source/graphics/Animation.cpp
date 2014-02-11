@@ -59,13 +59,15 @@ namespace graphics
 		this->speedModulation = 0;
 	}
 	
-	void Animation::addFrame( int x, int y, int width, int height )
+	void Animation::addFrame( int x, int y, int width, int height, int anchorX, int anchorY )
 	{
 		Sprite::Frame frame;
 		frame.x = x;
 		frame.y = y;
 		frame.width = width;
 		frame.height = height;
+		frame.anchorX = anchorX;
+		frame.anchorY = anchorY;
 		this->frames.push_back( frame );
 	}
 }
