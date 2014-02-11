@@ -118,10 +118,12 @@ namespace graphics
 	void Screen::clear()
 	{
 		SDL_RenderClear( this->renderer );
+		SDL_SetRenderDrawColor( this->renderer, 0, 0, 0, 255 );
 	}
 
 	void Screen::render()
 	{
+		SDL_SetRenderDrawColor( this->renderer, 0, 0, 0, 255 );
 		SDL_RenderPresent( this->renderer );
 	}
 }

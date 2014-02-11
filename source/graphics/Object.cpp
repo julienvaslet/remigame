@@ -263,10 +263,14 @@ namespace graphics
 			if( frame != NULL )
 			{
 				SDL_Rect dstRect;
-				dstRect.x = this->x - frame->anchorX;
-				dstRect.y = this->y - frame->anchorY;
-				dstRect.w = (this->zoom * this->width) / 100;
-				dstRect.h = (this->zoom * this->height) / 100;
+				int anchorX = this->x;
+				int anchorY = this->y;
+				
+				// TODO zoom for x,y position
+				dstRect.x = anchorX - (frame->anchorX * this->zoom / 100);
+				dstRect.y = anchorY - (frame->anchorY * this->zoom / 100);
+				dstRect.w = (this->zoom * frame->width) / 100;
+				dstRect.h = (this->zoom * frame->height) / 100;
 	
 				SDL_Rect srcRect;
 				srcRect.x = frame->x;
@@ -275,6 +279,14 @@ namespace graphics
 				srcRect.h = frame->height;
 	
 				SDL_RenderCopy( Screen::get()->getRenderer(), this->sprite->getTexture(), &srcRect, &dstRect );
+				
+				// Render the anchor point
+				if( true )
+				{
+					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 0, 255, 128 );
+					SDL_RenderDrawLine( Screen::get()->getRenderer(), anchorX + (5 * this->zoom / 100), anchorY, anchorX - (5 * this->zoom / 100), anchorY );
+					SDL_RenderDrawLine( Screen::get()->getRenderer(), anchorX, anchorY + (5 * this->zoom / 100), anchorX, anchorY - (5 * this->zoom / 100) );
+				}
 			}
 		}
 	}

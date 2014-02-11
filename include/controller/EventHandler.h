@@ -8,7 +8,7 @@ namespace controller
 	class EventHandler
 	{
 		public:
-			void handleEvent( Controller * controller, Mapping::Button button, short int value, unsigned int timestamp ) = 0;
+			//void handleEvent( Controller * controller, Mapping::Button button, short int value, unsigned int timestamp ) = 0;
 	};
 }
 

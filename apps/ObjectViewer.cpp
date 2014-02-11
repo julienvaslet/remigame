@@ -40,6 +40,12 @@ int main( int argc, char ** argv )
 	int mouseX = 0;
 	int mouseY = 0;
 	
+	bool mouseDown = false;
+	int objectX = 400;
+	int objectY = 300;
+	int objectXDiff = 0;
+	int objectYDiff = 0;
+	
 	stringstream currentZoomText;
 	int currentZoom = 100;
 	currentZoomText << currentZoom << " %";
@@ -73,8 +79,7 @@ int main( int argc, char ** argv )
 					
 					if( nObject->isLoaded() )
 					{
-						nObject->move( (800 - 512) / 2, (600 - 512) / 2 );
-						nObject->resize( 512, 512 );
+						nObject->move( objectX, objectY );
 						
 						if( object != NULL )
 							delete object;
@@ -142,7 +147,7 @@ int main( int argc, char ** argv )
 							if( object != NULL )
 								object->setZoom( currentZoom );
 							
-							currentZoomText = "";
+							currentZoomText.str( "" );
 							currentZoomText << currentZoom << " %";
 							break;
 						}
@@ -156,7 +161,7 @@ int main( int argc, char ** argv )
 								if( object != NULL )
 									object->setZoom( currentZoom );
 								
-								currentZoomText = "";
+								currentZoomText.str( "" );
 								currentZoomText << currentZoom << " %";
 							}
 							
@@ -167,12 +172,38 @@ int main( int argc, char ** argv )
 					break;
 				}
 				
+				case SDL_MOUSEBUTTONDOWN:
+				{				
+					if( object != NULL )
+					{
+						mouseDown = true;
+						objectXDiff = lastEvent.button.x - objectX;
+						objectYDiff = lastEvent.button.y - objectY;
+					}
+					
+					break;
+				}
+				
+				case SDL_MOUSEBUTTONUP:
+				{
+					if( object != NULL )
+					{
+						mouseDown = false;
+						objectX = lastEvent.button.x - objectXDiff;
+						objectY = lastEvent.button.y - objectYDiff;
+					}
+					
+					break;
+				}
 				
 				case SDL_MOUSEMOTION:
 				{
-					// TODO: report position into the showed frame
-					mouseX = lastEvent.x;
-					mouseY = lastEvent.y;
+					mouseX = lastEvent.motion.x;
+					mouseY = lastEvent.motion.y;
+					
+					if( object != NULL && mouseDown )
+						object->move( lastEvent.motion.x - objectXDiff, lastEvent.motion.y - objectYDiff );
+					
 					break;
 				}
 			}
@@ -185,7 +216,7 @@ int main( int argc, char ** argv )
 			if( ticks - lastSecond >= 1000 )
 			{
 				lastSecond = ticks;
-				framesPerSecondText.str("");
+				framesPerSecondText.str( "" );
 				framesPerSecondText << framesPerSecond << " FPS";
 				framesPerSecond = 0;
 			}
@@ -196,6 +227,8 @@ int main( int argc, char ** argv )
 			
 			if( object != NULL )
 			{
+				object->render( ticks );
+				
 				int animationX = Font::get( "font0" )->renderWidth( "Animation: " );
 				int speedTextWidth = Font::get( "font0" )->renderWidth( "Speed: " );
 				int speedWidth = Font::get( "font0" )->renderWidth( object->getAnimationSpeed() + object->getSpeedModulation() );
@@ -204,8 +237,6 @@ int main( int argc, char ** argv )
 				Font::get( "font0" )->render( 790 - speedWidth - speedTextWidth, 10, "Speed: " );
 				Font::get( "font0" )->render( animationX, 10, animations[currentAnimation] );
 				Font::get( "font0" )->render( 790 - speedWidth, 10, object->getAnimationSpeed() + object->getSpeedModulation() );
-				
-				object->render( ticks );
 			}
 			else
 			{
@@ -230,7 +261,7 @@ int main( int argc, char ** argv )
 			Font::get( "font0" )->render( 10, zoomY, currentZoomText.str() );
 			
 			// Print current mouse position
-			mousePositionText = "";
+			mousePositionText.str( "" );
 			mousePositionText << "x: " << mouseX << ", y: " << mouseY;
 			int mousePositionX = (800 - 10 - Font::get( "font0" )->renderWidth( mousePositionText.str() ));
 			int mousePositionY = (600 - 10 - Font::get( "font0" )->renderHeight( mousePositionText.str() ));

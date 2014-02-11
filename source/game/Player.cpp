@@ -23,8 +23,8 @@ namespace game
 		if( this->controller != NULL )
 			this->controller->setPlayer( NULL );
 		
-		if( this->eventHandler != NULL )
-			delete this->eventHandler;
+		/*if( this->eventHandler != NULL )
+			delete this->eventHandler;*/
 			
 		#ifdef DEBUG0
 		cout << "[Player: " << this->name << "] Destroyed." << endl;
@@ -33,8 +33,8 @@ namespace game
 	
 	void Player::handleEvent( Mapping::Button button, short int value, unsigned int timestamp )
 	{
-		if( this->eventHandler != NULL )
-			this->eventHandler->handleEvent( this->controller, button, value, timestamp );
+		/*if( this->eventHandler != NULL )
+			this->eventHandler->handleEvent( this->controller, button, value, timestamp );*/
 	}
 	
 	void Player::setController( Controller * controller )

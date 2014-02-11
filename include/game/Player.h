@@ -9,7 +9,6 @@ namespace game
 #include <controller/Controller.h>
 #include <controller/EventHandler.h>
 
-
 #include <string>
 
 #ifdef DEBUG0
@@ -26,7 +25,7 @@ namespace game
 		protected:
 			string name;
 			Controller * controller;
-			EventHandler * eventHandler;
+			//EventHandler * eventHandler;
 		
 		public:
 			Player( const char * name );
