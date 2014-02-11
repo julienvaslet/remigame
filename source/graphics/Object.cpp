@@ -266,7 +266,6 @@ namespace graphics
 				int anchorX = this->x;
 				int anchorY = this->y;
 				
-				// TODO zoom for x,y position
 				dstRect.x = anchorX - (frame->anchorX * this->zoom / 100);
 				dstRect.y = anchorY - (frame->anchorY * this->zoom / 100);
 				dstRect.w = (this->zoom * frame->width) / 100;
