@@ -95,6 +95,8 @@ namespace graphics
 												frame->isIntegerAttr( "x" ) ? frame->integerAttr( "x" ) : 0,
 												frame->isIntegerAttr( "y" ) ? frame->integerAttr( "y" ) : 0,
 												frame->isIntegerAttr( "width" ) ? frame->integerAttr( "width" ) : 0,
+												frame->isIntegerAttr( "height" ) ? frame->integerAttr( "height" ) : 0,
+												0,
 												frame->isIntegerAttr( "height" ) ? frame->integerAttr( "height" ) : 0
 											);
 											
