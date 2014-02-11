@@ -244,8 +244,8 @@ namespace graphics
 			if( frame != NULL )
 			{
 				SDL_Rect dstRect;
-				dstRect.x = this->x;
-				dstRect.y = this->y;
+				dstRect.x = this->x - frame->anchorX;
+				dstRect.y = this->y - frame->anchorY;
 				dstRect.w = this->width;
 				dstRect.h = this->height;
 	
