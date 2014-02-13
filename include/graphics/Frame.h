@@ -27,6 +27,14 @@ namespace graphics
 			Box& getBox();
 			Point& getAnchor();
 			
+			int getBoundingBoxCount() const;
+			int getAttackAreasCount() const;
+			int getDefenceAreasCount() const;
+			
+			const Box * getBoundingBox( int index ) const;
+			const Box * getAttackArea( int index ) const;
+			const Box * getDefenceArea( int index ) const;
+			
 			void addBoundingBox( const Box& box );
 			void addAttackArea( const Box& box );
 			void addDefenceArea( const Box& box );
