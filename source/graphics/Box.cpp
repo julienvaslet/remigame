@@ -24,7 +24,7 @@ namespace graphics
 	
 	Point& Box::getOrigin()
 	{
-		return &(this->point);
+		return this->point;
 	}
 	
 	int Box::getWidth() const
