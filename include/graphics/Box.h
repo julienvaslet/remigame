@@ -19,7 +19,7 @@ namespace graphics
 			Box( const Box& box );
 			~Box();
 			
-			Point * getOrigin();
+			Point& getOrigin();
 			int getWidth() const;
 			int getHeight() const;
 			
