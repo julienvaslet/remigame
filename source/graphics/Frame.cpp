@@ -8,7 +8,7 @@ namespace graphics
 	{
 	}
 	
-	Frame::Frame( const Box& box ) : box(box), anchor(0,box.height)
+	Frame::Frame( const Box& box ) : box(box), anchor(0,box.getHeight())
 	{
 	}
 	
@@ -17,15 +17,15 @@ namespace graphics
 		// TODO : Does pointers are mandatory, why don't use reference and exception ?
 		
 		// Import bounding boxes
-		for( vector<Box *>::iterator it = frame.boundingBoxes.begin() ; it != frame.boundingBoxes.end() ; it++ )
+		for( vector<Box *>::const_iterator it = frame.boundingBoxes.begin() ; it != frame.boundingBoxes.end() ; it++ )
 			this->boundingBoxes.push_back( new Box( **it ) );
 		
 		// Import attack areas
-		for( vector<Box *>::iterator it = frame.attackAreas.begin() ; it != frame.attackAreas.end() ; it++ )
+		for( vector<Box *>::const_iterator it = frame.attackAreas.begin() ; it != frame.attackAreas.end() ; it++ )
 			this->attackAreas.push_back( new Box( **it ) );
 		
 		// Import defence areas
-		for( vector<Box *>::iterator it = frame.defenceAreas.begin() ; it != frame.defenceAreas.end() ; it++ )
+		for( vector<Box *>::const_iterator it = frame.defenceAreas.begin() ; it != frame.defenceAreas.end() ; it++ )
 			this->defenceAreas.push_back( new Box( **it ) );
 	}
 	
@@ -54,32 +54,32 @@ namespace graphics
 		return this->anchor;
 	}
 	
-	int getBoundingBoxesCount() const
+	int Frame::getBoundingBoxesCount() const
 	{
 		return this->boundingBoxes.size();
 	}
 	
-	int getAttackAreasCount() const
+	int Frame::getAttackAreasCount() const
 	{
 		return this->attackAreas.size();
 	}
 	
-	int getDefenceAreasCount() const
+	int Frame::getDefenceAreasCount() const
 	{
 		return this->defenceAreas.size();
 	}
 	
-	const Box * getBoundingBox( int index ) const
+	const Box * Frame::getBoundingBox( int index ) const
 	{
 		return this->boundingBoxes.at( index );
 	}
 	
-	const Box * getAttackArea( int index ) const
+	const Box * Frame::getAttackArea( int index ) const
 	{
 		return this->attackAreas.at( index );
 	}
 	
-	const Box * getDefenceArea( int index ) const
+	const Box * Frame::getDefenceArea( int index ) const
 	{
 		return this->defenceAreas.at( index );
 	}

@@ -1,4 +1,4 @@
-#include <graphics.h>
+#include <graphics/Box.h>
 
 namespace graphics
 {
@@ -24,7 +24,7 @@ namespace graphics
 	
 	Point& Box::getOrigin()
 	{
-		return this->point;
+		return this->origin;
 	}
 	
 	int Box::getWidth() const

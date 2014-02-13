@@ -26,6 +26,7 @@ namespace graphics
 			void setWidth( int width );
 			void setHeight( int height );
 			void resize( int width, int height );
+			void resizeBy( int dwidth, int dheight );
 	};
 }
 

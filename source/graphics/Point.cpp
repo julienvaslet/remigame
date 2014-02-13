@@ -10,7 +10,7 @@ namespace graphics
 	{
 	}
 	
-	Point( const Point& point ) : x(point.x), y(point.y)
+	Point::Point( const Point& point ) : x(point.x), y(point.y)
 	{
 	}
 	
