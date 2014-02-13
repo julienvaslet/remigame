@@ -14,8 +14,9 @@ namespace graphics
 			
 		public:
 			Box();
-			Box( const Point * point, int width, int height );
+			Box( const Point& point, int width, int height );
 			Box( int x, int y, int width, int height );
+			Box( const Box& box );
 			~Box();
 			
 			Point * getOrigin();
