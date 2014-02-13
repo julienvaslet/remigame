@@ -22,7 +22,7 @@ namespace graphics
 	{
 	}
 	
-	Point * Box::getOrigin()
+	Point& Box::getOrigin()
 	{
 		return &(this->point);
 	}
