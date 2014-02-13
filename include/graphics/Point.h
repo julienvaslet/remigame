@@ -19,6 +19,7 @@ namespace graphics
 			void setX( int x );
 			void setY( int y );
 			void move( int x, int y );
+			void moveBy( int dx, int dy );
 	};
 }
 
