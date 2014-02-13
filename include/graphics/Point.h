@@ -5,7 +5,7 @@ namespace graphics
 {
 	class Point
 	{
-		private:
+		protected:
 			int x;
 			int y;
 			
