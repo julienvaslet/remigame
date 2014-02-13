@@ -12,6 +12,7 @@ namespace graphics
 		public:
 			Point();
 			Point( int x, int y );
+			Point( const Point& point );
 			~Point();
 			
 			int getX() const;
