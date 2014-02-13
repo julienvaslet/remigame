@@ -1,5 +1,5 @@
 #include <graphics/Box.h>
-
+#include <iostream>
 namespace graphics
 {
 	Box::Box() : origin(0,0), width(0), height(0)

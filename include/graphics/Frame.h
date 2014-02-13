@@ -14,9 +14,9 @@ namespace graphics
 		protected:
 			Box box;
 			Point anchor;
-			vector<Box *> boundingBoxes;
-			vector<Box *> attackAreas;
-			vector<Box *> defenceAreas;
+			vector<Box> boundingBoxes;
+			vector<Box> attackAreas;
+			vector<Box> defenceAreas;
 		
 		public:
 			Frame();
@@ -31,9 +31,9 @@ namespace graphics
 			int getAttackAreasCount() const;
 			int getDefenceAreasCount() const;
 			
-			const Box * getBoundingBox( int index ) const;
-			const Box * getAttackArea( int index ) const;
-			const Box * getDefenceArea( int index ) const;
+			const Box& getBoundingBox( int index ) const;
+			const Box& getAttackArea( int index ) const;
+			const Box& getDefenceArea( int index ) const;
 			
 			void addBoundingBox( const Box& box );
 			void addAttackArea( const Box& box );
