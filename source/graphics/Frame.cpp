@@ -56,17 +56,17 @@ namespace graphics
 		return this->defenceAreas.size();
 	}
 	
-	const Box& Frame::getBoundingBox( int index ) const
+	Box& Frame::getBoundingBox( int index )
 	{
 		return this->boundingBoxes.at( index );
 	}
 	
-	const Box& Frame::getAttackArea( int index ) const
+	Box& Frame::getAttackArea( int index )
 	{
 		return this->attackAreas.at( index );
 	}
 	
-	const Box& Frame::getDefenceArea( int index ) const
+	Box& Frame::getDefenceArea( int index )
 	{
 		return this->defenceAreas.at( index );
 	}

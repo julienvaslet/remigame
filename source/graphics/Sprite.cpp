@@ -47,12 +47,9 @@ namespace graphics
 			this->width = surface->w;
 			this->height = surface->h;
 		
-			this->view.x = 0;
-			this->view.y = 0;
-			this->view.width = surface->w;
-			this->view.height = surface->h;
-			this->view.anchorX = 0;
-			this->view.anchorY = surface->h;
+			this->view.getBox().getOrigin().move( 0, 0 );
+			this->view.getBox().resize( surface->w, surface->h );
+			this->view.getAnchor().move( 0, surface->h );
 		
 			this->texture = SDL_CreateTextureFromSurface( Screen::get()->getRenderer(), surface );
 			SDL_FreeSurface( surface );
@@ -74,34 +71,9 @@ namespace graphics
 		return (this->texture != NULL);
 	}
 
-	int Sprite::getViewX()
+	Frame& Sprite::getView()
 	{
-		return this->view.x;
-	}
-
-	int Sprite::getViewY()
-	{
-		return this->view.y;
-	}
-
-	int Sprite::getViewWidth()
-	{
-		return this->view.width;
-	}
-
-	int Sprite::getViewHeight()
-	{
-		return this->view.height;
-	}
-	
-	int Sprite::getViewAnchorX()
-	{
-		return this->view.anchorX;
-	}
-	
-	int Sprite::getViewAnchorY()
-	{
-		return this->view.anchorY;
+		return this->view;
 	}
 
 	int Sprite::getWidth()
@@ -112,14 +84,6 @@ namespace graphics
 	int Sprite::getHeight()
 	{
 		return this->height;
-	}
-
-	void Sprite::setView( int x, int y, int width, int height )
-	{
-		this->view.x = x;
-		this->view.y = y;
-		this->view.width = width;
-		this->view.height = height;
 	}
 	
 	SDL_Texture * Sprite::getTexture()

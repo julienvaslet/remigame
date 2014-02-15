@@ -14,9 +14,9 @@ namespace graphics
 	{
 	}
 	
-	const Sprite::Frame * Animation::getFrame( unsigned int time )
+	Frame * Animation::getFrame( unsigned int time )
 	{
-		const Sprite::Frame * frame = NULL;
+		Frame * frame = NULL;
 		
 		if( !this->frames.empty() )
 		{
@@ -59,15 +59,8 @@ namespace graphics
 		this->speedModulation = 0;
 	}
 	
-	void Animation::addFrame( int x, int y, int width, int height, int anchorX, int anchorY )
+	void Animation::addFrame( const Frame& frame )
 	{
-		Sprite::Frame frame;
-		frame.x = x;
-		frame.y = y;
-		frame.width = width;
-		frame.height = height;
-		frame.anchorX = anchorX;
-		frame.anchorY = anchorY;
 		this->frames.push_back( frame );
 	}
 }

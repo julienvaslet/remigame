@@ -16,7 +16,7 @@ namespace graphics
 		protected:
 			static map<string,Font *> fonts;
 			Sprite * image;
-			map<char,Sprite::Frame> characters;
+			map<char,Frame> characters;
 			
 			Font();
 			~Font();

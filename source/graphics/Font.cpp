@@ -78,19 +78,17 @@ namespace graphics
 								{
 									if( character->getType() == node::Node::Tag && character->getName() == "char" )
 									{
-										Sprite::Frame frame;
+										Frame frame;
 										
 										string value = character->hasAttr( "value" ) ? character->attr( "value" ) : "";
-										frame.x = character->isIntegerAttr( "x" ) ? character->integerAttr( "x" ) : 0;
-										frame.y = character->isIntegerAttr( "y" ) ? character->integerAttr( "y" ) : 0;
-										frame.width = character->isIntegerAttr( "width" ) ? character->integerAttr( "width" ) : 0;
-										frame.height = character->isIntegerAttr( "height" ) ? character->integerAttr( "height" ) : 0;
+										frame.getBox().getOrigin().move( character->isIntegerAttr( "x" ) ? character->integerAttr( "x" ) : 0, character->isIntegerAttr( "y" ) ? character->integerAttr( "y" ) : 0 );
+										frame.getBox().resize( character->isIntegerAttr( "width" ) ? character->integerAttr( "width" ) : 0, character->isIntegerAttr( "height" ) ? character->integerAttr( "height" ) : 0 );
 										
 										if( value.length() > 0 )
 										{
 											font->characters[value.at(0)] = frame;
 											#ifdef DEBUG0
-											cout << "[Font#" << font << "] Character \"" << value.at(0) << "\" is at (" << frame.x << "," << frame.y << ") and of size (" << frame.width << "," << frame.height << ")." << endl;
+											cout << "[Font#" << font << "] Character \"" << value.at(0) << "\" is at (" << frame.getBox().getOrigin().getX() << "," << frame.getBox().getOrigin().getY() << ") and of size (" << frame.getBox().getWidth() << "," << frame.getBox().getHeight() << ")." << endl;
 											#endif
 										}
 									}
@@ -220,17 +218,17 @@ namespace graphics
 		
 		while( text[i] != 0 )
 		{
-			map<char,Sprite::Frame>::iterator it = this->characters.find( text[i] );
+			map<char,Frame>::iterator it = this->characters.find( text[i] );
 			
 			if( it != this->characters.end() )
 			{
-				srcRect.x = it->second.x;
-				srcRect.y = it->second.y;
-				srcRect.w = it->second.width;
-				srcRect.h = it->second.height;
+				srcRect.x = it->second.getBox().getOrigin().getX();
+				srcRect.y = it->second.getBox().getOrigin().getY();
+				srcRect.w = it->second.getBox().getWidth();
+				srcRect.h = it->second.getBox().getHeight();
 				
-				dstRect.w = it->second.width;
-				dstRect.h = it->second.height;
+				dstRect.w = it->second.getBox().getWidth();
+				dstRect.h = it->second.getBox().getHeight();
 				
 				SDL_RenderCopy( Screen::get()->getRenderer(), this->image->getTexture(), &srcRect, &dstRect );
 				
@@ -255,16 +253,16 @@ namespace graphics
 		
 		while( text[i] != 0 )
 		{
-			map<char,Sprite::Frame>::iterator it = this->characters.find( text[i] );
+			map<char,Frame>::iterator it = this->characters.find( text[i] );
 			
 			if( it != this->characters.end() )
 			{
-				*x += it->second.width;
+				*x += it->second.getBox().getWidth();
 				
 				if( first )
 				{
 					first = false;
-					*y += it->second.height;
+					*y += it->second.getBox().getHeight();
 				}
 			}
 			else if( text[i] == '\n' )

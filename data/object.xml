@@ -2,15 +2,15 @@
 	<animation name="idle" speed="100">
 		<frame x="0" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
-			<bouding-box x="0" y="0" width="512" height="512" />
+			<bouding-box x="175" y="110" width="252" height="360" />
 		</frame>
 		<frame x="512" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
-			<bouding-box x="0" y="0" width="512" height="512" />
+			<bouding-box x="175" y="110" width="252" height="360" />
 		</frame>
 		<frame x="1024" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
-			<bouding-box x="0" y="0" width="512" height="512" />
+			<bouding-box x="175" y="110" width="252" height="360" />
 		</frame>
 	</animation>
 	<animation name="walk" speed="1000">

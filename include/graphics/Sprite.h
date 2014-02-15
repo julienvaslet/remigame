@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <string>
 #include <graphics/Screen.h>
+#include <graphics/Frame.h>
 
 using namespace std;
 
@@ -11,18 +12,6 @@ namespace graphics
 {
 	class Sprite
 	{
-		public:
-			struct Frame
-			{
-				int x;
-				int y;
-				int width;
-				int height;
-				
-				int anchorX;
-				int anchorY;
-			};
-		
 		protected:
 			SDL_Texture * texture;
 			int width;
@@ -40,12 +29,7 @@ namespace graphics
 		
 			void setView( int x, int y, int width, int height );
 		
-			int getViewX();
-			int getViewY();
-			int getViewWidth();
-			int getViewHeight();
-			int getViewAnchorX();
-			int getViewAnchorY();
+			Frame& getView();
 		
 			int getWidth();
 			int getHeight();

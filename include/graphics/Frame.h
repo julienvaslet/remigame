@@ -31,9 +31,9 @@ namespace graphics
 			int getAttackAreasCount() const;
 			int getDefenceAreasCount() const;
 			
-			const Box& getBoundingBox( int index ) const;
-			const Box& getAttackArea( int index ) const;
-			const Box& getDefenceArea( int index ) const;
+			Box& getBoundingBox( int index );
+			Box& getAttackArea( int index );
+			Box& getDefenceArea( int index );
 			
 			void addBoundingBox( const Box& box );
 			void addAttackArea( const Box& box );

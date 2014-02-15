@@ -91,34 +91,51 @@ namespace graphics
 									{
 										if( frame->getType() == node::Node::Tag && frame->getName() == "frame" )
 										{
-											int anchorX = 0;
-											int anchorY = frame->isIntegerAttr( "height" ) ? frame->integerAttr( "height" ) : 0;
+											Frame oFrame;
+											oFrame.getAnchor().move( 0, frame->isIntegerAttr( "height" ) ? frame->integerAttr( "height" ) : 0 );
 											
 											node::Node * frameChild = frame->childAt( 0 );
 											
 											while( frameChild != NULL )
 											{
-												if( frameChild->getType() == node::Node::Tag && frameChild->getName() == "anchor" )
+												if( frameChild->getType() == node::Node::Tag )
 												{
-													if( frameChild->isIntegerAttr( "x" ) )
-														anchorX = frameChild->integerAttr( "x" );
+													if( frameChild->getName() == "anchor" )
+													{
+														if( frameChild->isIntegerAttr( "x" ) )
+															oFrame.getAnchor().setX( frameChild->integerAttr( "x" ) );
 													
-													if( frameChild->isIntegerAttr( "y" ) )
-														anchorY = frameChild->integerAttr( "y" );
+														if( frameChild->isIntegerAttr( "y" ) )
+															oFrame.getAnchor().setY( frameChild->integerAttr( "y" ) );
+													}
+													else if( frameChild->getName() == "bouding-box" )
+													{
+														Box boundingBox;
+														
+														if( frameChild->isIntegerAttr( "x" ) )
+															boundingBox.getOrigin().setX( frameChild->integerAttr( "x" ) );
+													
+														if( frameChild->isIntegerAttr( "y" ) )
+															boundingBox.getOrigin().setY( frameChild->integerAttr( "y" ) );
+															
+														if( frameChild->isIntegerAttr( "width" ) )
+															boundingBox.setWidth( frameChild->integerAttr( "width" ) );
+													
+														if( frameChild->isIntegerAttr( "height" ) )
+															boundingBox.setHeight( frameChild->integerAttr( "height" ) );
+														
+														oFrame.addBoundingBox( boundingBox );
+													}
 												}
 												
 												frameChild = frameChild->next();
 											}
 											
-											anim->addFrame(
-												frame->isIntegerAttr( "x" ) ? frame->integerAttr( "x" ) : 0,
-												frame->isIntegerAttr( "y" ) ? frame->integerAttr( "y" ) : 0,
-												frame->isIntegerAttr( "width" ) ? frame->integerAttr( "width" ) : 0,
-												frame->isIntegerAttr( "height" ) ? frame->integerAttr( "height" ) : 0,
-												anchorX,
-												anchorY
-											);
+											oFrame.getBox().getOrigin().move( frame->isIntegerAttr( "x" ) ? frame->integerAttr( "x" ) : 0, frame->isIntegerAttr( "y" ) ? frame->integerAttr( "y" ) : 0 );
+											oFrame.getBox().resize( frame->isIntegerAttr( "width" ) ? frame->integerAttr( "width" ) : 0, frame->isIntegerAttr( "height" ) ? frame->integerAttr( "height" ) : 0 );
 											
+											anim->addFrame( oFrame );
+
 											iFrame++;
 										}
 										
@@ -258,7 +275,7 @@ namespace graphics
 	{
 		if( currentAnimation != NULL )
 		{
-			const Sprite::Frame * frame = this->currentAnimation->getFrame( time );
+			Frame * frame = this->currentAnimation->getFrame( time );
 			
 			if( frame != NULL )
 			{
@@ -266,16 +283,16 @@ namespace graphics
 				int anchorX = this->x;
 				int anchorY = this->y;
 				
-				dstRect.x = anchorX - (frame->anchorX * this->zoom / 100);
-				dstRect.y = anchorY - (frame->anchorY * this->zoom / 100);
-				dstRect.w = (this->zoom * frame->width) / 100;
-				dstRect.h = (this->zoom * frame->height) / 100;
+				dstRect.x = anchorX - (frame->getAnchor().getX() * this->zoom / 100);
+				dstRect.y = anchorY - (frame->getAnchor().getY() * this->zoom / 100);
+				dstRect.w = (this->zoom * frame->getBox().getWidth()) / 100;
+				dstRect.h = (this->zoom * frame->getBox().getHeight()) / 100;
 	
 				SDL_Rect srcRect;
-				srcRect.x = frame->x;
-				srcRect.y = frame->y;
-				srcRect.w = frame->width;
-				srcRect.h = frame->height;
+				srcRect.x = frame->getBox().getOrigin().getX();
+				srcRect.y = frame->getBox().getOrigin().getY();
+				srcRect.w = frame->getBox().getWidth();
+				srcRect.h = frame->getBox().getHeight();
 	
 				SDL_RenderCopy( Screen::get()->getRenderer(), this->sprite->getTexture(), &srcRect, &dstRect );
 				
@@ -285,6 +302,24 @@ namespace graphics
 					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 0, 255, 128 );
 					SDL_RenderDrawLine( Screen::get()->getRenderer(), anchorX + (5 * this->zoom / 100), anchorY, anchorX - (5 * this->zoom / 100), anchorY );
 					SDL_RenderDrawLine( Screen::get()->getRenderer(), anchorX, anchorY + (5 * this->zoom / 100), anchorX, anchorY - (5 * this->zoom / 100) );
+				}
+				
+				// Render each bounding boxes
+				if( true )
+				{
+					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 128 );
+					
+					for( int i = 0 ; i < frame->getBoundingBoxesCount() ; i++ )
+					{
+						Box boundingBox = frame->getBoundingBox( i );
+						SDL_Rect bRect;
+						bRect.x = this->x + ((boundingBox.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100);
+						bRect.y = this->y + ((boundingBox.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100);
+						bRect.w = (boundingBox.getWidth() * this->zoom / 100 );
+						bRect.h = (boundingBox.getHeight() * this->zoom / 100 );
+						
+						SDL_RenderDrawRect( Screen::get()->getRenderer(), &bRect );
+					}
 				}
 			}
 		}
