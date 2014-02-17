@@ -296,15 +296,15 @@ namespace graphics
 	
 				SDL_RenderCopy( Screen::get()->getRenderer(), this->sprite->getTexture(), &srcRect, &dstRect );
 				
-				// Render the anchor point
+				// Render the anchor point (green)
 				if( true )
 				{
-					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 0, 255, 128 );
+					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 128 );
 					SDL_RenderDrawLine( Screen::get()->getRenderer(), anchorX + (5 * this->zoom / 100), anchorY, anchorX - (5 * this->zoom / 100), anchorY );
 					SDL_RenderDrawLine( Screen::get()->getRenderer(), anchorX, anchorY + (5 * this->zoom / 100), anchorX, anchorY - (5 * this->zoom / 100) );
 				}
 				
-				// Render each bounding boxes
+				// Render each bounding boxes (green)
 				if( true )
 				{
 					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 128 );
@@ -317,6 +317,42 @@ namespace graphics
 						bRect.y = this->y + ((boundingBox.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100);
 						bRect.w = (boundingBox.getWidth() * this->zoom / 100 );
 						bRect.h = (boundingBox.getHeight() * this->zoom / 100 );
+						
+						SDL_RenderDrawRect( Screen::get()->getRenderer(), &bRect );
+					}
+				}
+				
+				// Render each attack areas (red)
+				if( true )
+				{
+					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 128 );
+					
+					for( int i = 0 ; i < frame->getAttackAreasCount() ; i++ )
+					{
+						Box attackArea = frame->getAttackArea( i );
+						SDL_Rect bRect;
+						bRect.x = this->x + ((attackArea.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100);
+						bRect.y = this->y + ((attackArea.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100);
+						bRect.w = (attackArea.getWidth() * this->zoom / 100 );
+						bRect.h = (attackArea.getHeight() * this->zoom / 100 );
+						
+						SDL_RenderDrawRect( Screen::get()->getRenderer(), &bRect );
+					}	
+				}
+				
+				// Render each defence areas (blue)
+				if( true )
+				{
+					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 0, 255, 128 );
+					
+					for( int i = 0 ; i < frame->getDefenceAreasCount() ; i++ )
+					{
+						Box defenceArea = frame->getDefenceArea( i );
+						SDL_Rect bRect;
+						bRect.x = this->x + ((defenceArea.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100);
+						bRect.y = this->y + ((defenceArea.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100);
+						bRect.w = (defenceArea.getWidth() * this->zoom / 100 );
+						bRect.h = (defenceArea.getHeight() * this->zoom / 100 );
 						
 						SDL_RenderDrawRect( Screen::get()->getRenderer(), &bRect );
 					}
