@@ -85,7 +85,6 @@ namespace graphics
 				cout << "[Screen] Renderer created." << endl;
 				#endif
 			
-				SDL_SetRenderDrawColor( screen->renderer, 0, 0, 0, 255 );
 				screen->clear();
 				screen->render();
 			
@@ -117,13 +116,12 @@ namespace graphics
 
 	void Screen::clear()
 	{
-		SDL_RenderClear( this->renderer );
 		SDL_SetRenderDrawColor( this->renderer, 0, 0, 0, 255 );
+		SDL_RenderClear( this->renderer );
 	}
 
 	void Screen::render()
 	{
-		SDL_SetRenderDrawColor( this->renderer, 0, 0, 0, 255 );
 		SDL_RenderPresent( this->renderer );
 	}
 }

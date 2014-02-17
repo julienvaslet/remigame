@@ -126,6 +126,42 @@ namespace graphics
 														
 														oFrame.addBoundingBox( boundingBox );
 													}
+													else if( frameChild->getName() == "attack-area" )
+													{
+														Box attackArea;
+														
+														if( frameChild->isIntegerAttr( "x" ) )
+															attackArea.getOrigin().setX( frameChild->integerAttr( "x" ) );
+													
+														if( frameChild->isIntegerAttr( "y" ) )
+															attackArea.getOrigin().setY( frameChild->integerAttr( "y" ) );
+															
+														if( frameChild->isIntegerAttr( "width" ) )
+															attackArea.setWidth( frameChild->integerAttr( "width" ) );
+													
+														if( frameChild->isIntegerAttr( "height" ) )
+															attackArea.setHeight( frameChild->integerAttr( "height" ) );
+														
+														oFrame.addAttackArea( attackArea );
+													}
+													else if( frameChild->getName() == "defence-area" )
+													{
+														Box defenceArea;
+														
+														if( frameChild->isIntegerAttr( "x" ) )
+															defenceArea.getOrigin().setX( frameChild->integerAttr( "x" ) );
+													
+														if( frameChild->isIntegerAttr( "y" ) )
+															defenceArea.getOrigin().setY( frameChild->integerAttr( "y" ) );
+															
+														if( frameChild->isIntegerAttr( "width" ) )
+															defenceArea.setWidth( frameChild->integerAttr( "width" ) );
+													
+														if( frameChild->isIntegerAttr( "height" ) )
+															defenceArea.setHeight( frameChild->integerAttr( "height" ) );
+														
+														oFrame.addDefenceArea( defenceArea );
+													}
 												}
 												
 												frameChild = frameChild->next();
@@ -299,7 +335,7 @@ namespace graphics
 				// Render the anchor point (green)
 				if( this->anchorPointRenderingState )
 				{
-					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 128 );
+					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 255 );
 					SDL_RenderDrawLine( Screen::get()->getRenderer(), anchorX + (5 * this->zoom / 100), anchorY, anchorX - (5 * this->zoom / 100), anchorY );
 					SDL_RenderDrawLine( Screen::get()->getRenderer(), anchorX, anchorY + (5 * this->zoom / 100), anchorX, anchorY - (5 * this->zoom / 100) );
 				}
@@ -307,7 +343,7 @@ namespace graphics
 				// Render each bounding boxes (green)
 				if( this->boundingBoxesRenderingState )
 				{
-					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 128 );
+					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 255 );
 					
 					for( int i = 0 ; i < frame->getBoundingBoxesCount() ; i++ )
 					{
@@ -325,7 +361,7 @@ namespace graphics
 				// Render each attack areas (red)
 				if( this->attackAreasRenderingState )
 				{
-					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 128 );
+					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0xFF, 0, 0, 255 );
 					
 					for( int i = 0 ; i < frame->getAttackAreasCount() ; i++ )
 					{
@@ -337,13 +373,13 @@ namespace graphics
 						bRect.h = (attackArea.getHeight() * this->zoom / 100 );
 						
 						SDL_RenderDrawRect( Screen::get()->getRenderer(), &bRect );
-					}	
+					}
 				}
 				
 				// Render each defence areas (blue)
 				if( this->defenceAreasRenderingState )
 				{
-					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 0, 255, 128 );
+					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 0, 255, 255 );
 					
 					for( int i = 0 ; i < frame->getDefenceAreasCount() ; i++ )
 					{
