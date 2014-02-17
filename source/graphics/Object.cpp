@@ -15,16 +15,16 @@ using namespace std;
 
 namespace graphics
 {
-	Object::Object() : x(0), y(0), width(0), height(0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL)
+	Object::Object() : x(0), y(0), width(0), height(0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
 	{
 	}
 	
-	Object::Object( const char * filename ) : x(0), y(0), width(0), height(0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL)
+	Object::Object( const char * filename ) : x(0), y(0), width(0), height(0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
 	{
 		this->load( filename );
 	}
 	
-	Object::Object( const string& filename ) : x(0), y(0), width(0), height(0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL)
+	Object::Object( const string& filename ) : x(0), y(0), width(0), height(0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
 	{
 		this->load( filename.c_str() );
 	}
@@ -297,7 +297,7 @@ namespace graphics
 				SDL_RenderCopy( Screen::get()->getRenderer(), this->sprite->getTexture(), &srcRect, &dstRect );
 				
 				// Render the anchor point (green)
-				if( true )
+				if( this->anchorPointRenderingState )
 				{
 					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 128 );
 					SDL_RenderDrawLine( Screen::get()->getRenderer(), anchorX + (5 * this->zoom / 100), anchorY, anchorX - (5 * this->zoom / 100), anchorY );
@@ -305,7 +305,7 @@ namespace graphics
 				}
 				
 				// Render each bounding boxes (green)
-				if( true )
+				if( this->boundingBoxesRenderingState )
 				{
 					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 128 );
 					
@@ -323,7 +323,7 @@ namespace graphics
 				}
 				
 				// Render each attack areas (red)
-				if( true )
+				if( this->attackAreasRenderingState )
 				{
 					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 128 );
 					
@@ -341,7 +341,7 @@ namespace graphics
 				}
 				
 				// Render each defence areas (blue)
-				if( true )
+				if( this->defenceAreasRenderingState )
 				{
 					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 0, 255, 128 );
 					
@@ -417,6 +417,26 @@ namespace graphics
 	void Object::setZoom( int zoom )
 	{
 		this->zoom = zoom;
+	}
+	
+	void Object::setAnchorPointRenderingState( bool state )
+	{
+		this->anchorPointRenderingState = state;
+	}
+	
+	void Object::setBoundingBoxesRenderingState( bool state )
+	{
+		this->boundingBoxesRenderingState = state;
+	}
+	
+	void Object::setAttackAreasRenderingState( bool state )
+	{
+		this->attackAreasRenderingState = state;
+	}
+	
+	void Object::setDefenceAreasRenderingState( bool state )
+	{
+		this->defenceAreasRenderingState = state;
 	}
 }
 
