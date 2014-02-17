@@ -25,6 +25,11 @@ namespace graphics
 			Sprite * sprite;
 			Animation * currentAnimation;
 			map<string, Animation *> animations;
+			
+			bool anchorPointRenderingState;
+			bool boundingBoxesRenderingState;
+			bool attackAreasRenderingState;
+			bool defenceAreasRenderingState;
 	
 		public:
 			Object();
@@ -51,6 +56,11 @@ namespace graphics
 			
 			int getZoom();
 			void setZoom( int zoom );
+			
+			void setAnchorPointRenderingState( bool state );
+			void setBoundingBoxesRenderingState( bool state );
+			void setAttackAreasRenderingState( bool state );
+			void setDefenceAreasRenderingState( bool state );
 	};
 }
 
