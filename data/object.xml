@@ -2,20 +2,20 @@
 	<animation name="idle" speed="100">
 		<frame x="0" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
-			<bouding-box x="175" y="110" width="252" height="360" />
+			<bounding-box x="175" y="110" width="252" height="360" />
 			<attack-area x="5" y="5" width="50" height="50" />
 			<defence-area x="457" y="5" width="50" height="50" />
 		</frame>
 		<frame x="512" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
-			<bouding-box x="175" y="110" width="252" height="360" />
+			<bounding-box x="175" y="110" width="252" height="360" />
 			<attack-area x="10" y="55" width="50" height="50" />
 			<defence-area x="457" y="5" width="50" height="50" />
 			<defence-area x="457" y="60" width="50" height="50" />
 		</frame>
 		<frame x="1024" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
-			<bouding-box x="175" y="110" width="252" height="360" />
+			<bounding-box x="175" y="110" width="252" height="360" />
 			<attack-area x="20" y="105" width="50" height="50" />
 			<defence-area x="457" y="5" width="50" height="50" />
 			<defence-area x="457" y="60" width="50" height="50" />
@@ -25,23 +25,23 @@
 	<animation name="walk" speed="1000">
 		<frame x="1024" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
-			<bouding-box x="0" y="0" width="512" height="512" />
+			<bounding-box x="0" y="0" width="512" height="512" />
 		</frame>
 	</animation>
 	<animation name="run" speed="1000">
 		<frame x="512" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
-			<bouding-box x="0" y="0" width="512" height="512" />
+			<bounding-box x="0" y="0" width="512" height="512" />
 		</frame>
 	</animation>
 	<animation name="jump" speed="1000">
 		<frame x="0" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
-			<bouding-box x="0" y="0" width="512" height="512" />
+			<bounding-box x="0" y="0" width="512" height="512" />
 		</frame>
 		<frame x="1024" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
-			<bouding-box x="0" y="0" width="512" height="512" />
+			<bounding-box x="0" y="0" width="512" height="512" />
 		</frame>
 	</animation>
 </object>

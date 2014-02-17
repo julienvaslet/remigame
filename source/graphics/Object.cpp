@@ -108,7 +108,7 @@ namespace graphics
 														if( frameChild->isIntegerAttr( "y" ) )
 															oFrame.getAnchor().setY( frameChild->integerAttr( "y" ) );
 													}
-													else if( frameChild->getName() == "bouding-box" )
+													else if( frameChild->getName() == "bounding-box" )
 													{
 														Box boundingBox;
 														
