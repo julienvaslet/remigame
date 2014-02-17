@@ -80,6 +80,10 @@ int main( int argc, char ** argv )
 					if( nObject->isLoaded() )
 					{
 						nObject->move( objectX, objectY );
+						nObject->setAnchorPointRenderingState( true );
+						nObject->setBoundingBoxesRenderingState( true );
+						nObject->setAttackAreasRenderingState( true );
+						nObject->setDefenceAreasRenderingState( true );
 						
 						if( object != NULL )
 							delete object;
