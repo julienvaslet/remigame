@@ -3,14 +3,23 @@
 		<frame x="0" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
 			<bouding-box x="175" y="110" width="252" height="360" />
+			<attack-area x="5" y="5" width="50" height="50" />
+			<defence-area x="457" y="5" width="50" height="50" />
 		</frame>
 		<frame x="512" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
 			<bouding-box x="175" y="110" width="252" height="360" />
+			<attack-area x="10" y="10" width="50" height="50" />
+			<defence-area x="457" y="5" width="50" height="50" />
+			<defence-area x="457" y="60" width="50" height="50" />
 		</frame>
 		<frame x="1024" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
 			<bouding-box x="175" y="110" width="252" height="360" />
+			<attack-area x="20" y="20" width="50" height="50" />
+			<defence-area x="457" y="5" width="50" height="50" />
+			<defence-area x="457" y="60" width="50" height="50" />
+			<defence-area x="457" y="115" width="50" height="50" />
 		</frame>
 	</animation>
 	<animation name="walk" speed="1000">
