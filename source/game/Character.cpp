@@ -17,10 +17,5 @@ namespace game
 		if( this->object != NULL )
 			delete this->object;
 	}
-
-	void handleEvent( Controller * controller, Mapping::Button button, short int value, unsigned int timestamp )
-	{
-		// handle
-	}
 }
 

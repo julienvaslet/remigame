@@ -422,6 +422,12 @@ namespace graphics
 		this->x = x;
 		this->y = y;
 	}
+	
+	void Object::moveBy( int dx, int dy )
+	{
+		this->x += dx;
+		this->y += dy;
+	}
 
 	void Object::resize( int width, int height )
 	{

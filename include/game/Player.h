@@ -6,8 +6,8 @@ namespace game
 	class Player;
 }
 
-#include <controller/Controller.h>
 #include <controller/EventHandler.h>
+#include <controller/Controller.h>
 
 #include <string>
 
@@ -25,13 +25,14 @@ namespace game
 		protected:
 			string name;
 			Controller * controller;
-			//EventHandler * eventHandler;
+			EventHandler * eventHandler;
 		
 		public:
 			Player( const char * name );
 			~Player();
 			
 			void handleEvent( Mapping::Button button, short int value, unsigned int timestamp );
+			void setEventHandler( EventHandler * eventHandler );
 			void setController( Controller * controller );
 	};
 }

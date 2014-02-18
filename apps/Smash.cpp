@@ -7,6 +7,7 @@
 #include <graphics/Object.h>
 #include <graphics/Font.h>
 #include <controller/Controller.h>
+#include <game/ObjectEventHandler.h>
 
 using namespace graphics;
 using namespace std;
@@ -14,6 +15,7 @@ using namespace controller;
 
 int main( int argc, char ** argv )
 {
+	vector<Object *> objects;
 	vector<Player *> players;
 	
 	if( !Screen::initialize( "Smash", 800, 600 ) )
@@ -55,6 +57,13 @@ int main( int argc, char ** argv )
 		player->setController( controller );
 		
 		players.push_back( player );
+		
+		Object * character = new Object( "data/object.xml" );
+		character->setZoom( 35 );
+		character->move( 100, 600 );
+		objects.push_back( character );
+		
+		player->setEventHandler( new ObjectEventHandler( character ) );
 		
 		controller = Controller::getFreeController();
 	}
@@ -130,6 +139,10 @@ int main( int argc, char ** argv )
 			// Show background
 			background->render( ticks );
 			
+			// Show objects
+			for( vector<Object *>::iterator itObject = objects.begin() ; itObject != objects.end() ; itObject++ )
+				(*itObject)->render( ticks );
+			
 			// Show FPS
 			int fpsX = (800 - Font::get( "font0" )->renderWidth( framesPerSecondText.str() )) / 2;
 			Font::get( "font0" )->render( fpsX, 10, framesPerSecondText.str() );
@@ -139,6 +152,11 @@ int main( int argc, char ** argv )
 			lastDrawTicks = ticks;
 		}
 	}
+	
+	for( vector<Object *>::iterator itObject = objects.begin() ; itObject != objects.end() ; itObject++ )
+		delete *itObject;
+		
+	objects.clear();
 	
 	// WARN: Could have some segfault when live disconnecting controller.
 	for( vector<Player *>::iterator itPlayer = players.begin() ; itPlayer != players.end() ; itPlayer++ )

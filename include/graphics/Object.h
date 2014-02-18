@@ -5,6 +5,7 @@
 #include <string>
 #include <graphics/Sprite.h>
 #include <graphics/Animation.h>
+#include <graphics/Renderable.h>
 
 #include <map>
 
@@ -12,7 +13,7 @@ using namespace std;
 
 namespace graphics
 {
-	class Object
+	class Object : public Renderable
 	{
 		protected:
 			int x;
@@ -35,8 +36,9 @@ namespace graphics
 			Object();
 			Object( const char * filename );
 			Object( const string& filename );
-			~Object();
+			virtual ~Object();
 		
+			void moveBy( int dx, int dy );
 			void move( int x, int y );
 			void resize( int width, int height );
 			
@@ -47,7 +49,7 @@ namespace graphics
 			
 			bool isLoaded();
 			bool load( const char * filename );
-			void render( unsigned int time );
+			virtual void render( unsigned int time );
 			
 			bool setAnimation( const string& name );
 			void setSpeedModulation( int modulation );
