@@ -58,4 +58,12 @@ namespace graphics
 		this->width += dwidth;
 		this->height += dheight;
 	}
+		
+	void Box::fillSDLRect( SDL_Rect * rect )
+	{
+		rect->x = this->getOrigin().getX();
+		rect->y = this->getOrigin().getY();
+		rect->w = this->width;
+		rect->h = this->height;
+	}
 }

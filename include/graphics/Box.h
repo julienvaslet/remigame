@@ -2,6 +2,7 @@
 #define __GRAPHICS_BOX_H	1
 
 #include <graphics/Point.h>
+#include <SDL2/SDL.h>
 
 namespace graphics
 {
@@ -27,6 +28,8 @@ namespace graphics
 			void setHeight( int height );
 			void resize( int width, int height );
 			void resizeBy( int dwidth, int dheight );
+			
+			void fillSDLRect( SDL_Rect * rect );
 	};
 }
 
