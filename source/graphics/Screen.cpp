@@ -116,7 +116,7 @@ namespace graphics
 
 	void Screen::clear()
 	{
-		SDL_SetRenderDrawColor( this->renderer, 0, 0, 0, 255 );
+		this->resetRenderDrawColor();
 		SDL_RenderClear( this->renderer );
 	}
 
@@ -124,5 +124,14 @@ namespace graphics
 	{
 		SDL_RenderPresent( this->renderer );
 	}
+	
+	void Screen::resetRenderColor()
+	{
+		SDL_SetRenderDrawColor( this->renderer, 0, 0, 0, 255 );
+	}
+	
+	void Screen::setRenderColor( Color& color )
+	{
+		SDL_SetRenderDrawColor( this->renderer, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() );
+	}
 }
-
