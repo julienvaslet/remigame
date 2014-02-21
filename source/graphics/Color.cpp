@@ -22,7 +22,30 @@ namespace graphics
 	
 	void Color::parseHexString( const string& hexstring )
 	{
+		istringstream iss;
+		int value = 0;
 		
+		if( hexstring.length() >= 6 )
+		{
+			iss = hexstring.subst( 0, 2 );
+			iss >> hex >> value;
+			this->red = static_cast<unsigned char>( value );
+			
+			iss = hexstring.subst( 2, 2 );
+			iss >> hex >> value;
+			this->green = static_cast<unsigned char>( value );
+			
+			iss = hexstring.subst( 4, 2 );
+			iss >> hex >> value;
+			this->blue = static_cast<unsigned char>( value );
+			
+			if( hexstring.length >= 8 )
+			{
+				iss = hexstring.subst( 6, 2 );
+				iss >> hex >> value;
+				this->alpha = static_cast<unsigned char>( value );
+			}
+		}
 	}
 	
 	unsigned char Color::getRed() const
