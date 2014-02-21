@@ -2,6 +2,7 @@
 #define	_GRAPHICS_SCREEN_H	1
 
 #include <SDL2/SDL.h>
+#include <graphics/Color.h>
 
 namespace graphics
 {
@@ -22,6 +23,8 @@ namespace graphics
 			static void destroy();
 		
 			SDL_Renderer * getRenderer();
+			void resetRenderColor();
+			void setRenderColor( Color& color );
 			void render();
 			void clear();	
 	};
