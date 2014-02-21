@@ -26,7 +26,7 @@ namespace graphics
 			unsigned char getGreen() const;
 			unsigned char getBlue() const;
 			unsigned char getAlpha() const;
-			string getHexString() const;
+			string getHexString( bool printAlpha = false ) const;
 			void setRed( unsigned char r );
 			void setGreen( unsigned char g );
 			void setBlue( unsigned char b );
