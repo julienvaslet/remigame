@@ -1,5 +1,7 @@
 #include <graphics/Sprite.h>
 
+#include <SDL2/SDL_image.h>
+
 #ifdef DEBUG0
 #include <iostream>
 #endif
@@ -40,7 +42,9 @@ namespace graphics
 		cout << "[Sprite#" << this << "] Loading texture file \"" << filename << "\"." << endl;
 		#endif
 	
-		SDL_Surface * surface = SDL_LoadBMP( filename );
+		//SDL_Surface * surface = SDL_LoadBMP( filename );
+		//SDL_Surface * surface = IMG_LoadTyped_RW( SDL_RWFromFile( filename, "rb" ), 1, "PNG" );
+		SDL_Surface * surface = IMG_Load( filename );
 	
 		if( surface != NULL )
 		{
@@ -59,7 +63,7 @@ namespace graphics
 			success = false;
 		
 			#ifdef DEBUG0
-			cout << "[Sprite#" << this << "] Unable to load texture file \"" << filename << "\": " << SDL_GetError() << endl;
+			cout << "[Sprite#" << this << "] Unable to load texture file \"" << filename << "\": " << IMG_GetError() << endl;
 			#endif
 		}
 	

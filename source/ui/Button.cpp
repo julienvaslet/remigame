@@ -54,7 +54,7 @@ namespace ui
 		SDL_Rect rect;
 		this->box.fillSDLRect( &rect );
 		SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 200, 200, 200, 255 );
-		SDL_RenderDrawRect( Screen::get()->getRenderer(), &rect );
+		SDL_RenderFillRect( Screen::get()->getRenderer(), &rect );
 		
 		Font::get( this->fontName )->render( this->box.getOrigin().getX() + 1 + ((this->box.getWidth() - width) / 2), this->box.getOrigin().getY() + 1 + ((this->box.getHeight() - height) / 2), this->value );
 	}

@@ -13,7 +13,7 @@ windowsSDLConfig32 = /usr/i686-w64-mingw32/sys-root/mingw/bin/sdl2-config
 windowsCompiler32 = i686-w64-mingw32-g++ -static-libgcc -static-libstdc++ -MD -Os -s
 windowsCompilerOptions32 = -Wall -I $(includesDirectory) -c `$(windowsSDLConfig32) --cflags` $(debugFlag)
 windowsLinker32 = i686-w64-mingw32-g++ -static-libgcc -static-libstdc++
-windowsLinkerOptions32 = `$(windowsSDLConfig32) --libs` -lopengl32 -lglu32 -MD -Os -s
+windowsLinkerOptions32 = `$(windowsSDLConfig32) --libs` -lopengl32 -lglu32 -lSDL2_image -MD -Os -s
 windowsLibraries32 = ./windowslib32
 windowsDirectory32 = ./windows32
 
@@ -21,14 +21,14 @@ windowsSDLConfig64 = /usr/x86_64-w64-mingw32/sys-root/mingw/bin/sdl2-config
 windowsCompiler64 = x86_64-w64-mingw32-g++ -static-libgcc -static-libstdc++ -MD -Os -s
 windowsCompilerOptions64 = -Wall -I $(includesDirectory) -c `$(windowsSDLConfig64) --cflags` $(debugFlag)
 windowsLinker64 = x86_64-w64-mingw32-g++ -static-libgcc -static-libstdc++
-windowsLinkerOptions64 = `$(windowsSDLConfig64) --libs` -lopengl32 -lglu32 -MD -Os -s
+windowsLinkerOptions64 = `$(windowsSDLConfig64) --libs` -lopengl32 -lglu32 -lSDL2_image -MD -Os -s
 windowsLibraries64 = ./windowslib64
 windowsDirectory64 = ./windows64
 
 compiler = g++
 compilerOptions = -Wall -I $(includesDirectory) -c `sdl2-config --cflags` $(debugFlag)
 linker = g++
-linkerOptions = `sdl2-config --libs` -lGL -lGLU
+linkerOptions = `sdl2-config --libs` -lGL -lGLU -lSDL2_image
 libraries = $(librariesDirectory)/*.o
 
 all: applications

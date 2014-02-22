@@ -1,4 +1,5 @@
 #include <graphics/Screen.h>
+#include <SDL2/SDL_image.h>
 
 #ifdef DEBUG0
 #include <iostream>
@@ -37,7 +38,17 @@ namespace graphics
 	bool Screen::initialize( const char * title, int width, int height )
 	{
 		bool success = true;
+		int imageFlags = IMG_INIT_PNG;
+		
 		SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK );
+		int initFlags = IMG_Init( imageFlags );
+		
+		if( (initFlags & imageFlags) != imageFlags )
+		{
+			#ifdef DEBUG0
+			cout << "[Screen] Unable to init SDL_image library: " << IMG_GetError() << endl;
+			#endif
+		}
 	
 		Screen * screen = new Screen();
 
@@ -106,6 +117,7 @@ namespace graphics
 		delete screen;
 		Screen::instance = NULL;
 	
+		IMG_Quit();
 		SDL_Quit();
 	}
 

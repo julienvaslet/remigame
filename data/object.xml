@@ -1,4 +1,4 @@
-<object sprite="data/texture2.bmp">
+<object sprite="data/texture2.png">
 	<animation name="idle" speed="100">
 		<frame x="0" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
