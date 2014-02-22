@@ -116,7 +116,7 @@ namespace graphics
 
 	void Screen::clear()
 	{
-		this->resetRenderDrawColor();
+		this->resetRenderColor();
 		SDL_RenderClear( this->renderer );
 	}
 

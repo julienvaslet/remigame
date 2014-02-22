@@ -7,7 +7,7 @@ namespace graphics
 	{
 	}
 	
-	Color::Color( unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255 ) : red(r), green(g), blue(b), alpha(a)
+	Color::Color( unsigned char r, unsigned char g, unsigned char b, unsigned char a ) : red(r), green(g), blue(b), alpha(a)
 	{
 	}
 	
@@ -27,21 +27,21 @@ namespace graphics
 		
 		if( hexstring.length() >= 6 )
 		{
-			iss = hexstring.subst( 0, 2 );
+			iss.str( hexstring.substr( 0, 2 ) );
 			iss >> hex >> value;
 			this->red = static_cast<unsigned char>( value );
 			
-			iss = hexstring.subst( 2, 2 );
+			iss.str( hexstring.substr( 2, 2 ) );
 			iss >> hex >> value;
 			this->green = static_cast<unsigned char>( value );
 			
-			iss = hexstring.subst( 4, 2 );
+			iss.str( hexstring.substr( 4, 2 ) );
 			iss >> hex >> value;
 			this->blue = static_cast<unsigned char>( value );
 			
-			if( hexstring.length >= 8 )
+			if( hexstring.length() >= 8 )
 			{
-				iss = hexstring.subst( 6, 2 );
+				iss.str( hexstring.substr( 6, 2 ) );
 				iss >> hex >> value;
 				this->alpha = static_cast<unsigned char>( value );
 			}

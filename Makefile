@@ -7,7 +7,7 @@ testsDirectory = ./tests
 debugMaxLevel = 3
 #debugFlag =
 debugFlag = -g -DDEBUG0 -DDEBUG1 -DDEBUG2 -DDEBUG3
-binDirectory = ./linux32
+binDirectory = ./linux64
 
 windowsSDLConfig32 = /usr/i686-w64-mingw32/sys-root/mingw/bin/sdl2-config
 windowsCompiler32 = i686-w64-mingw32-g++ -static-libgcc -static-libstdc++ -MD -Os -s
