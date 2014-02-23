@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <string>
+#include <graphics/Point.h>
 #include <graphics/Sprite.h>
 #include <graphics/Animation.h>
 #include <graphics/Renderable.h>
@@ -16,10 +17,7 @@ namespace graphics
 	class Object : public Renderable
 	{
 		protected:
-			int x;
-			int y;
-			int width;
-			int height;
+			Point origin;
 			int speedModulation;
 			int zoom;
 			
@@ -37,15 +35,8 @@ namespace graphics
 			Object( const char * filename );
 			Object( const string& filename );
 			virtual ~Object();
-		
-			void moveBy( int dx, int dy );
-			void move( int x, int y );
-			void resize( int width, int height );
 			
-			int getX();
-			int getY();
-			int getWidth();
-			int getHeight();
+			Point& getOrigin();
 			
 			bool isLoaded();
 			bool load( const char * filename );

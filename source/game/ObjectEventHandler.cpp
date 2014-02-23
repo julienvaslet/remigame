@@ -15,18 +15,18 @@ namespace game
 		if( button == Mapping::AXH )
 		{
 			if( value > 0 )
-				this->object->moveBy( 5, 0 );
+				this->object->getOrigin().moveBy( 5, 0 );
 				
 			else if( value < 0 )
-				this->object->moveBy( -5, 0 );
+				this->object->getOrigin().moveBy( -5, 0 );
 		}
 		else if( button == Mapping::AXV )
 		{
 			if( value > 0 )
-				this->object->moveBy( 0, 5 );
+				this->object->getOrigin().moveBy( 0, 5 );
 				
 			else if( value < 0 )
-				this->object->moveBy( 0, -5 );
+				this->object->getOrigin().moveBy( 0, -5 );
 		}
 	}
 }

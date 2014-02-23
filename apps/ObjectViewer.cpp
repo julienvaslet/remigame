@@ -79,7 +79,7 @@ int main( int argc, char ** argv )
 					
 					if( nObject->isLoaded() )
 					{
-						nObject->move( objectX, objectY );
+						nObject->getOrigin().move( objectX, objectY );
 						nObject->setAnchorPointRenderingState( true );
 						nObject->setBoundingBoxesRenderingState( true );
 						nObject->setAttackAreasRenderingState( true );
@@ -206,7 +206,7 @@ int main( int argc, char ** argv )
 					mouseY = lastEvent.motion.y;
 					
 					if( object != NULL && mouseDown )
-						object->move( lastEvent.motion.x - objectXDiff, lastEvent.motion.y - objectYDiff );
+						object->getOrigin().move( lastEvent.motion.x - objectXDiff, lastEvent.motion.y - objectYDiff );
 					
 					break;
 				}

@@ -15,16 +15,16 @@ using namespace std;
 
 namespace graphics
 {
-	Object::Object() : x(0), y(0), width(0), height(0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
+	Object::Object() : origin(0,0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
 	{
 	}
 	
-	Object::Object( const char * filename ) : x(0), y(0), width(0), height(0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
+	Object::Object( const char * filename ) : origin(0,0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
 	{
 		this->load( filename );
 	}
 	
-	Object::Object( const string& filename ) : x(0), y(0), width(0), height(0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
+	Object::Object( const string& filename ) : origin(0,0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
 	{
 		this->load( filename.c_str() );
 	}
@@ -316,8 +316,8 @@ namespace graphics
 			if( frame != NULL )
 			{
 				SDL_Rect dstRect;
-				int anchorX = this->x;
-				int anchorY = this->y;
+				int anchorX = this->origin.getX();
+				int anchorY = this->origin.getY();
 				
 				dstRect.x = anchorX - (frame->getAnchor().getX() * this->zoom / 100);
 				dstRect.y = anchorY - (frame->getAnchor().getY() * this->zoom / 100);
@@ -349,8 +349,8 @@ namespace graphics
 					{
 						Box boundingBox = frame->getBoundingBox( i );
 						SDL_Rect bRect;
-						bRect.x = this->x + ((boundingBox.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100);
-						bRect.y = this->y + ((boundingBox.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100);
+						bRect.x = this->origin.getX() + ((boundingBox.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100);
+						bRect.y = this->origin.getY() + ((boundingBox.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100);
 						bRect.w = (boundingBox.getWidth() * this->zoom / 100 );
 						bRect.h = (boundingBox.getHeight() * this->zoom / 100 );
 						
@@ -367,8 +367,8 @@ namespace graphics
 					{
 						Box attackArea = frame->getAttackArea( i );
 						SDL_Rect bRect;
-						bRect.x = this->x + ((attackArea.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100);
-						bRect.y = this->y + ((attackArea.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100);
+						bRect.x = this->origin.getX() + ((attackArea.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100);
+						bRect.y = this->origin.getY() + ((attackArea.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100);
 						bRect.w = (attackArea.getWidth() * this->zoom / 100 );
 						bRect.h = (attackArea.getHeight() * this->zoom / 100 );
 						
@@ -385,8 +385,8 @@ namespace graphics
 					{
 						Box defenceArea = frame->getDefenceArea( i );
 						SDL_Rect bRect;
-						bRect.x = this->x + ((defenceArea.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100);
-						bRect.y = this->y + ((defenceArea.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100);
+						bRect.x = this->origin.getX() + ((defenceArea.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100);
+						bRect.y = this->origin.getY() + ((defenceArea.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100);
 						bRect.w = (defenceArea.getWidth() * this->zoom / 100 );
 						bRect.h = (defenceArea.getHeight() * this->zoom / 100 );
 						
@@ -397,42 +397,9 @@ namespace graphics
 		}
 	}
 	
-	int Object::getX()
+	Point& Object::getOrigin()
 	{
-		return this->x;
-	}
-
-	int Object::getY()
-	{
-		return this->y;
-	}
-
-	int Object::getWidth()
-	{
-		return this->width;
-	}
-
-	int Object::getHeight()
-	{
-		return this->height;
-	}
-
-	void Object::move( int x, int y )
-	{
-		this->x = x;
-		this->y = y;
-	}
-	
-	void Object::moveBy( int dx, int dy )
-	{
-		this->x += dx;
-		this->y += dy;
-	}
-
-	void Object::resize( int width, int height )
-	{
-		this->width = width;
-		this->height = height;
+		return this->origin;
 	}
 	
 	void Object::setSpeedModulation( int modulation )

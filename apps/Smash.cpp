@@ -33,8 +33,7 @@ int main( int argc, char ** argv )
 	
 	// Background initialization
 	Object * background = new Object( "data/background.xml" );
-	background->move( 0, 0 );
-	background->resize( 800, 600 );
+	background->getOrigin().move( 0, 0 );
 	
 	if( !background->isLoaded() )
 	{
@@ -60,7 +59,7 @@ int main( int argc, char ** argv )
 		
 		Object * character = new Object( "data/object.xml" );
 		character->setZoom( 35 );
-		character->move( 100, 600 );
+		character->getOrigin().move( 100, 600 );
 		objects.push_back( character );
 		
 		player->setEventHandler( new ObjectEventHandler( character ) );
