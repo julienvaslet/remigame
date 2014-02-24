@@ -325,72 +325,47 @@ namespace graphics
 				dstRect.h = (this->zoom * frame->getBox().getHeight()) / 100;
 	
 				SDL_Rect srcRect;
-				srcRect.x = frame->getBox().getOrigin().getX();
-				srcRect.y = frame->getBox().getOrigin().getY();
-				srcRect.w = frame->getBox().getWidth();
-				srcRect.h = frame->getBox().getHeight();
+				frame->getBox().fillSDLRect( &srcRect );
 	
 				SDL_RenderCopy( Screen::get()->getRenderer(), this->sprite->getTexture(), &srcRect, &dstRect );
 				
 				// Render the anchor point (green)
 				if( this->anchorPointRenderingState )
-				{
-					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 255 );
-					SDL_RenderDrawLine( Screen::get()->getRenderer(), anchorX + (5 * this->zoom / 100), anchorY, anchorX - (5 * this->zoom / 100), anchorY );
-					SDL_RenderDrawLine( Screen::get()->getRenderer(), anchorX, anchorY + (5 * this->zoom / 100), anchorX, anchorY - (5 * this->zoom / 100) );
-				}
+					this->origin.render( Color( 0, 255, 0 ), (5 * this->zoom / 100) );
 				
 				// Render each bounding boxes (green)
 				if( this->boundingBoxesRenderingState )
 				{
-					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 255, 0, 255 );
-					
 					for( int i = 0 ; i < frame->getBoundingBoxesCount() ; i++ )
 					{
-						Box boundingBox = frame->getBoundingBox( i );
-						SDL_Rect bRect;
-						bRect.x = this->origin.getX() + ((boundingBox.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100);
-						bRect.y = this->origin.getY() + ((boundingBox.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100);
-						bRect.w = (boundingBox.getWidth() * this->zoom / 100 );
-						bRect.h = (boundingBox.getHeight() * this->zoom / 100 );
-						
-						SDL_RenderDrawRect( Screen::get()->getRenderer(), &bRect );
+						Box boundingBox( frame->getBoundingBox( i ) );
+						boundingBox.getOrigin().move( this->origin.getX() + ((boundingBox.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100), this->origin.getY() + ((boundingBox.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100) );
+						boundingBox.resize( boundingBox.getWidth() * this->zoom / 100, boundingBox.getHeight() * this->zoom / 100 );
+						boundingBox.render( Color( 0, 255, 0 ) );
 					}
 				}
 				
 				// Render each attack areas (red)
 				if( this->attackAreasRenderingState )
 				{
-					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0xFF, 0, 0, 255 );
-					
 					for( int i = 0 ; i < frame->getAttackAreasCount() ; i++ )
 					{
-						Box attackArea = frame->getAttackArea( i );
-						SDL_Rect bRect;
-						bRect.x = this->origin.getX() + ((attackArea.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100);
-						bRect.y = this->origin.getY() + ((attackArea.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100);
-						bRect.w = (attackArea.getWidth() * this->zoom / 100 );
-						bRect.h = (attackArea.getHeight() * this->zoom / 100 );
-						
-						SDL_RenderDrawRect( Screen::get()->getRenderer(), &bRect );
+						Box attackArea( frame->getAttackArea( i ) );
+						attackArea.getOrigin().move( this->origin.getX() + ((attackArea.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100), this->origin.getY() + ((attackArea.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100) );
+						attackArea.resize( attackArea.getWidth() * this->zoom / 100, attackArea.getHeight() * this->zoom / 100 );
+						attackArea.render( Color( 255, 0, 0 ) );
 					}
 				}
 				
 				// Render each defence areas (blue)
 				if( this->defenceAreasRenderingState )
 				{
-					SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 0, 0, 255, 255 );
-					
 					for( int i = 0 ; i < frame->getDefenceAreasCount() ; i++ )
 					{
-						Box defenceArea = frame->getDefenceArea( i );
-						SDL_Rect bRect;
-						bRect.x = this->origin.getX() + ((defenceArea.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100);
-						bRect.y = this->origin.getY() + ((defenceArea.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100);
-						bRect.w = (defenceArea.getWidth() * this->zoom / 100 );
-						bRect.h = (defenceArea.getHeight() * this->zoom / 100 );
-						
-						SDL_RenderDrawRect( Screen::get()->getRenderer(), &bRect );
+						Box defenceArea( frame->getDefenceArea( i ) );
+						defenceArea.getOrigin().move( this->origin.getX() + ((defenceArea.getOrigin().getX() - frame->getAnchor().getX()) * this->zoom / 100), this->origin.getY() + ((defenceArea.getOrigin().getY() - frame->getAnchor().getY()) * this->zoom / 100) );
+						defenceArea.resize( defenceArea.getWidth() * this->zoom / 100, defenceArea.getHeight() * this->zoom / 100 );
+						defenceArea.render( Color( 0, 0, 255 ) );
 					}
 				}
 			}
