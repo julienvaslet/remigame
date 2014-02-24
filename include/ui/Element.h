@@ -9,10 +9,12 @@ using namespace std;
 
 namespace ui
 {
+	typedef void (*Event)( Element * );
+	
 	class Element : public Renderable
 	{
 		protected:
-			map<string, void *> events;
+			map<string, Event> events;
 			
 		public:
 			Element();
