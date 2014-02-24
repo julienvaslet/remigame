@@ -1,6 +1,8 @@
 #ifndef __GRAPHICS_POINT_H
 #define __GRAPHICS_POINT_H	1
 
+#include <graphics/Color.h>
+
 namespace graphics
 {
 	class Point
@@ -22,8 +24,8 @@ namespace graphics
 			void move( int x, int y );
 			void moveBy( int dx, int dy );
 			
-			void render( unsigned int size = 0 );
-			void render( unsigned int width, unsigned int height );
+			void render( Color& color, unsigned int size = 0 );
+			void render( Color& color, unsigned int width, unsigned int height );
 	};
 }
 
