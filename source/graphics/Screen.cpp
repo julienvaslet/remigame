@@ -142,7 +142,7 @@ namespace graphics
 		SDL_SetRenderDrawColor( this->renderer, 0, 0, 0, 255 );
 	}
 	
-	void Screen::setRenderColor( Color& color )
+	void Screen::setRenderColor( const Color& color )
 	{
 		SDL_SetRenderDrawColor( this->renderer, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() );
 	}

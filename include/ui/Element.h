@@ -9,9 +9,10 @@ using namespace std;
 
 namespace ui
 {
+	class Element;
 	typedef void (*Event)( Element * );
 	
-	class Element : public Renderable
+	class Element : graphics::Renderable
 	{
 		protected:
 			map<string, Event> events;
@@ -20,7 +21,7 @@ namespace ui
 			Element();
 			virtual ~Element();
 			
-			void setEvent( const string& event, Event callback );
+			void setEventHandler( const string& event, Event callback );
 			void trigger( const string& event );
 			virtual void render( unsigned int ticks ) = 0;
 	};

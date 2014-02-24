@@ -24,7 +24,7 @@ namespace graphics
 		
 			SDL_Renderer * getRenderer();
 			void resetRenderColor();
-			void setRenderColor( Color& color );
+			void setRenderColor( const Color& color );
 			void render();
 			void clear();	
 	};

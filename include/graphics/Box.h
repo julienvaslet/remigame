@@ -31,8 +31,11 @@ namespace graphics
 			void resizeBy( int dwidth, int dheight );
 			
 			void fillSDLRect( SDL_Rect * rect );
-			void render( Color& color );
-			void renderFilled( Color& color );
+			void render( const Color& color );
+			void renderFilled( const Color& color );
+			
+			bool isInCollision( const Point& point );
+			bool isInCollision( const Box& box );
 	};
 }
 

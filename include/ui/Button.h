@@ -1,7 +1,7 @@
 #ifndef __UI_BUTTON_H
 #define __UI_BUTTON_H	1
 
-#include <graphics/Renderable.h>
+#include <ui/Element.h>
 #include <graphics/Point.h>
 #include <graphics/Box.h>
 #include <graphics/Font.h>
@@ -14,12 +14,15 @@ using namespace std;
 
 namespace ui
 {
-	class Button : public Renderable
+	class Button : public Element
 	{
 		protected:
 			string fontName;
 			string value;
 			Box box;
+			
+			bool highlighted;
+			bool pushed;
 			
 			void autoResize();
 		
@@ -33,6 +36,11 @@ namespace ui
 			const string& getFont();
 			void setFont( const string& fontName, bool resize = true );
 			virtual void render( unsigned int time );
+			
+			static void eventMouseDown( Element * );
+			static void eventMouseUp( Element * );
+			static void eventMouseEnter( Element * );
+			static void eventMouseLeave( Element * );
 	};
 }
 

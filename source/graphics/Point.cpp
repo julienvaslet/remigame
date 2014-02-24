@@ -51,12 +51,12 @@ namespace graphics
 		this->y += dy;
 	}
 	
-	void Point::render( Color& color, unsigned int size )
+	void Point::render( const Color& color, unsigned int size )
 	{
 		this->render( color, size, size );
 	}
 	
-	void render( Color& color, unsigned int width, unsigned int height )
+	void Point::render( const Color& color, unsigned int width, unsigned int height )
 	{
 		Screen::get()->setRenderColor( color );
 		SDL_RenderDrawLine( Screen::get()->getRenderer(), this->x + width, this->y, this->x - width, this->y );

@@ -331,7 +331,7 @@ namespace graphics
 				
 				// Render the anchor point (green)
 				if( this->anchorPointRenderingState )
-					this->origin.render( Color( 0, 255, 0 ), (5 * this->zoom / 100) );
+					this->origin.render( Color( 0, 255, 0 ), static_cast<unsigned int>( 5 * this->zoom / 100 ) );
 				
 				// Render each bounding boxes (green)
 				if( this->boundingBoxesRenderingState )

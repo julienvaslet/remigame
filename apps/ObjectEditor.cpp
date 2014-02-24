@@ -30,6 +30,7 @@ int main( int argc, char ** argv )
 	unsigned int lastDrawTicks = 0;
 	
 	Button button( "font0", "Message d'essai" );
+	button.getBox().getOrigin().move( 10, 10 );
 
 	while( running )
 	{
@@ -40,6 +41,31 @@ int main( int argc, char ** argv )
 				case SDL_QUIT:
 				{
 					running = false;
+					break;
+				}
+				
+				case SDL_MOUSEMOTION:
+				{
+					if( button.getBox().isInCollision( Point( lastEvent.motion.x, lastEvent.motion.y ) ) )
+						button.trigger( "mouseenter" );
+					else
+						button.trigger( "mouseleave" );
+
+					break;
+				}
+				
+				case SDL_MOUSEBUTTONDOWN:
+				{
+					if( button.getBox().isInCollision( Point( lastEvent.button.x, lastEvent.button.y ) ) )
+						button.trigger( "mousedown" );
+						
+					break;
+				}
+				
+				case SDL_MOUSEBUTTONUP:
+				{
+					button.trigger( "mouseup" );
+					
 					break;
 				}
 			}

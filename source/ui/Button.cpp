@@ -1,11 +1,20 @@
 #include <ui/Button.h>
 #include <SDL2/SDL.h>
 
+#ifdef DEBUG0
+#include <iostream>
+using namespace std;
+#endif
+
 namespace ui
 {
-	Button::Button( const string& fontName, const string& value ) : fontName(fontName), value(value)
+	Button::Button( const string& fontName, const string& value ) : fontName(fontName), value(value), highlighted(false), pushed(false)
 	{
 		this->autoResize();
+		this->setEventHandler( "mousedown", Button::eventMouseDown );
+		this->setEventHandler( "mouseup", Button::eventMouseUp );
+		this->setEventHandler( "mouseenter", Button::eventMouseEnter );
+		this->setEventHandler( "mouseleave", Button::eventMouseLeave );
 	}
 	
 	Button::~Button()
@@ -41,7 +50,7 @@ namespace ui
 		int height = 0;
 		
 		Font::get( this->fontName )->renderSize( &width, &height, this->value );
-		this->box.resize( width + 2, height + 2 );
+		this->box.resize( width + 12, height + 6 );
 	}
 	
 	void Button::render( unsigned int time )
@@ -51,12 +60,60 @@ namespace ui
 		
 		Font::get( this->fontName )->renderSize( &width, &height, this->value );
 		
-		SDL_Rect rect;
-		this->box.fillSDLRect( &rect );
-		SDL_SetRenderDrawColor( Screen::get()->getRenderer(), 200, 200, 200, 255 );
-		SDL_RenderFillRect( Screen::get()->getRenderer(), &rect );
+		Color background( 0xAA, 0xAA, 0xAA );
+		Color highlighted( 0xBB, 0xBB, 0xBB );
+		Color topBorders( 0xDD, 0xDD, 0xDD );
+		Color bottomBorders( 0x55, 0x55, 0x55 );
 		
-		Font::get( this->fontName )->render( this->box.getOrigin().getX() + 1 + ((this->box.getWidth() - width) / 2), this->box.getOrigin().getY() + 1 + ((this->box.getHeight() - height) / 2), this->value );
+		Box box( this->box );
+		
+		if( !this->pushed )
+			box.render( topBorders );
+		else
+			box.render( bottomBorders );
+
+		box.getOrigin().moveBy( 1, 1 );
+		box.resizeBy( -1, -1 );
+		
+		if( !this->pushed )
+			box.render( bottomBorders );
+		else
+			box.render( topBorders );
+	
+		box.resizeBy( -1, -1 );
+		
+		if( !this->highlighted )
+			box.renderFilled( background );
+		else
+			box.renderFilled( highlighted );
+		
+		Font::get( this->fontName )->render( this->box.getOrigin().getX() + ( this->pushed ? 1 : 0 ) + 1 + ((this->box.getWidth() - width) / 2), this->box.getOrigin().getY() + ( this->pushed ? 1 : 0 ) + 1 + ((this->box.getHeight() - height) / 2), this->value );
+	}
+	
+	// Events
+	void Button::eventMouseDown( Element * element )
+	{
+		Button * button = reinterpret_cast<Button *>( element );
+		button->pushed = true;
+	}
+	
+	void Button::eventMouseUp( Element * element )
+	{
+		Button * button = reinterpret_cast<Button *>( element );
+		button->pushed = false;
+	}
+	
+	void Button::eventMouseEnter( Element * element )
+	{
+		Button * button = reinterpret_cast<Button *>( element );
+		button->highlighted = true;
+	}
+	
+	void Button::eventMouseLeave( Element * element )
+	{
+		Button * button = reinterpret_cast<Button *>( element );
+		button->highlighted = false;
+		button->pushed = false;
 	}
 }
 
