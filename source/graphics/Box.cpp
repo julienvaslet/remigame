@@ -1,5 +1,8 @@
 #include <graphics/Box.h>
+#include <graphics/Screen.h>
+
 #include <iostream>
+
 namespace graphics
 {
 	Box::Box() : origin(0,0), width(0), height(0)
@@ -65,5 +68,21 @@ namespace graphics
 		rect->y = this->getOrigin().getY();
 		rect->w = this->width;
 		rect->h = this->height;
+	}
+	
+	void Box::render( Color& color )
+	{
+		Screen::get()->setRenderColor( color );
+		SDL_Rect rect;
+		this->fillSDLRect( &rect );
+		SDL_RenderDrawRect( Screen::get()->getRenderer(), &rect );
+	}
+	
+	void Box::renderFilled( Color& color )
+	{
+		Screen::get()->setRenderColor( color );
+		SDL_Rect rect;
+		this->fillSDLRect( &rect );
+		SDL_RenderFillRect( Screen::get()->getRenderer(), &rect );
 	}
 }
