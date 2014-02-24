@@ -18,6 +18,7 @@ namespace ui
 			Element();
 			virtual ~Element();
 			
+			void setEvent( const string& event, void * callback );
 			void trigger( const string& event );
 			virtual void render( unsigned int ticks ) = 0;
 	};
