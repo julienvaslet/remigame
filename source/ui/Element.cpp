@@ -10,6 +10,11 @@ namespace ui
 	{
 	}
 	
+	Box& Button::getBox()
+	{
+		return this->box;
+	}
+	
 	void Element::addEventHandler( const string& event, Event callback )
 	{
 		map<string, vector<Event> >::iterator it = this->events.find( event );
