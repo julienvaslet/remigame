@@ -1,4 +1,5 @@
 #include <ui/UserInterface.h>
+#include <graphics/Point.h>
 
 namespace ui
 {
@@ -39,10 +40,15 @@ namespace ui
 				{
 					if( it->second.getBox().isInCollision( point ) )
 					{
-						it->second.trigger( "mouseenter" );
+						if( this->mouseoverElements.count( it->first ) == 0 )
+						{
+							this->mouseoverElements.insert( it->first );
+							it->second.trigger( "mouseenter" );
+						}
 					}
-					else
+					else if( this->mouseoverElements.count( it->first ) > 0 )
 					{
+						this->mouseoverElements.erase( it->first );
 						it->second.trigger( "mouseleave" );
 					}
 				}
@@ -58,6 +64,7 @@ namespace ui
 					if( it->second.getBox().isInCollision( point ) )
 					{
 						it->second.trigger( "mousedown" );
+						eventHandled = true;
 					}
 				}
 				
@@ -72,6 +79,7 @@ namespace ui
 					if( it->second.getBox().isInCollision( point ) )
 					{
 						it->second.trigger( "mouseup" );
+						eventHandled = true;
 					}
 				}
 				
