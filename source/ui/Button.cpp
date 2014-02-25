@@ -91,29 +91,33 @@ namespace ui
 	}
 	
 	// Events
-	void Button::eventMouseDown( Element * element )
+	bool Button::eventMouseDown( Element * element )
 	{
 		Button * button = reinterpret_cast<Button *>( element );
 		button->pushed = true;
+		return true;
 	}
 	
-	void Button::eventMouseUp( Element * element )
+	bool Button::eventMouseUp( Element * element )
 	{
 		Button * button = reinterpret_cast<Button *>( element );
 		button->pushed = false;
+		return true;
 	}
 	
-	void Button::eventMouseEnter( Element * element )
+	bool Button::eventMouseEnter( Element * element )
 	{
 		Button * button = reinterpret_cast<Button *>( element );
 		button->highlighted = true;
+		return true;
 	}
 	
-	void Button::eventMouseLeave( Element * element )
+	bool Button::eventMouseLeave( Element * element )
 	{
 		Button * button = reinterpret_cast<Button *>( element );
 		button->highlighted = false;
 		button->pushed = false;
+		return true;
 	}
 }
 
