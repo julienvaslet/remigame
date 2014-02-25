@@ -10,18 +10,18 @@ using namespace std;
 namespace ui
 {
 	class Element;
-	typedef void (*Event)( Element * );
+	typedef bool (*Event)( Element * );
 	
 	class Element : graphics::Renderable
 	{
 		protected:
-			map<string, Event> events;
+			map<string, vector<Event>> events;
 			
 		public:
 			Element();
 			virtual ~Element();
 			
-			void setEventHandler( const string& event, Event callback );
+			void addEventHandler( const string& event, Event callback );
 			void trigger( const string& event );
 			virtual void render( unsigned int ticks ) = 0;
 	};
