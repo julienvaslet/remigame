@@ -37,10 +37,10 @@ namespace ui
 			void setFont( const string& fontName, bool resize = true );
 			virtual void render( unsigned int time );
 			
-			static void eventMouseDown( Element * );
-			static void eventMouseUp( Element * );
-			static void eventMouseEnter( Element * );
-			static void eventMouseLeave( Element * );
+			static bool eventMouseDown( Element * );
+			static bool eventMouseUp( Element * );
+			static bool eventMouseEnter( Element * );
+			static bool eventMouseLeave( Element * );
 	};
 }
 
