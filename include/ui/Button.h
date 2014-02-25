@@ -19,7 +19,6 @@ namespace ui
 		protected:
 			string fontName;
 			string value;
-			Box box;
 			
 			bool highlighted;
 			bool pushed;
@@ -30,7 +29,6 @@ namespace ui
 			Button( const string& fontName, const string& value );
 			virtual ~Button();
 			
-			Box& getBox();
 			const string& getValue();
 			void setValue( const string& value, bool resize = true );
 			const string& getFont();
