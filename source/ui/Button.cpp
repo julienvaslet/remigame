@@ -21,11 +21,6 @@ namespace ui
 	{
 	}
 	
-	Box& Button::getBox()
-	{
-		return this->box;
-	}
-	
 	const string& Button::getValue()
 	{
 		return this->value;
