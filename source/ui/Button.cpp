@@ -11,10 +11,10 @@ namespace ui
 	Button::Button( const string& fontName, const string& value ) : fontName(fontName), value(value), highlighted(false), pushed(false)
 	{
 		this->autoResize();
-		this->setEventHandler( "mousedown", Button::eventMouseDown );
-		this->setEventHandler( "mouseup", Button::eventMouseUp );
-		this->setEventHandler( "mouseenter", Button::eventMouseEnter );
-		this->setEventHandler( "mouseleave", Button::eventMouseLeave );
+		this->addEventHandler( "mousedown", Button::eventMouseDown );
+		this->addEventHandler( "mouseup", Button::eventMouseUp );
+		this->addEventHandler( "mouseenter", Button::eventMouseEnter );
+		this->addEventHandler( "mouseleave", Button::eventMouseLeave );
 	}
 	
 	Button::~Button()
