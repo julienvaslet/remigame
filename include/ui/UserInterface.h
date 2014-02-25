@@ -15,6 +15,7 @@ namespace ui
 	{
 		protected:
 			map<string, Element> elements;
+			set<string> mouseoverElements;
 		
 		public:
 			UserInterface();
