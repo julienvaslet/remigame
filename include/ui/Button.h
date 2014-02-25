@@ -2,8 +2,6 @@
 #define __UI_BUTTON_H	1
 
 #include <ui/Element.h>
-#include <graphics/Point.h>
-#include <graphics/Box.h>
 #include <graphics/Font.h>
 #include <graphics/Screen.h>
 

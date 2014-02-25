@@ -1,4 +1,7 @@
 #include <ui/Button.h>
+#include <graphics/Point.h>
+#include <graphics/Box.h>
+
 #include <SDL2/SDL.h>
 
 #ifdef DEBUG0
@@ -15,10 +18,17 @@ namespace ui
 		this->addEventHandler( "mouseup", Button::eventMouseUp );
 		this->addEventHandler( "mouseenter", Button::eventMouseEnter );
 		this->addEventHandler( "mouseleave", Button::eventMouseLeave );
+		
+		#ifdef DEBUG0
+		cout << "[Element#" << this << "] Button created." << endl;
+		#endif
 	}
 	
 	Button::~Button()
 	{
+		#ifdef DEBUG0
+		cout << "[Element#" << this << "] Button destroyed." << endl;
+		#endif
 	}
 	
 	const string& Button::getValue()

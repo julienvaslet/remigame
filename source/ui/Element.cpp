@@ -1,5 +1,10 @@
 #include <ui/Element.h>
 
+#ifdef DEBUG0
+#include <iostream>
+using namespace std;
+#endif
+
 namespace ui
 {
 	Element::Element()
@@ -10,7 +15,7 @@ namespace ui
 	{
 	}
 	
-	Box& Button::getBox()
+	graphics::Box& Element::getBox()
 	{
 		return this->box;
 	}
@@ -35,13 +40,23 @@ namespace ui
 		
 		if( it != this->events.end() )
 		{
+			#ifdef DEBUG0
+			cout << "[Element#" << this << "] Triggered event \"" << event << "\"." << endl;
+			#endif
+			
 			for( vector<Event>::reverse_iterator itEvent = it->second.rbegin() ; itEvent != it->second.rend() ; itEvent++ )
 			{
 				if( *itEvent != NULL )
 				{
 					// This could trigger a bad behavior if events are badly setted.
 					if( (*itEvent)( this ) == false )
+					{
+						#ifdef DEBUG0
+						cout << "[Element#" << this << "] Event propagation stopped." << endl;
+						#endif
+						
 						break;
+					}
 				}
 				else
 					break;
