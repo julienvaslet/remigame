@@ -15,7 +15,7 @@ namespace ui
 	class Element : graphics::Renderable
 	{
 		protected:
-			map<string, vector<Event>> events;
+			map<string, vector<Event> > events;
 			
 		public:
 			Element();
