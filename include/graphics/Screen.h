@@ -26,7 +26,9 @@ namespace graphics
 			void resetRenderColor();
 			void setRenderColor( const Color& color );
 			void render();
-			void clear();	
+			void clear();
+			int getWidth();
+			int getHeight();
 	};
 }
 
