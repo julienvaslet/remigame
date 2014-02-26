@@ -146,4 +146,36 @@ namespace graphics
 	{
 		SDL_SetRenderDrawColor( this->renderer, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() );
 	}
+	
+	int Screen::getWidth()
+	{
+		int width = 0;
+		int height = 0;
+		
+		if( SDL_GetRendererOutputSize( this->renderer, &width, &height ) != 0 )
+		{
+			width = 0;
+			#ifdef DEBUG0
+			cout << "[Screen] An error has occured when output size was requested: " << SDL_GetError() << endl;
+			#endif
+		}
+		
+		return width;
+	}
+	
+	int Screen::getHeight()
+	{
+		int width = 0;
+		int height = 0;
+		
+		if( SDL_GetRendererOutputSize( this->renderer, &width, &height ) != 0 )
+		{
+			height = 0;
+			#ifdef DEBUG0
+			cout << "[Screen] An error has occured when output size was requested: " << SDL_GetError() << endl;
+			#endif
+		}
+		
+		return height;
+	}
 }
