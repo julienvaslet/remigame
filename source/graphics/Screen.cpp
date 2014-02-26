@@ -35,7 +35,7 @@ namespace graphics
 		}
 	}
 		
-	bool Screen::initialize( const char * title, int width, int height )
+	bool Screen::initialize( const char * title, int width, int height, bool resizable )
 	{
 		bool success = true;
 		int imageFlags = IMG_INIT_PNG;
@@ -58,11 +58,11 @@ namespace graphics
 			SDL_WINDOWPOS_CENTERED,
 			width,
 			height,
-			( width == 0 || height == 0 ) ? SDL_WINDOW_FULLSCREEN : 0
+			( width == 0 || height == 0 ) ? SDL_WINDOW_FULLSCREEN : ( resizable ? SDL_WINDOW_RESIZABLE : 0 )
 		);
 	
 		// do no specify width & height and put in fullscreen
-		// then => SDL_RenderSetLogicalSize( renderer, 800, 600 );
+		// then => SDL_RenderSetLogicalSize( renderer, 800, 600 ); ?
 
 		if( screen->window == NULL )
 		{
