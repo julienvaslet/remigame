@@ -92,7 +92,7 @@ namespace ui
 		else
 			box.renderFilled( highlighted );
 		
-		Font::get( this->fontName )->render( this->box.getOrigin().getX() + ( this->pushed ? 1 : 0 ) + 1 + ((this->box.getWidth() - width) / 2), this->box.getOrigin().getY() + ( this->pushed ? 1 : 0 ) + 1 + ((this->box.getHeight() - height) / 2), this->value );
+		Font::get( this->fontName )->render( this->box.getOrigin().getX() + ( this->pushed ? -1 : 0 ) + 1 + ((this->box.getWidth() - width) / 2), this->box.getOrigin().getY() + ( this->pushed ? -1 : 0 ) + 1 + ((this->box.getHeight() - height) / 2), this->value );
 	}
 	
 	// Events
