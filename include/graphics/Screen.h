@@ -18,7 +18,7 @@ namespace graphics
 			~Screen();
 		
 		public:
-			static bool initialize( const char * title, int width = 800, int height = 600 );
+			static bool initialize( const char * title, int width = 800, int height = 600, bool resizable = false );
 			static Screen * get();
 			static void destroy();
 		
