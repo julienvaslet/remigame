@@ -29,6 +29,9 @@ namespace graphics
 			void setSpeedModulation( int modulation );
 			void addFrame( const Frame& frame );
 			
+			unsigned int getFrameCount() const;
+			Frame * getFrameByIndex( unsigned int index );
+			
 			void reset();
 	};
 }
