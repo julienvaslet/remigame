@@ -30,7 +30,7 @@ namespace graphics
 			void addFrame( const Frame& frame );
 			
 			unsigned int getFrameCount() const;
-			Frame * getFrameByIndex( unsigned int index );
+			Frame& getFrameByIndex( unsigned int index );
 			
 			void reset();
 	};
