@@ -63,5 +63,15 @@ namespace graphics
 	{
 		this->frames.push_back( frame );
 	}
+	
+	unsigned int Animation::getFrameCount() const
+	{
+		return this->frames.size();
+	}
+	
+	Frame& Animation::getFrameByIndex( unsigned int index )
+	{
+		return this->frames[index];
+	}
 }
 
