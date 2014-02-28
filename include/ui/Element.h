@@ -18,6 +18,7 @@ namespace ui
 	{
 		protected:
 			graphics::Box box;
+			bool disabledState;
 			map<string, vector<Event> > events;
 			
 		public:
@@ -28,6 +29,8 @@ namespace ui
 			void addEventHandler( const string& event, Event callback );
 			void trigger( const string& event );
 			virtual void render( unsigned int ticks ) = 0;
+			bool isDisabled() const;
+			void setDisabledState( bool state );
 	};
 }
 
