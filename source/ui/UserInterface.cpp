@@ -13,9 +13,22 @@ namespace ui
 			delete it->second;
 	}
 	
-	void UserInterface::addElement( const string& name, Element * element )
+	void UserInterface::addElement( const string& name, Element * element, bool hidden )
 	{
 		this->elements[name] = element;
+		
+		if( hidden )
+			this->hideElement( name );
+	}
+	
+	void UserInterface::showElement( const string& name )
+	{
+		this->mouseoverElements.erase( name );
+	}
+	
+	void UserInterface::hideElement( const string& name )
+	{
+		this->mouseoverElements.insert( name );
 	}
 	
 	Element * UserInterface::getElement( const string& name )
@@ -26,7 +39,10 @@ namespace ui
 	void UserInterface::render( unsigned int ticks )
 	{
 		for( map<string, Element *>::iterator it = this->elements.begin() ; it != this->elements.end() ; it++ )
-			it->second->render( ticks );
+		{
+			if( this->hiddenElement.count( it->first ) == 0 )
+				it->second->render( ticks );
+		}
 	}
 	
 	bool UserInterface::dispatchEvent( const SDL_Event * event )
