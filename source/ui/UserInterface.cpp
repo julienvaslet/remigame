@@ -56,18 +56,21 @@ namespace ui
 				graphics::Point point( event->motion.x, event->motion.y );
 				for( map<string, Element *>::iterator it = this->elements.begin() ; it != this->elements.end() ; it++ )
 				{
-					if( it->second->getBox().isInCollision( point ) )
+					if( this->hiddenElements.count( it->first ) == 0 && !it->second->isDisabled() )
 					{
-						if( this->mouseoverElements.count( it->first ) == 0 )
+						if( it->second->getBox().isInCollision( point ) )
 						{
-							this->mouseoverElements.insert( it->first );
-							it->second->trigger( "mouseenter" );
+							if( this->mouseoverElements.count( it->first ) == 0 )
+							{
+								this->mouseoverElements.insert( it->first );
+								it->second->trigger( "mouseenter" );
+							}
 						}
-					}
-					else if( this->mouseoverElements.count( it->first ) > 0 )
-					{
-						this->mouseoverElements.erase( it->first );
-						it->second->trigger( "mouseleave" );
+						else if( this->mouseoverElements.count( it->first ) > 0 )
+						{
+							this->mouseoverElements.erase( it->first );
+							it->second->trigger( "mouseleave" );
+						}
 					}
 				}
 
@@ -79,10 +82,13 @@ namespace ui
 				graphics::Point point( event->button.x, event->button.y );
 				for( map<string, Element *>::iterator it = this->elements.begin() ; it != this->elements.end() ; it++ )
 				{
-					if( it->second->getBox().isInCollision( point ) )
+					if( this->hiddenElements.count( it->first ) == 0 && !it->second->isDisabled() )
 					{
-						it->second->trigger( "mousedown" );
-						eventHandled = true;
+						if( it->second->getBox().isInCollision( point ) )
+						{
+							it->second->trigger( "mousedown" );
+							eventHandled = true;
+						}
 					}
 				}
 				
@@ -94,10 +100,13 @@ namespace ui
 				graphics::Point point( event->button.x, event->button.y );
 				for( map<string, Element *>::iterator it = this->elements.begin() ; it != this->elements.end() ; it++ )
 				{
-					if( it->second->getBox().isInCollision( point ) )
+					if( this->hiddenElements.count( it->first ) == 0 && !it->second->isDisabled() )
 					{
-						it->second->trigger( "mouseup" );
-						eventHandled = true;
+						if( it->second->getBox().isInCollision( point ) )
+						{
+							it->second->trigger( "mouseup" );
+							eventHandled = true;
+						}
 					}
 				}
 				
