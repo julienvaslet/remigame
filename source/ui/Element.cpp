@@ -7,7 +7,7 @@ using namespace std;
 
 namespace ui
 {
-	Element::Element()
+	Element::Element() : disabledState(false)
 	{
 	}
 	
@@ -62,5 +62,15 @@ namespace ui
 					break;
 			}
 		}
+	}
+
+	bool Element::isDisabled() const
+	{
+		return this->disabledState;
+	}
+	
+	void setDisabledState( bool state )
+	{
+		this->disabledState = state;
 	}
 }
