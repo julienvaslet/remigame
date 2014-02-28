@@ -257,12 +257,12 @@ int main( int argc, char ** argv )
 	editorUi.getElement( "lbl_animation" )->getBox().getOrigin().move( currentScreenWidth - 245, 340 );
 	panelButtons.push_back( "lbl_animation" );
 	
-	// Loading & saving status labels
-	editorUi.addElement( "lbl_loading", new Label( "font0", "Drop a XML or PNG file here" ) );
+	// Loading & saving status hidden labels
+	editorUi.addElement( "lbl_loading", new Label( "font0", "Drop a XML or PNG file here" ), true );
 	editorUi.getElement( "lbl_loading" )->getBox().resize( currentScreenWidth, Screen::get()->getHeight() );
 	panelButtons.push_back( "lbl_loading" );
 	
-	editorUi.addElement( "lbl_saving", new Label( "font0", "Saving the XML file..." ) );
+	editorUi.addElement( "lbl_saving", new Label( "font0", "Saving the XML file..." ), true );
 	editorUi.getElement( "lbl_saving" )->getBox().resize( currentScreenWidth, Screen::get()->getHeight() );
 	panelButtons.push_back( "lbl_saving" );
 	
