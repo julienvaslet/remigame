@@ -18,12 +18,15 @@ namespace ui
 		protected:
 			map<string, Element *> elements;
 			set<string> mouseoverElements;
+			set<string> hiddenElements;
 		
 		public:
 			UserInterface();
 			virtual ~UserInterface();
 			
-			void addElement( const string& name, Element * element );
+			void addElement( const string& name, Element * element, bool hidden = false );
+			void showElement( const string& name );
+			void hideElement( const string& name );
 			Element * getElement( const string& name );
 			
 			virtual void render( unsigned int ticks );
