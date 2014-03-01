@@ -541,7 +541,7 @@ int main( int argc, char ** argv )
 					stringstream toolBoxInfo;
 					toolBoxInfo << "x: " << toolBox.getOrigin().getX() - origin.getX() << " y: " << toolBox.getOrigin().getY() - origin.getY();
 					Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, toolBoxInfo.str() );
-					Font::get( "font0" )->render( toolBox.getOrigin().getX() + ((toolBox.getWidth() - infoWidth) / 2), toolBox.getOrigin().getY() + (toolBox.getHeight() / 2) - infoHeight, toolBoxInfo.str() );
+					Font::get( "font0" )->render( toolBox.getOrigin().getX() - (infoWidth / 2), toolBox.getOrigin().getY() - infoHeight, toolBoxInfo.str() );
 				}
 				else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
 				{
