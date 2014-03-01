@@ -33,6 +33,14 @@ namespace ui
 		else
 			this->events[event].push_back( callback );
 	}
+	
+	void Element::removeEventHandler( const string& event )
+	{
+		map<string, vector<Event> >::iterator it = this->events.find( event );
+		
+		if( it != this->events.end() )
+			this->events.erase( it );
+	}
 
 	void Element::trigger( const string& event )
 	{
@@ -69,7 +77,7 @@ namespace ui
 		return this->disabledState;
 	}
 	
-	void setDisabledState( bool state )
+	void Element::setDisabledState( bool state )
 	{
 		this->disabledState = state;
 	}

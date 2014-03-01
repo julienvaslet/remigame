@@ -34,6 +34,10 @@ namespace ui
 	
 	void Label::setValue( const string& value, bool resize )
 	{
+		this->value = value;
+		
+		if( resize )
+			this->autoResize();
 	}
 	
 	const string& Label::getFont()
@@ -43,6 +47,10 @@ namespace ui
 	
 	void Label::setFont( const string& fontName, bool resize )
 	{
+		this->fontName = fontName;
+		
+		if( resize )
+			this->autoResize();
 	}
 
 	void Label::autoResize()

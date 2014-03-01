@@ -23,12 +23,12 @@ namespace ui
 	
 	void UserInterface::showElement( const string& name )
 	{
-		this->mouseoverElements.erase( name );
+		this->hiddenElements.erase( name );
 	}
 	
 	void UserInterface::hideElement( const string& name )
 	{
-		this->mouseoverElements.insert( name );
+		this->hiddenElements.insert( name );
 	}
 	
 	Element * UserInterface::getElement( const string& name )
@@ -40,7 +40,7 @@ namespace ui
 	{
 		for( map<string, Element *>::iterator it = this->elements.begin() ; it != this->elements.end() ; it++ )
 		{
-			if( this->hiddenElement.count( it->first ) == 0 )
+			if( this->hiddenElements.count( it->first ) == 0 )
 				it->second->render( ticks );
 		}
 	}

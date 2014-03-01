@@ -1,5 +1,9 @@
 #include <graphics/Color.h>
 #include <sstream>
+#include <cstdlib>
+
+#include <iostream> 
+using namespace std;
 
 namespace graphics
 {
@@ -21,30 +25,15 @@ namespace graphics
 	}
 	
 	void Color::parseHexString( const string& hexstring )
-	{
-		istringstream iss;
-		int value = 0;
-		
+	{		
 		if( hexstring.length() >= 6 )
 		{
-			iss.str( hexstring.substr( 0, 2 ) );
-			iss >> hex >> value;
-			this->red = static_cast<unsigned char>( value );
-			
-			iss.str( hexstring.substr( 2, 2 ) );
-			iss >> hex >> value;
-			this->green = static_cast<unsigned char>( value );
-			
-			iss.str( hexstring.substr( 4, 2 ) );
-			iss >> hex >> value;
-			this->blue = static_cast<unsigned char>( value );
+			this->red = static_cast<unsigned char>( strtol( hexstring.substr( 0, 2 ).c_str(), 0, 16 ) );
+			this->green = static_cast<unsigned char>( strtol( hexstring.substr( 2, 2 ).c_str(), 0, 16 ) );
+			this->blue = static_cast<unsigned char>( strtol( hexstring.substr( 4, 2 ).c_str(), 0, 16 ) );
 			
 			if( hexstring.length() >= 8 )
-			{
-				iss.str( hexstring.substr( 6, 2 ) );
-				iss >> hex >> value;
-				this->alpha = static_cast<unsigned char>( value );
-			}
+				this->alpha = static_cast<unsigned char>( strtol( hexstring.substr( 6, 2 ).c_str(), 0, 16 ) );
 		}
 	}
 	

@@ -38,6 +38,10 @@ namespace ui
 	
 	void Button::setValue( const string& value, bool resize )
 	{
+		this->value = value;
+		
+		if( resize )
+			this->autoResize();
 	}
 	
 	const string& Button::getFont()
@@ -47,6 +51,10 @@ namespace ui
 	
 	void Button::setFont( const string& fontName, bool resize )
 	{
+		this->fontName = fontName;
+		
+		if( resize )
+			this->autoResize();
 	}
 
 	void Button::autoResize()

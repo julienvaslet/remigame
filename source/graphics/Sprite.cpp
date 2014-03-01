@@ -41,9 +41,7 @@ namespace graphics
 		#ifdef DEBUG0
 		cout << "[Sprite#" << this << "] Loading texture file \"" << filename << "\"." << endl;
 		#endif
-	
-		//SDL_Surface * surface = SDL_LoadBMP( filename );
-		//SDL_Surface * surface = IMG_LoadTyped_RW( SDL_RWFromFile( filename, "rb" ), 1, "PNG" );
+
 		SDL_Surface * surface = IMG_Load( filename );
 	
 		if( surface != NULL )

@@ -28,9 +28,9 @@ namespace ui
 			virtual ~Button();
 			
 			const string& getValue();
-			void setValue( const string& value, bool resize = true );
+			void setValue( const string& value, bool resize = false );
 			const string& getFont();
-			void setFont( const string& fontName, bool resize = true );
+			void setFont( const string& fontName, bool resize = false );
 			virtual void render( unsigned int time );
 			
 			static bool eventMouseDown( Element * );

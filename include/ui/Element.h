@@ -27,6 +27,7 @@ namespace ui
 			
 			graphics::Box& getBox();
 			void addEventHandler( const string& event, Event callback );
+			void removeEventHandler( const string& event );
 			void trigger( const string& event );
 			virtual void render( unsigned int ticks ) = 0;
 			bool isDisabled() const;
