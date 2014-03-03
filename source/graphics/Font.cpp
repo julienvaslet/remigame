@@ -235,7 +235,10 @@ namespace graphics
 				dstRect.x += dstRect.w;
 			}
 			else if( text[i] == '\n' )
+			{
+				dstRect.x = x;
 				dstRect.y += dstRect.h;
+			}
 			
 			i++;
 		}
