@@ -15,8 +15,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
-
-// TODO: make a function who translate with precision currentZoom to real sizes
+#include <cmath>
 
 using namespace graphics;
 using namespace ui;
@@ -45,6 +44,8 @@ bool saveingState = false;
 void cleanObjectVariables();
 void adjustSpriteToScreen();
 void synchronizeLabel( const string& name, const string& value );
+int applyZoom( int value );
+int revertZoom( int value );
 
 // Events
 bool changeTool( Element * element );
@@ -357,10 +358,10 @@ int main( int argc, char ** argv )
 								// Restrict to the current sprite
 								if( sprite != NULL )
 								{
-									if( toolBox.getOrigin().getX() + toolBox.getWidth() > origin.getX() + (sprite->getWidth() * currentZoom / 100) ) toolBox.setWidth( origin.getX() + (sprite->getWidth() * currentZoom / 100) - toolBox.getOrigin().getX() );
+									if( toolBox.getOrigin().getX() + toolBox.getWidth() > origin.getX() + applyZoom( sprite->getWidth() ) toolBox.setWidth( origin.getX() + applyZoom( sprite->getWidth() ) - toolBox.getOrigin().getX() );
 									else if( toolBox.getOrigin().getX() + toolBox.getWidth() < origin.getX() ) toolBox.setWidth( origin.getX() - toolBox.getOrigin().getX() + 1 );
 									
-									if( toolBox.getOrigin().getY() + toolBox.getHeight() > origin.getY() + (sprite->getHeight() * currentZoom / 100) ) toolBox.setHeight( origin.getY() + (sprite->getHeight() * currentZoom / 100) - toolBox.getOrigin().getY() );
+									if( toolBox.getOrigin().getY() + toolBox.getHeight() > origin.getY() + applyZoom( sprite->getHeight() ) ) toolBox.setHeight( origin.getY() + applyZoom( sprite->getHeight() ) - toolBox.getOrigin().getY() );
 									else if( toolBox.getOrigin().getY() + toolBox.getHeight() < origin.getY() ) toolBox.setHeight( origin.getY() - toolBox.getOrigin().getY() + 1);
 								}
 							}
@@ -403,10 +404,10 @@ int main( int argc, char ** argv )
 								if( sprite != NULL )
 								{
 									if( toolBox.getOrigin().getX() < origin.getX() ) toolBox.getOrigin().setX( origin.getX() );
-									else if( toolBox.getOrigin().getX() > origin.getX() + (sprite->getWidth() * currentZoom / 100) ) toolBox.getOrigin().setX( origin.getX() + (sprite->getWidth() * currentZoom / 100) - 1 );
+									else if( toolBox.getOrigin().getX() > origin.getX() + applyZoom( sprite->getWidth() ) ) toolBox.getOrigin().setX( origin.getX() + applyZoom( sprite->getWidth() ) - 1 );
 									
 									if( toolBox.getOrigin().getY() < origin.getY() ) toolBox.getOrigin().setY( origin.getY() );
-									else if( toolBox.getOrigin().getY() > origin.getY() + (sprite->getHeight() * currentZoom / 100) ) toolBox.getOrigin().setY( origin.getY() + (sprite->getHeight() * currentZoom / 100) - 1 );
+									else if( toolBox.getOrigin().getY() > origin.getY() + applyZoom( sprite->getHeight() ) ) toolBox.getOrigin().setY( origin.getY() + applyZoom( sprite->getHeight() ) - 1 );
 								}
 							}
 							
@@ -524,7 +525,7 @@ int main( int argc, char ** argv )
 				srcRect.h = sprite->getHeight();
 				
 				SDL_Rect dstRect;
-				Box spriteBox( origin, sprite->getWidth() * currentZoom / 100, sprite->getHeight() * currentZoom / 100 );
+				Box spriteBox( origin, applyZoom( sprite->getWidth() ), applyZoom( sprite->getHeight() ) );
 				spriteBox.fillSDLRect( &dstRect );
 				
 				SDL_RenderCopy( Screen::get()->getRenderer(), sprite->getTexture(), &srcRect, &dstRect );
@@ -562,7 +563,7 @@ int main( int argc, char ** argv )
 					infoWidth = 0;
 					infoHeight = 0;
 					toolBoxInfo.str( "" );
-					toolBoxInfo << toolBox.getWidth() * 100 / currentZoom << " x " << toolBox.getHeight() * 100 / currentZoom;
+					toolBoxInfo << revertZoom( toolBox.getWidth() ) << " x " << revertZoom( toolBox.getHeight() );
 					Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, toolBoxInfo.str() );
 					Font::get( "font0" )->render( toolBox.getOrigin().getX() + ((toolBox.getWidth() - infoWidth) / 2), toolBox.getOrigin().getY() + (toolBox.getHeight() / 2), toolBoxInfo.str() );
 				}
@@ -617,12 +618,22 @@ void cleanObjectVariables()
 	synchronizeLabel( "lbl_zoom", ss.str() );
 }
 
+int applyZoom( int value )
+{
+	return static_cast<int>( round( static_cast<double>( value ) * static_cast<double>( currentZoom ) / 100.0 ) );
+}
+
+int revertZoom( int value )
+{
+	return static_cast<int>( round( static_cast<double>( value ) * 100.0 / static_cast<double>( currentZoom ) ) );
+}
+
 void adjustSpriteToScreen()
 {
 	int availableWidth = Screen::get()->getWidth() - 300;
 	int availableHeight = Screen::get()->getHeight();
-	int zoomOnWidth = static_cast<int>( static_cast<double>( availableWidth ) / static_cast<double>( sprite->getWidth() ) * 100 );
-	int zoomOnHeight = static_cast<int>( static_cast<double>( availableHeight ) / static_cast<double>( sprite->getHeight() ) * 100 );
+	int zoomOnWidth = static_cast<int>( static_cast<double>( availableWidth ) / static_cast<double>( sprite->getWidth() ) * 100.0 );
+	int zoomOnHeight = static_cast<int>( static_cast<double>( availableHeight ) / static_cast<double>( sprite->getHeight() ) * 100.0 );
 	currentZoom = zoomOnWidth > zoomOnHeight ? zoomOnHeight : zoomOnWidth;
 	
 	currentZoom -=  currentZoom % 5;
@@ -631,7 +642,7 @@ void adjustSpriteToScreen()
 	ss << currentZoom << " %";
 	synchronizeLabel( "lbl_zoom", ss.str() );
 	
-	origin.move( (availableWidth - (sprite->getWidth() * currentZoom / 100)) / 2, (availableHeight - (sprite->getHeight() * currentZoom / 100)) / 2 );
+	origin.move( (availableWidth - applyZoom( sprite->getWidth() )) / 2, (availableHeight - applyZoom( sprite->getHeight() )) / 2 );
 }
 
 void synchronizeLabel( const string& name, const string& value )
