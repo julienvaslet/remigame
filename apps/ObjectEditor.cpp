@@ -41,6 +41,8 @@ bool loadingState = false;
 bool saveingState = false;
 
 // Global functions
+bool loadSprite( const string& filename );
+bool loadObject( const string& filename );
 void cleanObjectVariables();
 void adjustSpriteToScreen();
 void synchronizeLabel( const string& name, const string& value );
@@ -52,6 +54,7 @@ bool changeTool( Element * element );
 bool decreaseZoom( Element * element );
 bool increaseZoom( Element * element );
 bool loadFile( Element * element );
+bool cancelLoading( Element * element );
 bool saveFile( Element * element );
 bool prevAnimation( Element * element );
 bool nextAnimation( Element * element );
@@ -285,9 +288,9 @@ int main( int argc, char ** argv )
 	panelButtons.push_back( "lbl_zoom" );
 	
 	// Loading & saving status hidden labels
-	// TODO: Add "\nClick here to cancel" and link to one event, but correctly handle new lines ;)
-	editorUi.addElement( "zlbl_loading", new Label( "font0", "Drop a XML or PNG file here" ), true );
+	editorUi.addElement( "zlbl_loading", new Label( "font0", "Drop a XML or PNG file here\nSimply click here to cancel" ), true );
 	editorUi.getElement( "zlbl_loading" )->getBox().resize( currentScreenWidth, Screen::get()->getHeight() );
+	editorUi.getElement( "zlbl_loading" )->addEventHandler( "mousedown", cancelLoading );
 	
 	editorUi.addElement( "zlbl_saving", new Label( "font0", "Saving the XML file..." ), true );
 	editorUi.getElement( "zlbl_saving" )->getBox().resize( currentScreenWidth, Screen::get()->getHeight() );
@@ -473,27 +476,13 @@ int main( int argc, char ** argv )
 					
 					if( filename.substr( filename.length() - 4, 4 ).compare( ".png" ) == 0 )
 					{
-						Sprite * nSprite = new Sprite( filename );
-						
-						if( nSprite->isLoaded() )
-						{
-							cleanObjectVariables();
-							sprite = nSprite;
-							
-							spriteFilename = filename;
-							objectFilename = filename.substr( 0, filename.length() - 4 ) + ".xml";
-							
-							adjustSpriteToScreen();
-						}
-						else
-						{
+						if( !loadSprite( filename ) )
 							cout << "[ObjectEditor] Unable to load sprite." << endl;
-							delete nSprite;
-						}
 					}
 					else if( filename.substr( filename.length() - 4, 4 ).compare( ".xml" ) == 0 )
 					{
-						cout << "[ObjectEditor] Object loading not supported." << endl;
+						if( !loadObject( filename ) )
+							cout << "[ObjectEditor] Unable to load object." << endl;
 					}
 					else
 						cout << "[ObjectEditor] Invalid extension." << endl;
@@ -530,8 +519,27 @@ int main( int argc, char ** argv )
 				
 				SDL_RenderCopy( Screen::get()->getRenderer(), sprite->getTexture(), &srcRect, &dstRect );
 				spriteBox.render( Color( 0xAA, 0xAA, 0xAA ) );
+			
+				// Render current animation frames
+				Animation * cAnimation = animations[animationsNames[currentAnimation]];
+				
+				for( unsigned int i = 0 ; i < cAnimation->getFrameCount() ; i++ )
+				{
+					Box fBox( cAnimation->getFrameByIndex( i ).getBox() );
+					fBox.getOrigin().moveBy( origin.getX(), origin.getY() );
+					fBox.render( Color( 0xFF, 0xFF, 0xFF ) );
+					
+					// Render anchor
+					
+					// Render bounding boxes
+					
+					// Render attack areas
+					
+					// Render defence areas
+				}
 			}
 			
+			// Render current tool
 			if( toolActive )
 			{
 				int infoWidth = 0;
@@ -577,6 +585,36 @@ int main( int argc, char ** argv )
 			actionPanel.render( Color( 0xAA, 0xAA, 0xAA ) );
 			
 			editorUi.render( ticks );
+			
+			// Render animation preview
+			Frame * frame = animations[animationsNames[currentAnimation]]->getFrame( ticks );
+			
+			if( frame != NULL )
+			{
+				// TODO: Compute local zoom based on each animation frame (get the max width & max height & take part of anchor point)
+				/*int frameZoom = 100;
+				SDL_Rect dstRect;
+				int anchorX = origin.getX();
+				int anchorY = origin.getY();
+				
+				dstRect.x = anchorX - (frame->getAnchor().getX() * frameZoom / 100.0);
+				dstRect.y = anchorY - (frame->getAnchor().getY() * frameZoom / 100.0);
+				dstRect.w = (frameZoom * frame->getBox().getWidth()) / 100;
+				dstRect.h = (frameZoom * frame->getBox().getHeight()) / 100;
+	
+				SDL_Rect srcRect;
+				frame->getBox().fillSDLRect( &srcRect );
+	
+				SDL_RenderCopy( Screen::get()->getRenderer(), sprite->getTexture(), &srcRect, &dstRect );*/
+				
+				// Render anchor
+				
+				// Render bounding boxes
+				
+				// Render attack areas
+				
+				// Render defence areas
+			}
 					
 			Screen::get()->render();	
 			lastDrawTicks = ticks;
@@ -732,4 +770,50 @@ bool changeTool( Element * element )
 	}
 	
 	return true;
+}
+
+bool cancelLoading( Element * element )
+{
+	editorUi.hideElement( "zlbl_loading" );
+	SDL_EventState( SDL_DROPFILE, SDL_DISABLE );
+	return true;
+}
+
+bool loadSprite( const string& filename )
+{
+	bool success = true;
+	Sprite * nSprite = new Sprite( filename );
+	
+	if( nSprite->isLoaded() )
+	{
+		cleanObjectVariables();
+		sprite = nSprite;
+		
+		spriteFilename = filename;
+		objectFilename = filename.substr( 0, filename.length() - 4 ) + ".xml";
+		
+		adjustSpriteToScreen();
+		
+		// Initialize each animation with one frame
+		Frame frame( Box( 0, 0, sprite->getWidth(), sprite->getHeight() ) );
+		
+		for( vector<string>::iterator it = animationsNames.begin() ; it != animationsNames.end() ; it++ )
+		{
+			animations[*it] = new Animation();
+			animations[*it]->addFrame( frame );
+		}
+	}
+	else
+	{
+		delete nSprite;
+		success = false;
+	}
+	
+	return success;
+}
+
+bool loadObject( const string& filename )
+{
+	cout << "[ObjectEditor] Object loading not supported." << endl;
+	return false;
 }
