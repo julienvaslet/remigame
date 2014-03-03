@@ -295,6 +295,9 @@ int main( int argc, char ** argv )
 	editorUi.addElement( "zlbl_saving", new Label( "font0", "Saving the XML file..." ), true );
 	editorUi.getElement( "zlbl_saving" )->getBox().resize( currentScreenWidth, Screen::get()->getHeight() );
 	
+	// TODO: DEBUG
+	loadSprite( "data/texture2.png" );
+	
 	while( running )
 	{
 		while( SDL_PollEvent( &lastEvent ) )
@@ -361,7 +364,7 @@ int main( int argc, char ** argv )
 								// Restrict to the current sprite
 								if( sprite != NULL )
 								{
-									if( toolBox.getOrigin().getX() + toolBox.getWidth() > origin.getX() + applyZoom( sprite->getWidth() ) toolBox.setWidth( origin.getX() + applyZoom( sprite->getWidth() ) - toolBox.getOrigin().getX() );
+									if( toolBox.getOrigin().getX() + toolBox.getWidth() > origin.getX() + applyZoom( sprite->getWidth() ) ) toolBox.setWidth( origin.getX() + applyZoom( sprite->getWidth() ) - toolBox.getOrigin().getX() );
 									else if( toolBox.getOrigin().getX() + toolBox.getWidth() < origin.getX() ) toolBox.setWidth( origin.getX() - toolBox.getOrigin().getX() + 1 );
 									
 									if( toolBox.getOrigin().getY() + toolBox.getHeight() > origin.getY() + applyZoom( sprite->getHeight() ) ) toolBox.setHeight( origin.getY() + applyZoom( sprite->getHeight() ) - toolBox.getOrigin().getY() );
@@ -527,6 +530,7 @@ int main( int argc, char ** argv )
 				{
 					Box fBox( cAnimation->getFrameByIndex( i ).getBox() );
 					fBox.getOrigin().moveBy( origin.getX(), origin.getY() );
+					fBox.resize( applyZoom( fBox.getWidth() ), applyZoom( fBox.getHeight() ) );
 					fBox.render( Color( 0xFF, 0xFF, 0xFF ) );
 					
 					// Render anchor
@@ -587,33 +591,36 @@ int main( int argc, char ** argv )
 			editorUi.render( ticks );
 			
 			// Render animation preview
-			Frame * frame = animations[animationsNames[currentAnimation]]->getFrame( ticks );
-			
-			if( frame != NULL )
+			if( animations.size() > 0 )
 			{
-				// TODO: Compute local zoom based on each animation frame (get the max width & max height & take part of anchor point)
-				/*int frameZoom = 100;
-				SDL_Rect dstRect;
-				int anchorX = origin.getX();
-				int anchorY = origin.getY();
+				Frame * frame = animations[animationsNames[currentAnimation]]->getFrame( ticks );
+			
+				if( frame != NULL )
+				{
+					// TODO: Compute local zoom based on each animation frame (get the max width & max height & take part of anchor point)
+					/*int frameZoom = 100;
+					SDL_Rect dstRect;
+					int anchorX = origin.getX();
+					int anchorY = origin.getY();
 				
-				dstRect.x = anchorX - (frame->getAnchor().getX() * frameZoom / 100.0);
-				dstRect.y = anchorY - (frame->getAnchor().getY() * frameZoom / 100.0);
-				dstRect.w = (frameZoom * frame->getBox().getWidth()) / 100;
-				dstRect.h = (frameZoom * frame->getBox().getHeight()) / 100;
+					dstRect.x = anchorX - (frame->getAnchor().getX() * frameZoom / 100.0);
+					dstRect.y = anchorY - (frame->getAnchor().getY() * frameZoom / 100.0);
+					dstRect.w = (frameZoom * frame->getBox().getWidth()) / 100;
+					dstRect.h = (frameZoom * frame->getBox().getHeight()) / 100;
 	
-				SDL_Rect srcRect;
-				frame->getBox().fillSDLRect( &srcRect );
+					SDL_Rect srcRect;
+					frame->getBox().fillSDLRect( &srcRect );
 	
-				SDL_RenderCopy( Screen::get()->getRenderer(), sprite->getTexture(), &srcRect, &dstRect );*/
+					SDL_RenderCopy( Screen::get()->getRenderer(), sprite->getTexture(), &srcRect, &dstRect );*/
 				
-				// Render anchor
+					// Render anchor
 				
-				// Render bounding boxes
+					// Render bounding boxes
 				
-				// Render attack areas
+					// Render attack areas
 				
-				// Render defence areas
+					// Render defence areas
+				}
 			}
 					
 			Screen::get()->render();	
@@ -774,6 +781,9 @@ bool changeTool( Element * element )
 
 bool cancelLoading( Element * element )
 {
+	for( vector<string>::iterator it = panelButtons.begin() ; it != panelButtons.end() ; it++ )
+		editorUi.showElement( *it );
+						
 	editorUi.hideElement( "zlbl_loading" );
 	SDL_EventState( SDL_DROPFILE, SDL_DISABLE );
 	return true;
