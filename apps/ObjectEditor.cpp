@@ -30,6 +30,10 @@ Sprite * sprite = NULL;
 map<string, Animation *> animations;
 vector<string> animationsNames;
 unsigned int currentAnimation = 0;
+int currentFrame = -1;
+int currentBoundingBox = -1;
+int currentAttackArea = -1;
+int currentDefenceArea = -1;
 
 // Global variables
 int currentZoom = 100;
@@ -48,6 +52,7 @@ void adjustSpriteToScreen();
 void synchronizeLabel( const string& name, const string& value );
 int applyZoom( int value, int zoom = 0 );
 int revertZoom( int value, int zoom = 0 );
+void renderBoxInformation( Box& box, Point& relative );
 
 // Events
 bool changeTool( Element * element );
@@ -538,27 +543,70 @@ int main( int argc, char ** argv )
 					fBox.resize( applyZoom( fBox.getWidth() ), applyZoom( fBox.getHeight() ) );
 					fBox.render( Color( 0xFF, 0xFF, 0xFF ) );
 					
-					// If !toolActive && currentTool.compare( "box.frame" ) == 0
-					// TODO: Show box coordinates & size (do the same for others)
-					
-					// Render anchor
-					
-					// Render bounding boxes
-					
-					// Render attack areas
-					
-					// Render defence areas
+					if( currentFrame == i )
+					{
+						if( !toolActive && currentTool.compare( "box.frame" ) == 0 )
+							renderBoxInformation( fBox, origin );
+						
+						// Render anchor
+						Point aPt( cAnimation->getFrameByIndex( i ).getAnchor() );
+						aPt.moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin.getY() );
+						aPt.render( Color( 0x00, 0xFF, 0x00 ), 5 * currentZoom / 100 );
+						
+						// Render bounding boxes
+						for( unsigned int iBox = 0 ; i < cAnimation->getFrameByIndex( i ).getBoundingBoxesCount() ; iBox++ )
+						{
+							Box bBox( cAnimation->getFrameByIndex( i ).getBoundingBox( iBox ) );
+							bBox.moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin.getY() );
+							bBox.render( Color( 0x00, 0xFF, 0x00 ) );
+							
+							if( iBox == currentBoundingBox )
+							{
+								if( !toolActive && currentTool.compare( "box.bounding" ) == 0 )
+									renderBoxInformation( bBox, fBox.getOrigin() );
+							}
+						}
+						
+						// Render attack areas
+						for( unsigned int iAttack = 0 ; i < cAnimation->getFrameByIndex( i ).getAttackAreasCount() ; iAttack++ )
+						{
+							Box aBox( cAnimation->getFrameByIndex( i ).getAttackArea( iAttack ) );
+							aBox.moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin.getY() );
+							aBox.render( Color( 0xFF, 0x00, 0x00 ) );
+							
+							if( iAttack == currentAttackArea )
+							{
+								if( !toolActive && currentTool.compare( "box.attack" ) == 0 )
+									renderBoxInformation( aBox, fBox.getOrigin() );
+							}
+						}
+			
+						
+						// Render defence areas
+						for( unsigned int iDefence = 0 ; i < cAnimation->getFrameByIndex( i ).getDefenceAreasCount() ; iDefence++ )
+						{
+							Box dBox( cAnimation->getFrameByIndex( i ).getDefenceArea( iDefence ) );
+							dBox.moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin.getY() );
+							dBox.render( Color( 0x00, 0x00, 0xFF ) );
+							
+							if( iDefence == currentDefenceArea )
+							{
+								if( !toolActive && currentTool.compare( "box.defence" )
+									renderBoxInformation( dBox, fBox.getOrigin() );
+							}
+						}
+					}
 				}
 			}
 			
 			// Render current tool
 			if( toolActive )
 			{
-				int infoWidth = 0;
-				int infoHeight = 0;
-				
 				if( currentTool.compare( "anchor" ) == 0 )
 				{
+					int infoWidth = 0;
+					int infoHeight = 0;
+					
 					stringstream toolBoxInfo;
 					toolBoxInfo << "x: " << toolBox.getOrigin().getX() - origin.getX() << " y: " << toolBox.getOrigin().getY() - origin.getY();
 					Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, toolBoxInfo.str() );
@@ -574,18 +622,7 @@ int main( int argc, char ** argv )
 					else if( currentTool.compare( "box.defence" ) == 0 ) color.setColor( "0000FF" );
 				
 					toolBox.render( color );
-				
-					stringstream toolBoxInfo;
-					toolBoxInfo << "x: " << toolBox.getOrigin().getX() - origin.getX() << " y: " << toolBox.getOrigin().getY() - origin.getY();
-					Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, toolBoxInfo.str() );
-					Font::get( "font0" )->render( toolBox.getOrigin().getX() + ((toolBox.getWidth() - infoWidth) / 2), toolBox.getOrigin().getY() + (toolBox.getHeight() / 2) - infoHeight, toolBoxInfo.str() );
-				
-					infoWidth = 0;
-					infoHeight = 0;
-					toolBoxInfo.str( "" );
-					toolBoxInfo << revertZoom( toolBox.getWidth() ) << " x " << revertZoom( toolBox.getHeight() );
-					Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, toolBoxInfo.str() );
-					Font::get( "font0" )->render( toolBox.getOrigin().getX() + ((toolBox.getWidth() - infoWidth) / 2), toolBox.getOrigin().getY() + (toolBox.getHeight() / 2), toolBoxInfo.str() );
+					renderBoxInformation( toolBox, origin );
 				}
 			}
 			
@@ -607,6 +644,9 @@ int main( int argc, char ** argv )
 				{
 					Box animationBackground( currentScreenWidth - 300, 0, 300, 300 );
 					box.animationBackground( Color( 0xFF, 0xFF, 0xFF ) );
+				
+					int animationZoom = frame->getBox().getWidth() > frame->getBox().getHeight() ? : static_cast<int>( 300.0 / static_cast<double>( frame->getBox().getWidth() ) * 100.0 ) : static_cast<int>( 300.0 / static_cast<double>( frame->getBox().getHeight() ) * 100.0 );
+					
 					
 					// TODO: Compute local zoom based on each animation frame (get the max width & max height & take part of anchor point)
 					/*int frameZoom = 100;
@@ -667,9 +707,18 @@ void cleanObjectVariables()
 
 	currentAnimation = 0;
 	synchronizeLabel( "lbl_animation", animationsNames[currentAnimation] );
+	
+	currentFrame = -1;
+	synchronizeLabel( "lbl_frame", "Frame" );
+	currentBoundingBox = -1;
+	synchronizeLabel( "lbl_frame", "Bounding" );
+	currentAttackArea = -1;
+	synchronizeLabel( "lbl_frame", "Attack" );
+	currentDefenceArea = -1;
+	synchronizeLabel( "lbl_frame", "Defence" );
 
-	currentZoom = 100;
 	stringstream ss;
+	currentZoom = 100;
 	ss << currentZoom << " %";
 	synchronizeLabel( "lbl_zoom", ss.str() );
 }
@@ -682,6 +731,24 @@ int applyZoom( int value, int zoom )
 int revertZoom( int value, int zoom )
 {
 	return static_cast<int>( round( static_cast<double>( value ) * 100.0 / static_cast<double>( zoom == 0 ? currentZoom : zoom ) ) );
+}
+
+void renderBoxInformation( Box& box, Point& relative )
+{
+	int infoWidth = 0;
+	int infoHeight = 0;
+	
+	stringstream boxInfo;
+	boxInfo << "x: " << box.getOrigin().getX() - relative.getX() << " y: " << box.getOrigin().getY() - relative.getY();
+	Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, boxInfo.str() );
+	Font::get( "font0" )->render( box.getOrigin().getX() + ((box.getWidth() - infoWidth) / 2), box.getOrigin().getY() + (box.getHeight() / 2) - infoHeight, boxInfo.str() );
+
+	infoWidth = 0;
+	infoHeight = 0;
+	boxInfo.str( "" );
+	boxInfo << revertZoom( box.getWidth() ) << " x " << revertZoom( box.getHeight() );
+	Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, boxInfo.str() );
+	Font::get( "font0" )->render( box.getOrigin().getX() + ((box.getWidth() - infoWidth) / 2), box.getOrigin().getY() + (box.getHeight() / 2), boxInfo.str() );
 }
 
 void adjustSpriteToScreen()
