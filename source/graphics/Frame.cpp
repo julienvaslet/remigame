@@ -41,17 +41,17 @@ namespace graphics
 		return this->anchor;
 	}
 	
-	int Frame::getBoundingBoxesCount() const
+	unsigned int Frame::getBoundingBoxesCount() const
 	{
 		return this->boundingBoxes.size();
 	}
 	
-	int Frame::getAttackAreasCount() const
+	unsigned int Frame::getAttackAreasCount() const
 	{
 		return this->attackAreas.size();
 	}
 	
-	int Frame::getDefenceAreasCount() const
+	unsigned int Frame::getDefenceAreasCount() const
 	{
 		return this->defenceAreas.size();
 	}

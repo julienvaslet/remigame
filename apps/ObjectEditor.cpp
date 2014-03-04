@@ -30,10 +30,10 @@ Sprite * sprite = NULL;
 map<string, Animation *> animations;
 vector<string> animationsNames;
 unsigned int currentAnimation = 0;
-int currentFrame = -1;
-int currentBoundingBox = -1;
-int currentAttackArea = -1;
-int currentDefenceArea = -1;
+unsigned int currentFrame = 0;
+unsigned int currentBoundingBox = 0;
+unsigned int currentAttackArea = 0;
+unsigned int currentDefenceArea = 0;
 
 // Global variables
 int currentZoom = 100;
@@ -42,7 +42,10 @@ vector<string> panelButtons;
 map<string, string> tools;
 string currentTool = "move";
 bool loadingState = false;
-bool saveingState = false;
+bool savingState = false;
+bool shiftKeyState = false;
+bool ctrlKeyState = false;
+bool altKeyState = false;
 
 // Global functions
 bool loadSprite( const string& filename );
@@ -50,17 +53,34 @@ bool loadObject( const string& filename );
 void cleanObjectVariables();
 void adjustSpriteToScreen();
 void synchronizeLabel( const string& name, const string& value );
+void synchronizeLabels();
 int applyZoom( int value, int zoom = 0 );
 int revertZoom( int value, int zoom = 0 );
 void renderBoxInformation( Box& box, Point& relative );
 
 // Events
 bool changeTool( Element * element );
+
+// Zoom Events
 bool decreaseZoom( Element * element );
 bool increaseZoom( Element * element );
+
+// Speed Events
+bool decreaseSpeed( Element * element );
+bool increaseSpeed( Element * element );
+
+// Frame Events
+bool addFrame( Element * element );
+bool deleteFrame( Element * element );
+bool nextFrame( Element * element );
+bool prevFrame( Element * element );
+
+// File Events
 bool loadFile( Element * element );
 bool cancelLoading( Element * element );
 bool saveFile( Element * element );
+
+// Animation Events
 bool prevAnimation( Element * element );
 bool nextAnimation( Element * element );
 
@@ -132,14 +152,16 @@ int main( int argc, char ** argv )
 	panelButtons.push_back( "lbl_animation" );
 	
 	// h: 370 - Speed selection
-	editorUi.addElement( "btn_increase_speed", new Button( "font0", "~" ) );
+	editorUi.addElement( "btn_increase_speed", new Button( "font0", "+" ) );
 	editorUi.getElement( "btn_increase_speed" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_increase_speed" )->getBox().getOrigin().move( currentScreenWidth - 290 , 370 );
+	editorUi.getElement( "btn_increase_speed" )->getBox().getOrigin().move( currentScreenWidth - 50, 370 );
+	editorUi.getElement( "btn_increase_speed" )->addEventHandler( "mouseup", increaseSpeed );
 	panelButtons.push_back( "btn_increase_speed" );
 	
-	editorUi.addElement( "btn_decrease_speed", new Button( "font0", "+" ) );
+	editorUi.addElement( "btn_decrease_speed", new Button( "font0", "~" ) );
 	editorUi.getElement( "btn_decrease_speed" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_decrease_speed" )->getBox().getOrigin().move( currentScreenWidth - 50, 370 );
+	editorUi.getElement( "btn_decrease_speed" )->getBox().getOrigin().move( currentScreenWidth - 290 , 370 );
+	editorUi.getElement( "btn_decrease_speed" )->addEventHandler( "mouseup", decreaseSpeed );
 	panelButtons.push_back( "btn_decrease_speed" );
 	
 	editorUi.addElement( "lbl_speed", new Label( "font0", "100 fps" ) );
@@ -151,21 +173,25 @@ int main( int argc, char ** argv )
 	editorUi.addElement( "btn_prev_frame", new Button( "font0", "<" ) );
 	editorUi.getElement( "btn_prev_frame" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_prev_frame" )->getBox().getOrigin().move( currentScreenWidth - 290, 400 );
+	editorUi.getElement( "btn_prev_frame" )->addEventHandler( "mouseup", prevFrame );
 	panelButtons.push_back( "btn_prev_frame" );
 	
 	editorUi.addElement( "btn_del_frame", new Button( "font0", "~" ) );
 	editorUi.getElement( "btn_del_frame" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_del_frame" )->getBox().getOrigin().move( currentScreenWidth - 245, 400 );
+	editorUi.getElement( "btn_del_frame" )->addEventHandler( "mouseup", deleteFrame );
 	panelButtons.push_back( "btn_del_frame" );
 	
 	editorUi.addElement( "btn_add_frame", new Button( "font0", "+" ) );
 	editorUi.getElement( "btn_add_frame" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_add_frame" )->getBox().getOrigin().move( currentScreenWidth - 95, 400 );
+	editorUi.getElement( "btn_add_frame" )->addEventHandler( "mouseup", addFrame );
 	panelButtons.push_back( "btn_add_frame" );
 	
 	editorUi.addElement( "btn_next_frame", new Button( "font0", ">" ) );
 	editorUi.getElement( "btn_next_frame" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_next_frame" )->getBox().getOrigin().move( currentScreenWidth - 50, 400 );
+	editorUi.getElement( "btn_next_frame" )->addEventHandler( "mouseup", nextFrame );
 	panelButtons.push_back( "btn_next_frame" );
 	
 	editorUi.addElement( "lbl_frame", new PushButton( "font0", "frame#0" ) );
@@ -393,7 +419,7 @@ int main( int argc, char ** argv )
 				{
 					// TODO: May test which button ? cancel with right one ?
 					
-					if( !editorUi.dispatchEvent( &lastEvent ) )
+					if( !editorUi.dispatchEvent( &lastEvent ) && lastEvent.button.x < currentScreenWidth - 300 )
 					{
 						if( currentTool.compare( "move" ) == 0 )
 						{
@@ -459,6 +485,14 @@ int main( int argc, char ** argv )
 								if( currentTool.compare( "box.frame" ) == 0 )
 								{
 									// Set the frame
+									Animation * animation = animations[animationsNames[currentAnimation]];
+									
+									if( animation != NULL )
+									{
+										// Test if frame exist or not!!!
+										animation->getFrameByIndex( currentFrame ).getBox().getOrigin().move( toolBox.getOrigin().getX() - origin.getX(), toolBox.getOrigin().getY() - origin.getY() );
+										animation->getFrameByIndex( currentFrame ).getBox().resize( revertZoom( toolBox.getWidth() ), revertZoom( toolBox.getHeight() ) );
+									}
 								}
 								else if( currentTool.compare( "box.bounding" ) == 0 )
 								{
@@ -506,8 +540,271 @@ int main( int argc, char ** argv )
 					break;
 				}
 				
-				// TODO: Handle keydown (keyrepeat??)
-				// keyboard arrow with shift or ctrl pressed for different action
+				case SDL_KEYDOWN:
+				{
+					switch( lastEvent.key.keysym.sym )
+					{
+						case SDLK_LCTRL:
+						case SDLK_RCTRL:
+						{
+							if( lastEvent.key.repeat == 0 )
+								ctrlKeyState = true;
+								
+							break;
+						}
+						
+						case SDLK_LALT:
+						case SDLK_RALT:
+						{
+							if( lastEvent.key.repeat == 0 )
+								altKeyState = true;
+								
+							break;
+						}
+						
+						case SDLK_LSHIFT:
+						case SDLK_RSHIFT:
+						{
+							if( lastEvent.key.repeat == 0 )
+								shiftKeyState = true;
+
+							break;
+						}
+						
+						case SDLK_LEFT:
+						{
+							if( currentTool.compare( "move" ) == 0 )
+								origin.moveBy( -1 * ( shiftKeyState ? 10 : 1 ), 0 );
+
+							else if( currentTool.compare( "anchor" ) == 0 )
+							{
+							}
+							else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
+							{
+								Animation * animation = animations[animationsNames[currentAnimation]];
+								
+								if( animation != NULL )
+								{
+									if( currentTool.compare( "box.frame" ) == 0 )
+									{
+										// Move action
+										if( !altKeyState )
+											animation->getFrameByIndex( currentFrame ).getBox().getOrigin().moveBy( -1 * ( shiftKeyState ? 10 : 1 ), 0 );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getBox().resizeBy( shiftKeyState ? 10 : 1, 0 );
+										
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getBox().resizeBy( shiftKeyState ? -10 : -1, 0 );
+										
+										// TODO: Limit frame to be in the sprite area
+									}
+									else if( currentTool.compare( "box.bounding" ) == 0 )
+									{
+									}
+									else if( currentTool.compare( "box.attack" ) == 0 )
+									{
+									}
+									else if( currentTool.compare( "box.defence" ) == 0 )
+									{
+									}
+								}
+							}
+							
+							break;
+						}
+						
+						case SDLK_RIGHT:
+						{
+							if( currentTool.compare( "move" ) == 0 )
+								origin.moveBy( shiftKeyState ? 10 : 1, 0 );
+
+							else if( currentTool.compare( "anchor" ) == 0 )
+							{
+							}
+							else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
+							{
+								Animation * animation = animations[animationsNames[currentAnimation]];
+								
+								if( animation != NULL )
+								{
+									if( currentTool.compare( "box.frame" ) == 0 )
+									{
+										// Move action
+										if( !ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getBox().getOrigin().moveBy( shiftKeyState ? 10 : 1, 0 );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getBox().resizeBy( shiftKeyState ? 10 : 1, 0 );
+										
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getBox().resizeBy( shiftKeyState ? -10 : -1, 0 );
+										
+										// TODO: Limit frame to be in the sprite area
+									}
+									else if( currentTool.compare( "box.bounding" ) == 0 )
+									{
+									}
+									else if( currentTool.compare( "box.attack" ) == 0 )
+									{
+									}
+									else if( currentTool.compare( "box.defence" ) == 0 )
+									{
+									}
+								}
+							}
+							
+							break;
+						}
+						
+						case SDLK_UP:
+						{
+							if( currentTool.compare( "move" ) == 0 )
+								origin.moveBy( 0, -1 * ( shiftKeyState ? 10 : 1 ) );
+
+							else if( currentTool.compare( "anchor" ) == 0 )
+							{
+							}
+							else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
+							{
+								Animation * animation = animations[animationsNames[currentAnimation]];
+								
+								if( animation != NULL )
+								{
+									if( currentTool.compare( "box.frame" ) == 0 )
+									{
+										// Move action
+										if( !altKeyState )
+											animation->getFrameByIndex( currentFrame ).getBox().getOrigin().moveBy( 0, -1 * ( shiftKeyState ? 10 : 1 ) );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getBox().resizeBy( 0, shiftKeyState ? 10 : 1 );
+											
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getBox().resizeBy( 0, shiftKeyState ? -10 : -1 );
+											
+										// TODO: Limit frame to be in the sprite area
+									}
+									else if( currentTool.compare( "box.bounding" ) == 0 )
+									{
+									}
+									else if( currentTool.compare( "box.attack" ) == 0 )
+									{
+									}
+									else if( currentTool.compare( "box.defence" ) == 0 )
+									{
+									}
+								}
+							}
+							
+							break;
+						}
+						
+						case SDLK_DOWN:
+						{
+							if( currentTool.compare( "move" ) == 0 )
+								origin.moveBy( 0, shiftKeyState ? 10 : 1 );
+
+							else if( currentTool.compare( "anchor" ) == 0 )
+							{
+							}
+							else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
+							{
+								Animation * animation = animations[animationsNames[currentAnimation]];
+								
+								if( animation != NULL )
+								{
+									if( currentTool.compare( "box.frame" ) == 0 )
+									{
+										// Move action
+										if( !ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getBox().getOrigin().moveBy( 0, shiftKeyState ? 10 : 1 );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getBox().resizeBy( 0, shiftKeyState ? 10 : 1 );
+										
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getBox().resizeBy( 0, shiftKeyState ? -10 : -1 );
+
+										// TODO: Limit frame to be in the sprite area
+									}
+									else if( currentTool.compare( "box.bounding" ) == 0 )
+									{
+									}
+									else if( currentTool.compare( "box.attack" ) == 0 )
+									{
+									}
+									else if( currentTool.compare( "box.defence" ) == 0 )
+									{
+									}
+								}
+							}
+							
+							break;
+						}
+					}
+					
+					break;
+				}
+				
+				case SDL_KEYUP:
+				{
+					switch( lastEvent.key.keysym.sym )
+					{
+						case SDLK_LCTRL:
+						case SDLK_RCTRL:
+						{
+							ctrlKeyState = false;
+							break;
+						}
+						
+						case SDLK_LALT:
+						case SDLK_RALT:
+						{
+							altKeyState = false;
+							break;
+						}
+						
+						case SDLK_LSHIFT:
+						case SDLK_RSHIFT:
+						{
+							shiftKeyState = false;
+							break;
+						}
+					}
+					
+					break;
+				}
+				
+				case SDL_MOUSEWHEEL:
+				{
+					if( altKeyState )
+					{
+						if( lastEvent.wheel.y > 0 )
+						{
+							currentZoom += 5;
+							synchronizeLabels();
+						}
+						else if( lastEvent.wheel.y < 0 )
+						{
+							currentZoom -= 5;
+							if( currentZoom < 5 )
+								currentZoom = 5;
+							
+							synchronizeLabels();
+						}
+					}
+					
+					break;
+				}
 			}
 		}
 
@@ -550,14 +847,14 @@ int main( int argc, char ** argv )
 						
 						// Render anchor
 						Point aPt( cAnimation->getFrameByIndex( i ).getAnchor() );
-						aPt.moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin.getY() );
+						aPt.moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin().getY() );
 						aPt.render( Color( 0x00, 0xFF, 0x00 ), 5 * currentZoom / 100 );
 						
 						// Render bounding boxes
 						for( unsigned int iBox = 0 ; i < cAnimation->getFrameByIndex( i ).getBoundingBoxesCount() ; iBox++ )
 						{
 							Box bBox( cAnimation->getFrameByIndex( i ).getBoundingBox( iBox ) );
-							bBox.moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin.getY() );
+							bBox.getOrigin().moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin().getY() );
 							bBox.render( Color( 0x00, 0xFF, 0x00 ) );
 							
 							if( iBox == currentBoundingBox )
@@ -571,7 +868,7 @@ int main( int argc, char ** argv )
 						for( unsigned int iAttack = 0 ; i < cAnimation->getFrameByIndex( i ).getAttackAreasCount() ; iAttack++ )
 						{
 							Box aBox( cAnimation->getFrameByIndex( i ).getAttackArea( iAttack ) );
-							aBox.moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin.getY() );
+							aBox.getOrigin().moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin().getY() );
 							aBox.render( Color( 0xFF, 0x00, 0x00 ) );
 							
 							if( iAttack == currentAttackArea )
@@ -586,12 +883,12 @@ int main( int argc, char ** argv )
 						for( unsigned int iDefence = 0 ; i < cAnimation->getFrameByIndex( i ).getDefenceAreasCount() ; iDefence++ )
 						{
 							Box dBox( cAnimation->getFrameByIndex( i ).getDefenceArea( iDefence ) );
-							dBox.moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin.getY() );
+							dBox.getOrigin().moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin().getY() );
 							dBox.render( Color( 0x00, 0x00, 0xFF ) );
 							
 							if( iDefence == currentDefenceArea )
 							{
-								if( !toolActive && currentTool.compare( "box.defence" )
+								if( !toolActive && currentTool.compare( "box.defence" ) == 0 )
 									renderBoxInformation( dBox, fBox.getOrigin() );
 							}
 						}
@@ -628,9 +925,12 @@ int main( int argc, char ** argv )
 			
 			// UserInterface rendering
 			Box actionPanelBorder( actionPanel );
+			Box animationBackground( currentScreenWidth - 300, 0, 300, 300 );
+			
 			actionPanelBorder.resizeBy( 1, 2 );
 			actionPanelBorder.getOrigin().moveBy( 0, -1 );
 			actionPanel.renderFilled( Color( 0xEE, 0xEE, 0xEE ) );
+			animationBackground.renderFilled( Color( 0xFF, 0xFF, 0xFF ) );
 			actionPanel.render( Color( 0xAA, 0xAA, 0xAA ) );
 			
 			editorUi.render( ticks );
@@ -642,11 +942,19 @@ int main( int argc, char ** argv )
 			
 				if( frame != NULL )
 				{
-					Box animationBackground( currentScreenWidth - 300, 0, 300, 300 );
-					box.animationBackground( Color( 0xFF, 0xFF, 0xFF ) );
+					int animationZoom = frame->getBox().getWidth() > frame->getBox().getHeight() ? static_cast<int>( 300.0 / static_cast<double>( frame->getBox().getWidth() ) * 100.0 ) : static_cast<int>( 300.0 / static_cast<double>( frame->getBox().getHeight() ) * 100.0 );
+
+					SDL_Rect dstRect;
 				
-					int animationZoom = frame->getBox().getWidth() > frame->getBox().getHeight() ? : static_cast<int>( 300.0 / static_cast<double>( frame->getBox().getWidth() ) * 100.0 ) : static_cast<int>( 300.0 / static_cast<double>( frame->getBox().getHeight() ) * 100.0 );
-					
+					dstRect.x = currentScreenWidth - 300;//applyZoom( frame->getAnchor().getX(), animationZoom );
+					dstRect.y = 0;//applyZoom( frame->getAnchor().getY(), animationZoom );
+					dstRect.w = applyZoom( frame->getBox().getWidth(), animationZoom );
+					dstRect.h = applyZoom( frame->getBox().getHeight(), animationZoom );
+
+					SDL_Rect srcRect;
+					frame->getBox().fillSDLRect( &srcRect );
+	
+					SDL_RenderCopy( Screen::get()->getRenderer(), sprite->getTexture(), &srcRect, &dstRect );
 					
 					// TODO: Compute local zoom based on each animation frame (get the max width & max height & take part of anchor point)
 					/*int frameZoom = 100;
@@ -654,8 +962,8 @@ int main( int argc, char ** argv )
 					int anchorX = origin.getX();
 					int anchorY = origin.getY();
 				
-					dstRect.x = anchorX - (frame->getAnchor().getX() * frameZoom / 100.0);
-					dstRect.y = anchorY - (frame->getAnchor().getY() * frameZoom / 100.0);
+					dstRect.x = anchorX - (frame->getAnchor().getX() * animationZoom / 100.0);
+					dstRect.y = anchorY - (frame->getAnchor().getY() * animationZoom / 100.0);
 					dstRect.w = (frameZoom * frame->getBox().getWidth()) / 100;
 					dstRect.h = (frameZoom * frame->getBox().getHeight()) / 100;
 	
@@ -706,21 +1014,13 @@ void cleanObjectVariables()
 	objectFilename = "";
 
 	currentAnimation = 0;
-	synchronizeLabel( "lbl_animation", animationsNames[currentAnimation] );
-	
-	currentFrame = -1;
-	synchronizeLabel( "lbl_frame", "Frame" );
-	currentBoundingBox = -1;
-	synchronizeLabel( "lbl_frame", "Bounding" );
-	currentAttackArea = -1;
-	synchronizeLabel( "lbl_frame", "Attack" );
-	currentDefenceArea = -1;
-	synchronizeLabel( "lbl_frame", "Defence" );
-
-	stringstream ss;
+	currentFrame = 0;
+	currentBoundingBox = 0;
+	currentAttackArea = 0;
+	currentDefenceArea = 0;
 	currentZoom = 100;
-	ss << currentZoom << " %";
-	synchronizeLabel( "lbl_zoom", ss.str() );
+	
+	synchronizeLabels();
 }
 
 int applyZoom( int value, int zoom )
@@ -761,10 +1061,7 @@ void adjustSpriteToScreen()
 	
 	currentZoom -=  currentZoom % 5;
 	
-	stringstream ss;
-	ss << currentZoom << " %";
-	synchronizeLabel( "lbl_zoom", ss.str() );
-	
+	synchronizeLabels();
 	origin.move( (availableWidth - applyZoom( sprite->getWidth() )) / 2, (availableHeight - applyZoom( sprite->getHeight() )) / 2 );
 }
 
@@ -774,25 +1071,57 @@ void synchronizeLabel( const string& name, const string& value )
 	label->setValue( value );
 }
 
-bool decreaseZoom( Element * element )
+void synchronizeLabels()
 {
 	stringstream ss;
+	
+	synchronizeLabel( "lbl_animation", animationsNames[currentAnimation] );
+	
+	ss << "Frame#" << currentFrame;
+	synchronizeLabel( "lbl_frame", ss.str() );
+
+	ss.str( "" );
+	ss << "Bounding#" << currentBoundingBox;
+	synchronizeLabel( "lbl_boundingbox", ss.str() );
+	
+	ss.str( "" );
+	ss << "Attack#" << currentAttackArea;
+	synchronizeLabel( "lbl_attackarea", ss.str() );
+	
+	ss.str( "" );
+	ss << "Defence#" << currentDefenceArea;
+	synchronizeLabel( "lbl_defencearea", ss.str() );
+	
+	ss.str( "" );
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+		ss << animations[animationsNames[currentAnimation]]->getSpeed() << " fps";
+	else
+		ss << "-- fps";
+		
+	synchronizeLabel( "lbl_speed", ss.str() );
+
+	ss.str( "" );
+	ss << currentZoom << " %";
+	synchronizeLabel( "lbl_zoom", ss.str() );
+}
+
+bool decreaseZoom( Element * element )
+{
 	currentZoom -= 5;
 	
 	if( currentZoom <= 0 )
 		currentZoom = 5;
 	
-	ss << currentZoom << " %";
-	synchronizeLabel( "lbl_zoom", ss.str() );
+	synchronizeLabels();
 	return true;
 }
 
 bool increaseZoom( Element * element )
 {
-	stringstream ss;
 	currentZoom += 5;
-	ss << currentZoom << " %";
-	synchronizeLabel( "lbl_zoom", ss.str() );
+	synchronizeLabels();
 	return true;
 }
 
@@ -819,7 +1148,7 @@ bool prevAnimation( Element * element )
 	if( currentAnimation < 0 )
 		currentAnimation = animationsNames.size() - 1;
 	
-	synchronizeLabel( "lbl_animation", animationsNames[currentAnimation] );
+	synchronizeLabels();
 	return true;
 }
 
@@ -830,7 +1159,7 @@ bool nextAnimation( Element * element )
 	if( currentAnimation >= animationsNames.size() )
 		currentAnimation = 0;
 		
-	synchronizeLabel( "lbl_animation", animationsNames[currentAnimation] );
+	synchronizeLabels();
 	return true;
 }
 
@@ -888,8 +1217,11 @@ bool loadSprite( const string& filename )
 		for( vector<string>::iterator it = animationsNames.begin() ; it != animationsNames.end() ; it++ )
 		{
 			animations[*it] = new Animation();
+			animations[*it]->setSpeed( 100 );
 			animations[*it]->addFrame( frame );
 		}
+		
+		synchronizeLabels();
 	}
 	else
 	{
@@ -905,3 +1237,97 @@ bool loadObject( const string& filename )
 	cout << "[ObjectEditor] Object loading not supported." << endl;
 	return false;
 }
+
+// Speed Events
+bool decreaseSpeed( Element * element )
+{
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		if( animation->getSpeed() > 5 )
+			animation->setSpeed( animation->getSpeed() - 5 );
+		else
+			animation->setSpeed( 0 );
+			
+		synchronizeLabels();
+	}
+	
+	return true;
+}
+
+bool increaseSpeed( Element * element )
+{
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		animation->setSpeed( animation->getSpeed() + 5 );		
+		synchronizeLabels();
+	}
+	
+	return true;
+}
+
+// Frame Events
+bool addFrame( Element * element )
+{
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL && sprite != NULL )
+	{
+		Frame frame( animation->getFrameByIndex( currentFrame ) );
+		
+		if( frame.getBox().getWidth() + frame.getBox().getOrigin().getX() <= sprite->getWidth() )
+			frame.getBox().getOrigin().moveBy( frame.getBox().getWidth(), 0 );
+		else if( frame.getBox().getHeight() + frame.getBox().getOrigin().getY() <= sprite->getHeight() )
+			frame.getBox().getOrigin().moveBy( -1 * frame.getBox().getOrigin().getX(), frame.getBox().getHeight() );
+			
+		animation->addFrame( frame );
+		currentFrame = animation->getFrameCount() - 1;
+		
+		synchronizeLabels();
+	}
+	
+	return true;
+}
+
+bool deleteFrame( Element * element )
+{
+	return true;
+}
+
+bool nextFrame( Element * element )
+{
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL  )
+	{
+		currentFrame++;
+		
+		if( currentFrame >= animation->getFrameCount() )
+			currentFrame = 0;
+			
+		synchronizeLabels();
+	}
+	
+	return true;
+}
+
+bool prevFrame( Element * element )
+{
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL  )
+	{
+		if( currentFrame == 0 )
+			currentFrame = animation->getFrameCount() - 1;
+		else
+			currentFrame--;
+			
+		synchronizeLabels();
+	}
+	
+	return true;
+}
+
