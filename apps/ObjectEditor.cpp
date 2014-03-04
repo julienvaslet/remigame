@@ -46,8 +46,8 @@ bool loadObject( const string& filename );
 void cleanObjectVariables();
 void adjustSpriteToScreen();
 void synchronizeLabel( const string& name, const string& value );
-int applyZoom( int value );
-int revertZoom( int value );
+int applyZoom( int value, int zoom = 0 );
+int revertZoom( int value, int zoom = 0 );
 
 // Events
 bool changeTool( Element * element );
@@ -386,6 +386,8 @@ int main( int argc, char ** argv )
 				
 				case SDL_MOUSEBUTTONDOWN:
 				{
+					// TODO: May test which button ? cancel with right one ?
+					
 					if( !editorUi.dispatchEvent( &lastEvent ) )
 					{
 						if( currentTool.compare( "move" ) == 0 )
@@ -498,6 +500,9 @@ int main( int argc, char ** argv )
 					SDL_EventState( SDL_DROPFILE, SDL_DISABLE );
 					break;
 				}
+				
+				// TODO: Handle keydown (keyrepeat??)
+				// keyboard arrow with shift or ctrl pressed for different action
 			}
 		}
 
@@ -532,6 +537,9 @@ int main( int argc, char ** argv )
 					fBox.getOrigin().moveBy( origin.getX(), origin.getY() );
 					fBox.resize( applyZoom( fBox.getWidth() ), applyZoom( fBox.getHeight() ) );
 					fBox.render( Color( 0xFF, 0xFF, 0xFF ) );
+					
+					// If !toolActive && currentTool.compare( "box.frame" ) == 0
+					// TODO: Show box coordinates & size (do the same for others)
 					
 					// Render anchor
 					
@@ -597,6 +605,9 @@ int main( int argc, char ** argv )
 			
 				if( frame != NULL )
 				{
+					Box animationBackground( currentScreenWidth - 300, 0, 300, 300 );
+					box.animationBackground( Color( 0xFF, 0xFF, 0xFF ) );
+					
 					// TODO: Compute local zoom based on each animation frame (get the max width & max height & take part of anchor point)
 					/*int frameZoom = 100;
 					SDL_Rect dstRect;
@@ -663,14 +674,14 @@ void cleanObjectVariables()
 	synchronizeLabel( "lbl_zoom", ss.str() );
 }
 
-int applyZoom( int value )
+int applyZoom( int value, int zoom )
 {
-	return static_cast<int>( round( static_cast<double>( value ) * static_cast<double>( currentZoom ) / 100.0 ) );
+	return static_cast<int>( round( static_cast<double>( value ) * static_cast<double>( zoom == 0 ? currentZoom : zoom ) / 100.0 ) );
 }
 
-int revertZoom( int value )
+int revertZoom( int value, int zoom )
 {
-	return static_cast<int>( round( static_cast<double>( value ) * 100.0 / static_cast<double>( currentZoom ) ) );
+	return static_cast<int>( round( static_cast<double>( value ) * 100.0 / static_cast<double>( zoom == 0 ? currentZoom : zoom ) ) );
 }
 
 void adjustSpriteToScreen()
