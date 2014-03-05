@@ -1,0 +1,77 @@
+Object Editor
+=============
+
+What it is ?
+------------
+Object Editor is an application which allow the user to create or edit a game object.
+Editing a game object means defining its animations, anchor points, bounding boxes, attack areas and defence areas.
+
+Loading a file
+--------------
+There are two type of file which could be loaded: PNG images, object XML files.
+By loading a PNG image, a new object description is created.
+By loading an object XML file, each parameter is loaded in the application.
+
+To load a file, just click the "Load" button and drop a file in the editor window.
+
+Saving a file
+-------------
+To save a file, just click the "Save" button of the editor interface.
+The file will be saved with the same name than the PNG image, with the XML extension.
+If a XML file was loaded, it will be overwritten.
+
+Tools
+-----
+To be redacted.
+
+Keyboard actions
+----------------
+
+Change current tool:
+
+	- M key			Select the "move" tool
+	- F key			Select the "frame" tool
+	- P key			Select the "anchor" tool
+	- B key			Select the "bounding box" tool
+	- A key			Select the "attack area" tool
+	- D key			Select the "defence area" tool
+
+Move tool:
+
+	- UP key		Move by 1 pixel in up direction
+	- LEFT key		Move by 1 pixel in left direction
+	- DOWN key		Move by 1 pixel in down direction
+	- RIGHT key		Move by 1 pixel in right direction
+	- SHIFT-UP keys		Move by 10 pixel in up direction
+	- SHIFT-LEFT keys	Move by 10 pixel in left direction
+	- SHIFT-DOWN keys	Move by 10 pixel in down direction
+	- SHIFT-RIGHT keys	Move by 10 pixel in right direction
+	
+Frame, Bounding, Attack & Defence tools:
+
+	- UP key		Move by 1 pixel in up direction
+	- LEFT key		Move by 1 pixel in left direction
+	- DOWN key		Move by 1 pixel in down direction
+	- RIGHT key		Move by 1 pixel in right direction
+	- SHIFT-UP keys		Move by 10 pixel in up direction
+	- SHIFT-LEFT keys	Move by 10 pixel in left direction
+	- SHIFT-DOWN keys	Move by 10 pixel in down direction
+	- SHIFT-RIGHT keys	Move by 10 pixel in right direction
+	
+	- CTRL-UP keys		Resize by +1 pixel in up direction
+	- CTRL-LEFT keys	Resize by +1 pixel in left direction
+	- CTRL-DOWN keys	Resize by +1 pixel in down direction
+	- CTRL-RIGHT keys	Resize by +1 pixel in right direction
+	- CTRL-SHIFT-UP keys	Resize by +10 pixel in up direction
+	- CTRL-SHIFT-LEFT keys	Resize by +10 pixel in left direction
+	- CTRL-SHIFT-DOWN keys	Resize by +10 pixel in down direction
+	- CTRL-SHIFT-RIGHT keys	Resize by +10 pixel in right direction
+	
+	- ALT-UP keys		Resize by -1 pixel in up direction
+	- ALT-LEFT keys		Resize by -1 pixel in left direction
+	- ALT-DOWN keys		Resize by -1 pixel in down direction
+	- ALT-RIGHT keys	Resize by -1 pixel in right direction
+	- ALT-SHIFT-UP keys	Resize by -10 pixel in up direction
+	- ALT-SHIFT-LEFT keys	Resize by -10 pixel in left direction
+	- ALT-SHIFT-DOWN keys	Resize by -10 pixel in down direction
+	- ALT-SHIFT-RIGHT keys	Resize by -10 pixel in right direction
