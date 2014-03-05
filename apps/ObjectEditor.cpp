@@ -535,6 +535,7 @@ int main( int argc, char ** argv )
 						editorUi.showElement( *it );
 						
 					editorUi.hideElement( "zlbl_loading" );
+					loadingState = false;
 					
 					SDL_EventState( SDL_DROPFILE, SDL_DISABLE );
 					break;
@@ -1172,6 +1173,7 @@ bool loadFile( Element * element )
 	for( vector<string>::iterator it = panelButtons.begin() ; it != panelButtons.end() ; it++ )
 		editorUi.hideElement( *it );
 	
+	loadingState = true;
 	editorUi.showElement( "zlbl_loading" );
 	
 	SDL_EventState( SDL_DROPFILE, SDL_ENABLE );
@@ -1235,6 +1237,7 @@ bool cancelLoading( Element * element )
 						
 	editorUi.hideElement( "zlbl_loading" );
 	SDL_EventState( SDL_DROPFILE, SDL_DISABLE );
+	loadingState = false;
 	return true;
 }
 
