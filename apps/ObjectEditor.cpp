@@ -978,7 +978,7 @@ int main( int argc, char ** argv )
 			editorUi.render( ticks );
 			
 			// Render animation preview
-			if( animations.size() > 0 )
+			if( !loadingState && !savingState && animations.size() > 0 )
 			{
 				Frame * frame = animations[animationsNames[currentAnimation]]->getFrame( ticks );
 			
