@@ -779,6 +779,48 @@ int main( int argc, char ** argv )
 							shiftKeyState = false;
 							break;
 						}
+						
+						case SDLK_m:
+						{
+							// ChangeTool to "move"
+							editorUi.getElement( "btn_move" ).trigger( "mouseup" );
+							break;
+						}
+						
+						case SDLK_f:
+						{
+							// ChangeTool to "frame"
+							editorUi.getElement( "lbl_frame" ).trigger( "mouseup" );
+							break;
+						}
+						
+						case SDLK_p:
+						{
+							// ChangeTool to "anchor point"
+							editorUi.getElement( "btn_anchor" ).trigger( "mouseup" );
+							break;
+						}
+						
+						case SDLK_b:
+						{
+							// ChangeTool to "bounding box"
+							editorUi.getElement( "lbl_boundingbox" ).trigger( "mouseup" );
+							break;
+						}
+						
+						case SDLK_a:
+						{
+							// ChangeTool to "attack area"
+							editorUi.getElement( "lbl_attackarea" ).trigger( "mouseup" );
+							break;
+						}
+						
+						case SDLK_d:
+						{
+							// ChangeTool to "defence area"
+							editorUi.getElement( "lbl_defencearea" ).trigger( "mouseup" );
+							break;
+						}
 					}
 					
 					break;
