@@ -489,8 +489,8 @@ int main( int argc, char ** argv )
 									
 									if( animation != NULL )
 									{
-										// Test if frame exist or not!!!
-										animation->getFrameByIndex( currentFrame ).getBox().getOrigin().move( toolBox.getOrigin().getX() - origin.getX(), toolBox.getOrigin().getY() - origin.getY() );
+										//TODO: Test if frame exist or not!!! ok for the frame but not for other boxes
+										animation->getFrameByIndex( currentFrame ).getBox().getOrigin().move( revertZoom( toolBox.getOrigin().getX() - origin.getX() ), revertZoom( toolBox.getOrigin().getY() - origin.getY() ) );
 										animation->getFrameByIndex( currentFrame ).getBox().resize( revertZoom( toolBox.getWidth() ), revertZoom( toolBox.getHeight() ) );
 									}
 								}
@@ -879,7 +879,7 @@ int main( int argc, char ** argv )
 				for( unsigned int i = 0 ; i < cAnimation->getFrameCount() ; i++ )
 				{
 					Box fBox( cAnimation->getFrameByIndex( i ).getBox() );
-					fBox.getOrigin().moveBy( origin.getX(), origin.getY() );
+					fBox.getOrigin().move( origin.getX() + applyZoom( fBox.getOrigin().getX() ), origin.getY() + applyZoom( fBox.getOrigin().getY() ) );
 					fBox.resize( applyZoom( fBox.getWidth() ), applyZoom( fBox.getHeight() ) );
 					fBox.render( Color( 0xFF, 0xFF, 0xFF ) );
 					
@@ -890,14 +890,17 @@ int main( int argc, char ** argv )
 						
 						// Render anchor
 						Point aPt( cAnimation->getFrameByIndex( i ).getAnchor() );
-						aPt.moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin().getY() );
+						aPt.move( origin.getX() + fBox.getOrigin().getX() + applyZoom( aPt.getX() ), origin.getY() + fBox.getOrigin().getY() + applyZoom( aPt.getY() ) );
 						aPt.render( Color( 0x00, 0xFF, 0x00 ), 5 * currentZoom / 100 );
+						
+						if( !toolActive && currentTool.compare( "anchor" ) == 0 )
+							renderPointInformation( aPt, fBox.getOrigin() );
 						
 						// Render bounding boxes
 						for( unsigned int iBox = 0 ; i < cAnimation->getFrameByIndex( i ).getBoundingBoxesCount() ; iBox++ )
 						{
 							Box bBox( cAnimation->getFrameByIndex( i ).getBoundingBox( iBox ) );
-							bBox.getOrigin().moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin().getY() );
+							bBox.getOrigin().move( origin.getX() + fBox.getOrigin().getX() + applyZoom( bBox.getOrigin().getX() ), origin.getY() + fBox.getOrigin().getY() + applyZoom( bBox.getOrigin().getY() ) );
 							bBox.render( Color( 0x00, 0xFF, 0x00 ) );
 							
 							if( iBox == currentBoundingBox )
@@ -911,7 +914,7 @@ int main( int argc, char ** argv )
 						for( unsigned int iAttack = 0 ; i < cAnimation->getFrameByIndex( i ).getAttackAreasCount() ; iAttack++ )
 						{
 							Box aBox( cAnimation->getFrameByIndex( i ).getAttackArea( iAttack ) );
-							aBox.getOrigin().moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin().getY() );
+							aBox.getOrigin().move( origin.getX() + fBox.getOrigin().getX() + applyZoom( aBox.getOrigin().getX() ), origin.getY() + fBox.getOrigin().getY() + applyZoom( aBox.getOrigin().getY() ) );
 							aBox.render( Color( 0xFF, 0x00, 0x00 ) );
 							
 							if( iAttack == currentAttackArea )
@@ -926,7 +929,7 @@ int main( int argc, char ** argv )
 						for( unsigned int iDefence = 0 ; i < cAnimation->getFrameByIndex( i ).getDefenceAreasCount() ; iDefence++ )
 						{
 							Box dBox( cAnimation->getFrameByIndex( i ).getDefenceArea( iDefence ) );
-							dBox.getOrigin().moveBy( origin.getX() + fBox.getOrigin().getX(), origin.getY() + fBox.getOrigin().getY() );
+							dBox.getOrigin().move( origin.getX() + fBox.getOrigin().getX() + applyZoom( dBox.getOrigin().getX() ), origin.getY() + fBox.getOrigin().getY() + applyZoom( dBox.getOrigin().getY() ) );
 							dBox.render( Color( 0x00, 0x00, 0xFF ) );
 							
 							if( iDefence == currentDefenceArea )
@@ -944,13 +947,7 @@ int main( int argc, char ** argv )
 			{
 				if( currentTool.compare( "anchor" ) == 0 )
 				{
-					int infoWidth = 0;
-					int infoHeight = 0;
-					
-					stringstream toolBoxInfo;
-					toolBoxInfo << "x: " << toolBox.getOrigin().getX() - origin.getX() << " y: " << toolBox.getOrigin().getY() - origin.getY();
-					Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, toolBoxInfo.str() );
-					Font::get( "font0" )->render( toolBox.getOrigin().getX() - (infoWidth / 2), toolBox.getOrigin().getY() - infoHeight, toolBoxInfo.str() );
+					renderPointInformation( toolBox.getOrigin(), origin );
 				}
 				else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
 				{
@@ -1076,13 +1073,24 @@ int revertZoom( int value, int zoom )
 	return static_cast<int>( round( static_cast<double>( value ) * 100.0 / static_cast<double>( zoom == 0 ? currentZoom : zoom ) ) );
 }
 
+void renderPointInformation( Point& point, Point& relative )
+{
+	int infoWidth = 0;
+	int infoHeight = 0;
+	
+	stringstream pointInfo;
+	pointInfo << "x: " << revertZoom( point.getX() - relative.getX() ) << " y: " << revertZoom( point.getY() - relative.getY() );
+	Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, pointInfo.str() );
+	Font::get( "font0" )->render( point.getX() - infoWidth / 2), point.getY() + - infoHeight, pointInfo.str() );
+}
+
 void renderBoxInformation( Box& box, Point& relative )
 {
 	int infoWidth = 0;
 	int infoHeight = 0;
 	
 	stringstream boxInfo;
-	boxInfo << "x: " << box.getOrigin().getX() - relative.getX() << " y: " << box.getOrigin().getY() - relative.getY();
+	boxInfo << "x: " << revertZoom( box.getOrigin().getX() - relative.getX() ) << " y: " << revertZoom( box.getOrigin().getY() - relative.getY() );
 	Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, boxInfo.str() );
 	Font::get( "font0" )->render( box.getOrigin().getX() + ((box.getWidth() - infoWidth) / 2), box.getOrigin().getY() + (box.getHeight() / 2) - infoHeight, boxInfo.str() );
 
@@ -1187,10 +1195,15 @@ bool saveFile( Element * element )
 
 bool prevAnimation( Element * element )
 {
-	currentAnimation--;
-	
-	if( currentAnimation < 0 )
+	if( currentAnimation == 0 )
 		currentAnimation = animationsNames.size() - 1;
+	else
+		currentAnimation--;
+		
+	currentFrame = 0;
+	currentBoundingBox = 0;
+	currentAttackArea = 0;
+	currentDefenceArea = 0;
 	
 	synchronizeLabels();
 	return true;
@@ -1202,6 +1215,11 @@ bool nextAnimation( Element * element )
 	
 	if( currentAnimation >= animationsNames.size() )
 		currentAnimation = 0;
+	
+	currentFrame = 0;
+	currentBoundingBox = 0;
+	currentAttackArea = 0;
+	currentDefenceArea = 0;
 		
 	synchronizeLabels();
 	return true;
