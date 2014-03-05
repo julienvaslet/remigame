@@ -57,6 +57,7 @@ void synchronizeLabels();
 int applyZoom( int value, int zoom = 0 );
 int revertZoom( int value, int zoom = 0 );
 void renderBoxInformation( Box& box, Point& relative );
+void renderPointInformation( Point& point, Point& relative );
 
 // Events
 bool changeTool( Element * element );
@@ -601,6 +602,7 @@ int main( int argc, char ** argv )
 											animation->getFrameByIndex( currentFrame ).getBox().resizeBy( shiftKeyState ? -10 : -1, 0 );
 										
 										// TODO: Limit frame to be in the sprite area
+										
 									}
 									else if( currentTool.compare( "box.bounding" ) == 0 )
 									{
@@ -784,42 +786,42 @@ int main( int argc, char ** argv )
 						case SDLK_m:
 						{
 							// ChangeTool to "move"
-							editorUi.getElement( "btn_move" ).trigger( "mouseup" );
+							editorUi.getElement( "btn_move" )->trigger( "mouseup" );
 							break;
 						}
 						
 						case SDLK_f:
 						{
 							// ChangeTool to "frame"
-							editorUi.getElement( "lbl_frame" ).trigger( "mouseup" );
+							editorUi.getElement( "lbl_frame" )->trigger( "mouseup" );
 							break;
 						}
 						
 						case SDLK_p:
 						{
 							// ChangeTool to "anchor point"
-							editorUi.getElement( "btn_anchor" ).trigger( "mouseup" );
+							editorUi.getElement( "btn_anchor" )->trigger( "mouseup" );
 							break;
 						}
 						
 						case SDLK_b:
 						{
 							// ChangeTool to "bounding box"
-							editorUi.getElement( "lbl_boundingbox" ).trigger( "mouseup" );
+							editorUi.getElement( "lbl_boundingbox" )->trigger( "mouseup" );
 							break;
 						}
 						
 						case SDLK_a:
 						{
 							// ChangeTool to "attack area"
-							editorUi.getElement( "lbl_attackarea" ).trigger( "mouseup" );
+							editorUi.getElement( "lbl_attackarea" )->trigger( "mouseup" );
 							break;
 						}
 						
 						case SDLK_d:
 						{
 							// ChangeTool to "defence area"
-							editorUi.getElement( "lbl_defencearea" ).trigger( "mouseup" );
+							editorUi.getElement( "lbl_defencearea" )->trigger( "mouseup" );
 							break;
 						}
 					}
@@ -834,6 +836,7 @@ int main( int argc, char ** argv )
 						if( lastEvent.wheel.y > 0 )
 						{
 							currentZoom += 5;
+							
 							synchronizeLabels();
 						}
 						else if( lastEvent.wheel.y < 0 )
@@ -890,7 +893,7 @@ int main( int argc, char ** argv )
 						
 						// Render anchor
 						Point aPt( cAnimation->getFrameByIndex( i ).getAnchor() );
-						aPt.move( origin.getX() + fBox.getOrigin().getX() + applyZoom( aPt.getX() ), origin.getY() + fBox.getOrigin().getY() + applyZoom( aPt.getY() ) );
+						aPt.move( origin.getX() + applyZoom( fBox.getOrigin().getX() ) + applyZoom( aPt.getX() ), origin.getY() + applyZoom( fBox.getOrigin().getY() ) + applyZoom( aPt.getY() ) );
 						aPt.render( Color( 0x00, 0xFF, 0x00 ), 5 * currentZoom / 100 );
 						
 						if( !toolActive && currentTool.compare( "anchor" ) == 0 )
@@ -1081,7 +1084,7 @@ void renderPointInformation( Point& point, Point& relative )
 	stringstream pointInfo;
 	pointInfo << "x: " << revertZoom( point.getX() - relative.getX() ) << " y: " << revertZoom( point.getY() - relative.getY() );
 	Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, pointInfo.str() );
-	Font::get( "font0" )->render( point.getX() - infoWidth / 2), point.getY() + - infoHeight, pointInfo.str() );
+	Font::get( "font0" )->render( point.getX() - infoWidth / 2, point.getY() + - infoHeight, pointInfo.str() );
 }
 
 void renderBoxInformation( Box& box, Point& relative )
