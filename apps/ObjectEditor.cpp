@@ -418,46 +418,52 @@ int main( int argc, char ** argv )
 				
 				case SDL_MOUSEBUTTONDOWN:
 				{
-					// TODO: May test which button ? cancel with right one ?
-					
-					if( !editorUi.dispatchEvent( &lastEvent ) && lastEvent.button.x < currentScreenWidth - 300 )
+					if( lastEvent.button == lastEvent.button == SDL_BUTTON_LEFT )
 					{
-						if( currentTool.compare( "move" ) == 0 )
+						if( !editorUi.dispatchEvent( &lastEvent ) && lastEvent.button.x < currentScreenWidth - 300 )
 						{
-							toolBox.getOrigin().move( lastEvent.button.x - origin.getX(), lastEvent.button.y - origin.getY() );
-							toolActive = true;
-						}
-						else if( currentTool.compare( "anchor" ) == 0 )
-						{
-							toolBox.getOrigin().move( lastEvent.button.x, lastEvent.button.y );
-							toolActive = true;
-						}
-						else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
-						{
-							toolBox.getOrigin().move( lastEvent.button.x, lastEvent.button.y );
-							toolBox.resize( 0, 0 );
-							toolActive = true;
-							
-							if( currentTool.compare( "box.frame" ) == 0 )
+							if( currentTool.compare( "move" ) == 0 )
 							{
-								// Restrict to the current sprite
-								if( sprite != NULL )
+								toolBox.getOrigin().move( lastEvent.button.x - origin.getX(), lastEvent.button.y - origin.getY() );
+								toolActive = true;
+							}
+							else if( currentTool.compare( "anchor" ) == 0 )
+							{
+								toolBox.getOrigin().move( lastEvent.button.x, lastEvent.button.y );
+								toolActive = true;
+							}
+							else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
+							{
+								toolBox.getOrigin().move( lastEvent.button.x, lastEvent.button.y );
+								toolBox.resize( 0, 0 );
+								toolActive = true;
+								
+								if( currentTool.compare( "box.frame" ) == 0 )
 								{
-									if( toolBox.getOrigin().getX() < origin.getX() ) toolBox.getOrigin().setX( origin.getX() );
-									else if( toolBox.getOrigin().getX() > origin.getX() + applyZoom( sprite->getWidth() ) ) toolBox.getOrigin().setX( origin.getX() + applyZoom( sprite->getWidth() ) - 1 );
-									
-									if( toolBox.getOrigin().getY() < origin.getY() ) toolBox.getOrigin().setY( origin.getY() );
-									else if( toolBox.getOrigin().getY() > origin.getY() + applyZoom( sprite->getHeight() ) ) toolBox.getOrigin().setY( origin.getY() + applyZoom( sprite->getHeight() ) - 1 );
+									// Restrict to the current sprite
+									if( sprite != NULL )
+									{
+										if( toolBox.getOrigin().getX() < origin.getX() ) toolBox.getOrigin().setX( origin.getX() );
+										else if( toolBox.getOrigin().getX() > origin.getX() + applyZoom( sprite->getWidth() ) ) toolBox.getOrigin().setX( origin.getX() + applyZoom( sprite->getWidth() ) - 1 );
+										
+										if( toolBox.getOrigin().getY() < origin.getY() ) toolBox.getOrigin().setY( origin.getY() );
+										else if( toolBox.getOrigin().getY() > origin.getY() + applyZoom( sprite->getHeight() ) ) toolBox.getOrigin().setY( origin.getY() + applyZoom( sprite->getHeight() ) - 1 );
+									}
+								}
+								
+								else if( currentTool.compare( "box.bounding" ) == 0
+								      || currentTool.compare( "box.attack" ) == 0
+								      || currentTool.compare( "box.defnce" ) == 0 )
+								{
+									// Restrict to the current frame
 								}
 							}
-							
-							else if( currentTool.compare( "box.bounding" ) == 0
-							      || currentTool.compare( "box.attack" ) == 0
-							      || currentTool.compare( "box.defnce" ) == 0 )
-							{
-								// Restrict to the current frame
-							}
 						}
+					}
+					else if( lastEvent.button == SDL_BUTTON_RIGHT )
+					{
+						if( toolActive )
+							toolActive = false;
 					}
 						
 					break;
@@ -465,47 +471,50 @@ int main( int argc, char ** argv )
 				
 				case SDL_MOUSEBUTTONUP:
 				{
-					if( !editorUi.dispatchEvent( &lastEvent ) )
+					if( lastEvent.button == SDL_BUTTON_LEFT )
 					{
-						if( toolActive )
+						if!editorUi.dispatchEvent( &lastEvent ) )
 						{
-							if( currentTool.compare( "move" ) == 0 )
+							if( toolActive )
 							{
-								toolActive = false;
-							}
-							else if( currentTool.compare( "anchor" ) == 0 )
-							{
-								toolActive = false;
-							
-								// Set the frame anchor to toolBox.getOrigin()
-							}
-							else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
-							{
-								toolActive = false;
+								if( currentTool.compare( "move" ) == 0 )
+								{
+									toolActive = false;
+								}
+								else if( currentTool.compare( "anchor" ) == 0 )
+								{
+									toolActive = false;
 								
-								if( currentTool.compare( "box.frame" ) == 0 )
+									// Set the frame anchor to toolBox.getOrigin()
+								}
+								else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
 								{
-									// Set the frame
-									Animation * animation = animations[animationsNames[currentAnimation]];
+									toolActive = false;
 									
-									if( animation != NULL )
+									if( currentTool.compare( "box.frame" ) == 0 )
 									{
-										//TODO: Test if frame exist or not!!! ok for the frame but not for other boxes
-										animation->getFrameByIndex( currentFrame ).getBox().getOrigin().move( revertZoom( toolBox.getOrigin().getX() - origin.getX() ), revertZoom( toolBox.getOrigin().getY() - origin.getY() ) );
-										animation->getFrameByIndex( currentFrame ).getBox().resize( revertZoom( toolBox.getWidth() ), revertZoom( toolBox.getHeight() ) );
+										// Set the frame
+										Animation * animation = animations[animationsNames[currentAnimation]];
+										
+										if( animation != NULL )
+										{
+											//TODO: Test if frame exist or not!!! ok for the frame but not for other boxes
+											animation->getFrameByIndex( currentFrame ).getBox().getOrigin().move( revertZoom( toolBox.getOrigin().getX() - origin.getX() ), revertZoom( toolBox.getOrigin().getY() - origin.getY() ) );
+											animation->getFrameByIndex( currentFrame ).getBox().resize( revertZoom( toolBox.getWidth() ), revertZoom( toolBox.getHeight() ) );
+										}
 									}
-								}
-								else if( currentTool.compare( "box.bounding" ) == 0 )
-								{
-									// Set the bounding box
-								}
-								else if( currentTool.compare( "box.attack" ) == 0 )
-								{
-									// Set the attack area
-								}
-								else if( currentTool.compare( "box.defence" ) == 0 )
-								{
-									// Set the defence
+									else if( currentTool.compare( "box.bounding" ) == 0 )
+									{
+										// Set the bounding box
+									}
+									else if( currentTool.compare( "box.attack" ) == 0 )
+									{
+										// Set the attack area
+									}
+									else if( currentTool.compare( "box.defence" ) == 0 )
+									{
+										// Set the defence
+									}
 								}
 							}
 						}
@@ -1342,7 +1351,7 @@ bool addFrame( Element * element )
 	
 	if( animation != NULL && sprite != NULL )
 	{
-		Frame frame( animation->getFrameByIndex( currentFrame ) );
+		Frame frame( animation->getFrameByIndex( animation->getFrameCount() - 1 ) );
 		
 		if( frame.getBox().getWidth() + frame.getBox().getOrigin().getX() <= sprite->getWidth() )
 			frame.getBox().getOrigin().moveBy( frame.getBox().getWidth(), 0 );
@@ -1360,6 +1369,15 @@ bool addFrame( Element * element )
 
 bool deleteFrame( Element * element )
 {
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL && animation->getFrameCount() > 1 )
+	{
+		animation->removeFrameByIndex( currentFrame );
+		currentFrame = animation->getFrameCount() - 1;
+		synchronizeLabels();
+	}
+	
 	return true;
 }
 
