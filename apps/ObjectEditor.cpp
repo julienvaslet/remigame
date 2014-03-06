@@ -418,7 +418,7 @@ int main( int argc, char ** argv )
 				
 				case SDL_MOUSEBUTTONDOWN:
 				{
-					if( lastEvent.button == lastEvent.button == SDL_BUTTON_LEFT )
+					if( lastEvent.button.button == SDL_BUTTON_LEFT )
 					{
 						if( !editorUi.dispatchEvent( &lastEvent ) && lastEvent.button.x < currentScreenWidth - 300 )
 						{
@@ -460,7 +460,7 @@ int main( int argc, char ** argv )
 							}
 						}
 					}
-					else if( lastEvent.button == SDL_BUTTON_RIGHT )
+					else if( lastEvent.button.button == SDL_BUTTON_RIGHT )
 					{
 						if( toolActive )
 							toolActive = false;
@@ -471,9 +471,9 @@ int main( int argc, char ** argv )
 				
 				case SDL_MOUSEBUTTONUP:
 				{
-					if( lastEvent.button == SDL_BUTTON_LEFT )
+					if( lastEvent.button.button == SDL_BUTTON_LEFT )
 					{
-						if!editorUi.dispatchEvent( &lastEvent ) )
+						if( !editorUi.dispatchEvent( &lastEvent ) )
 						{
 							if( toolActive )
 							{

@@ -31,6 +31,7 @@ namespace graphics
 			
 			unsigned int getFrameCount() const;
 			Frame& getFrameByIndex( unsigned int index );
+			void removeFrameByIndex( unsigned int index );
 			
 			void reset();
 	};

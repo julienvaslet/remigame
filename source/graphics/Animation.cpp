@@ -73,5 +73,15 @@ namespace graphics
 	{
 		return this->frames[index];
 	}
+	
+	void Animation::removeFrameByIndex( unsigned int index )
+	{
+		unsigned int i = 0;
+		for( vector<Frame>::iterator it = this->frames.begin() ; it != this->frames.end() ; it++ )
+		{
+			if( i++ == index )
+				this->frames.erase( it );
+		}
+	}
 }
 
