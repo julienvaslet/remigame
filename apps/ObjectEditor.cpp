@@ -1018,47 +1018,78 @@ int main( int argc, char ** argv )
 			// Render animation preview
 			if( !loadingState && !savingState && animations.size() > 0 )
 			{
-				Frame * frame = animations[animationsNames[currentAnimation]]->getFrame( ticks );
-			
-				if( frame != NULL )
+				Animation * animation = animations[animationsNames[currentAnimation]];
+				
+				if( animation != NULL )
 				{
-					int animationZoom = frame->getBox().getWidth() > frame->getBox().getHeight() ? static_cast<int>( 300.0 / static_cast<double>( frame->getBox().getWidth() ) * 100.0 ) : static_cast<int>( 300.0 / static_cast<double>( frame->getBox().getHeight() ) * 100.0 );
-
-					SDL_Rect dstRect;
-				
-					dstRect.x = currentScreenWidth - 300;//applyZoom( frame->getAnchor().getX(), animationZoom );
-					dstRect.y = 0;//applyZoom( frame->getAnchor().getY(), animationZoom );
-					dstRect.w = applyZoom( frame->getBox().getWidth(), animationZoom );
-					dstRect.h = applyZoom( frame->getBox().getHeight(), animationZoom );
-
-					SDL_Rect srcRect;
-					frame->getBox().fillSDLRect( &srcRect );
-	
-					SDL_RenderCopy( Screen::get()->getRenderer(), sprite->getTexture(), &srcRect, &dstRect );
+					int animationZoom = 100;
+					Box negativeArea;
+					Box positiveArea;
 					
-					// TODO: Compute local zoom based on each animation frame (get the max width & max height & take part of anchor point)
-					/*int frameZoom = 100;
-					SDL_Rect dstRect;
-					int anchorX = origin.getX();
-					int anchorY = origin.getY();
+					if( animation->getFrameCount() > 0 )
+					{
+						// Find animation area
+						for( unsigned int i = 0 ; i < animation->getFrameCount() ; i++ )
+						{
+							// Positive area
+							if( animation->getFrameByIndex( i ).getBox().getWidth() - animation->getFrameByIndex( i ).getAnchor().getX() > positiveArea.getWidth() ) positiveArea.setWidth( animation->getFrameByIndex( i ).getBox().getWidth() - animation->getFrameByIndex( i ).getAnchor().getX() );
+							if( animation->getFrameByIndex( i ).getBox().getHeight() - animation->getFrameByIndex( i ).getAnchor().getY() > positiveArea.getHeight() ) positiveArea.setHeight( animation->getFrameByIndex( i ).getBox().getHeight() - animation->getFrameByIndex( i ).getAnchor().getY() );
+							
+							// Negative area
+							if( animation->getFrameByIndex( i ).getAnchor().getX() > negativeArea.getWidth() ) negativeArea.setWidth( animation->getFrameByIndex( i ).getAnchor().getX() );
+							if( animation->getFrameByIndex( i ).getAnchor().getY() > negativeArea.getHeight() ) negativeArea.setHeight( animation->getFrameByIndex( i ).getAnchor().getY() );
+						}
+						
+						// Determine the zoom level
+						if( positiveArea.getWidth() + negativeArea.getWidth() > positiveArea.getHeight() + negativeArea.getHeight() )
+							animationZoom = (positiveArea.getWidth() + negativeArea.getWidth()) / 300.0;
+						else
+							animationZoom = (positiveArea.getHeight() + negativeArea.getHeight()) / 300.0;
+					}
+					
+					Frame * frame = animation->getFrame( ticks );
 				
-					dstRect.x = anchorX - (frame->getAnchor().getX() * animationZoom / 100.0);
-					dstRect.y = anchorY - (frame->getAnchor().getY() * animationZoom / 100.0);
-					dstRect.w = (frameZoom * frame->getBox().getWidth()) / 100;
-					dstRect.h = (frameZoom * frame->getBox().getHeight()) / 100;
+					if( frame != NULL )
+					{
+						// TODO: Temporary
+						//animationZoom = frame->getBox().getWidth() > frame->getBox().getHeight() ? static_cast<int>( 300.0 / static_cast<double>( frame->getBox().getWidth() ) * 100.0 ) : static_cast<int>( 300.0 / static_cast<double>( frame->getBox().getHeight() ) * 100.0 );
 	
-					SDL_Rect srcRect;
-					frame->getBox().fillSDLRect( &srcRect );
+						SDL_Rect dstRect;
+					
+						dstRect.x = currentScreenWidth - 300;//applyZoom( frame->getAnchor().getX(), animationZoom );
+						dstRect.y = 0;//applyZoom( frame->getAnchor().getY(), animationZoom );
+						dstRect.w = applyZoom( frame->getBox().getWidth(), animationZoom );
+						dstRect.h = applyZoom( frame->getBox().getHeight(), animationZoom );
 	
-					SDL_RenderCopy( Screen::get()->getRenderer(), sprite->getTexture(), &srcRect, &dstRect );*/
-				
-					// Render anchor
-				
-					// Render bounding boxes
-				
-					// Render attack areas
-				
-					// Render defence areas
+						SDL_Rect srcRect;
+						frame->getBox().fillSDLRect( &srcRect );
+		
+						SDL_RenderCopy( Screen::get()->getRenderer(), sprite->getTexture(), &srcRect, &dstRect );
+						
+						// TODO: Compute local zoom based on each animation frame (get the max width & max height & take part of anchor point)
+						/*int frameZoom = 100;
+						SDL_Rect dstRect;
+						int anchorX = origin.getX();
+						int anchorY = origin.getY();
+					
+						dstRect.x = anchorX - (frame->getAnchor().getX() * animationZoom / 100.0);
+						dstRect.y = anchorY - (frame->getAnchor().getY() * animationZoom / 100.0);
+						dstRect.w = (frameZoom * frame->getBox().getWidth()) / 100;
+						dstRect.h = (frameZoom * frame->getBox().getHeight()) / 100;
+		
+						SDL_Rect srcRect;
+						frame->getBox().fillSDLRect( &srcRect );
+		
+						SDL_RenderCopy( Screen::get()->getRenderer(), sprite->getTexture(), &srcRect, &dstRect );*/
+					
+						// Render anchor
+					
+						// Render bounding boxes
+					
+						// Render attack areas
+					
+						// Render defence areas
+					}
 				}
 			}
 					
