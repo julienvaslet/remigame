@@ -842,9 +842,16 @@ int main( int argc, char ** argv )
 				{
 					if( altKeyState )
 					{
+						int prevZoom = currentZoom;
+						int mouseX = 0;
+						int mouseY = 0;
+						SDL_GetMouseState( &mouseX, &mouseY );
+						
 						if( lastEvent.wheel.y > 0 )
 						{
 							currentZoom += 5;
+							
+							origin.moveBy( static_cast<int>( static_cast<double>( mouseX - origin.getX() ) * -5.0 / 100.0 ), static_cast<int>( static_cast<double>( mouseY - origin.getY() ) * -1.0 * static_cast<double>( currentZoom - prevZoom ) / 100.0 ) );
 							
 							synchronizeLabels();
 						}
@@ -853,6 +860,8 @@ int main( int argc, char ** argv )
 							currentZoom -= 5;
 							if( currentZoom < 5 )
 								currentZoom = 5;
+								
+							origin.moveBy( static_cast<int>( static_cast<double>( mouseX - origin.getX() ) * -5.0 / 100.0 ), static_cast<int>( static_cast<double>( mouseY - origin.getY() ) * -1.0 * static_cast<double>( prevZoom - currentZoom ) / 100.0 ) );
 							
 							synchronizeLabels();
 						}
