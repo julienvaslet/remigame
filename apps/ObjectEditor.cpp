@@ -85,7 +85,7 @@ bool saveFile( Element * element );
 bool prevAnimation( Element * element );
 bool nextAnimation( Element * element );
 
-// TODO: add z-index value to???
+// TODO: add z-index value to UserInterface element, and a tab index too
 // TODO: add disabled state to ui::Element
 
 int main( int argc, char ** argv )
@@ -406,9 +406,19 @@ int main( int argc, char ** argv )
 							
 							else if( currentTool.compare( "box.bounding" ) == 0
 							      || currentTool.compare( "box.attack" ) == 0
-							      || currentTool.compare( "box.defnce" ) == 0 )
+							      || currentTool.compare( "box.defence" ) == 0 )
 							{
 								// Restrict to the current frame
+								Animation * annimation = animations[animationsNames[currentAnimation]];
+								
+								if( animation != NULL )
+								{
+									if( toolBox.getOrigin().getX() + toolBox.getWidth() > animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getWidth() ) ) toolBox.setWidth( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getWidth() ) - toolBox.getOrigin().getX() );
+									else if( toolBox.getOrigin().getX() + toolBox.getWidth() < animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() ) toolBox.setWidth( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() - toolBox.getOrigin().getX() + 1 );
+									
+									if( toolBox.getOrigin().getY() + toolBox.getHeight() > animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getHeight() ) ) toolBox.setHeight( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getHeight() ) - toolBox.getOrigin().getY() );
+									else if( toolBox.getOrigin().getY() + toolBox.getHeight() < animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() ) toolBox.setHeight( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() - toolBox.getOrigin().getY() + 1);
+								}
 							}
 						}
 					}
@@ -456,6 +466,16 @@ int main( int argc, char ** argv )
 								      || currentTool.compare( "box.defnce" ) == 0 )
 								{
 									// Restrict to the current frame
+									Animation * annimation = animations[animationsNames[currentAnimation]];
+									
+									if( animation != NULL )
+									{
+										if( toolBox.getOrigin().getX() + toolBox.getWidth() > animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getWidth() ) ) toolBox.setWidth( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getWidth() ) - toolBox.getOrigin().getX() );
+										else if( toolBox.getOrigin().getX() + toolBox.getWidth() < animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() ) toolBox.setWidth( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() - toolBox.getOrigin().getX() + 1 );
+										
+										if( toolBox.getOrigin().getY() + toolBox.getHeight() > animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getHeight() ) ) toolBox.setHeight( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getHeight() ) - toolBox.getOrigin().getY() );
+										else if( toolBox.getOrigin().getY() + toolBox.getHeight() < animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() ) toolBox.setHeight( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() - toolBox.getOrigin().getY() + 1);
+									}
 								}
 							}
 						}
@@ -498,7 +518,6 @@ int main( int argc, char ** argv )
 										
 										if( animation != NULL )
 										{
-											//TODO: Test if frame exist or not!!! ok for the frame but not for other boxes
 											animation->getFrameByIndex( currentFrame ).getBox().getOrigin().move( revertZoom( toolBox.getOrigin().getX() - origin.getX() ), revertZoom( toolBox.getOrigin().getY() - origin.getY() ) );
 											animation->getFrameByIndex( currentFrame ).getBox().resize( revertZoom( toolBox.getWidth() ), revertZoom( toolBox.getHeight() ) );
 										}
