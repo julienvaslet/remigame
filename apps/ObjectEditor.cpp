@@ -59,6 +59,8 @@ int applyZoom( int value, int zoom = 0 );
 int revertZoom( int value, int zoom = 0 );
 void renderBoxInformation( Box& box, Point& relative );
 void renderPointInformation( Point& point, Point& relative );
+void restrictPointToBoxArea( Point& point, Box& area );
+void restrictBoxToBoxArea( Box& point, Box& area );
 
 // Events
 bool changeTool( Element * element );
@@ -187,7 +189,14 @@ int main( int argc, char ** argv )
 						}
 						else if( currentTool.compare( "anchor" ) == 0 )
 						{
-							toolBox.getOrigin().move( lastEvent.motion.x, lastEvent.motion.y );
+							// Restrict to the current frame
+							Animation * animation = animations[animationsNames[currentAnimation]];
+							
+							if( animation != NULL )
+							{
+								toolBox.getOrigin().move( revertZoom( lastEvent.button.x - origin.getX() ) - animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX(), revertZoom( lastEvent.button.y - origin.getY() ) - animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() );
+								restrictPointToBoxArea( toolBox.getOrigin(), animation->getFrameByIndex( currentFrame ).getBox() );
+							}
 						}
 						else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
 						{
@@ -241,12 +250,20 @@ int main( int argc, char ** argv )
 							}
 							else if( currentTool.compare( "anchor" ) == 0 )
 							{
-								toolBox.getOrigin().move( lastEvent.button.x, lastEvent.button.y );
-								toolActive = true;
+								// Restrict to the current frame
+								Animation * animation = animations[animationsNames[currentAnimation]];
+								
+								if( animation != NULL )
+								{
+									toolBox.getOrigin().move( revertZoom( lastEvent.button.x - origin.getX() ) - animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX(), revertZoom( lastEvent.button.y - origin.getY() ) - animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() );
+									restrictPointToBoxArea( toolBox.getOrigin(), animation->getFrameByIndex( currentFrame ).getBox() );
+									
+									toolActive = true;
+								}
 							}
 							else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
 							{
-								toolBox.getOrigin().move( lastEvent.button.x, lastEvent.button.y );
+								toolBox.getOrigin().move( revertZoom( lastEvent.button.x ), revertZoom( lastEvent.button.y ) );
 								toolBox.resize( 0, 0 );
 								toolActive = true;
 								
@@ -255,11 +272,11 @@ int main( int argc, char ** argv )
 									// Restrict to the current sprite
 									if( sprite != NULL )
 									{
-										if( toolBox.getOrigin().getX() < origin.getX() ) toolBox.getOrigin().setX( origin.getX() );
+										/*if( toolBox.getOrigin().getX() < origin.getX() ) toolBox.getOrigin().setX( origin.getX() );
 										else if( toolBox.getOrigin().getX() > origin.getX() + applyZoom( sprite->getWidth() ) ) toolBox.getOrigin().setX( origin.getX() + applyZoom( sprite->getWidth() ) - 1 );
 										
 										if( toolBox.getOrigin().getY() < origin.getY() ) toolBox.getOrigin().setY( origin.getY() );
-										else if( toolBox.getOrigin().getY() > origin.getY() + applyZoom( sprite->getHeight() ) ) toolBox.getOrigin().setY( origin.getY() + applyZoom( sprite->getHeight() ) - 1 );
+										else if( toolBox.getOrigin().getY() > origin.getY() + applyZoom( sprite->getHeight() ) ) toolBox.getOrigin().setY( origin.getY() + applyZoom( sprite->getHeight() ) - 1 );*/
 									}
 								}
 								
@@ -307,7 +324,10 @@ int main( int argc, char ** argv )
 								{
 									toolActive = false;
 								
-									// Set the frame anchor to toolBox.getOrigin()
+									Animation * animation = animations[animationsNames[currentAnimation]];
+									
+									if( animation != NULL )
+										animation->getFrameByIndex( currentFrame ).getAnchor().move( toolBox.getOrigin().getX(), toolBox.getOrigin().getY() );
 								}
 								else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
 								{
@@ -410,6 +430,13 @@ int main( int argc, char ** argv )
 
 							else if( currentTool.compare( "anchor" ) == 0 )
 							{
+								Animation * animation = animations[animationsNames[currentAnimation]];
+								
+								if( animation != NULL )
+								{
+									animation->getFrameByIndex( currentFrame ).getAnchor().moveBy( -1 * ( shiftKeyState ? 10 : 1 ), 0 );
+									restrictPointToBoxArea( animation->getFrameByIndex( currentFrame ).getAnchor(), animation->getFrameByIndex( currentFrame ).getBox() );
+								}
 							}
 							else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
 							{
@@ -456,6 +483,13 @@ int main( int argc, char ** argv )
 
 							else if( currentTool.compare( "anchor" ) == 0 )
 							{
+								Animation * animation = animations[animationsNames[currentAnimation]];
+								
+								if( animation != NULL )
+								{
+									animation->getFrameByIndex( currentFrame ).getAnchor().moveBy( shiftKeyState ? 10 : 1, 0 );
+									restrictPointToBoxArea( animation->getFrameByIndex( currentFrame ).getAnchor(), animation->getFrameByIndex( currentFrame ).getBox() );
+								}
 							}
 							else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
 							{
@@ -501,6 +535,13 @@ int main( int argc, char ** argv )
 
 							else if( currentTool.compare( "anchor" ) == 0 )
 							{
+								Animation * animation = animations[animationsNames[currentAnimation]];
+								
+								if( animation != NULL )
+								{
+									animation->getFrameByIndex( currentFrame ).getAnchor().moveBy( 0, -1 * ( shiftKeyState ? 10 : 1 ) );
+									restrictPointToBoxArea( animation->getFrameByIndex( currentFrame ).getAnchor(), animation->getFrameByIndex( currentFrame ).getBox() );
+								}
 							}
 							else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
 							{
@@ -546,6 +587,13 @@ int main( int argc, char ** argv )
 
 							else if( currentTool.compare( "anchor" ) == 0 )
 							{
+								Animation * animation = animations[animationsNames[currentAnimation]];
+								
+								if( animation != NULL )
+								{
+									animation->getFrameByIndex( currentFrame ).getAnchor().moveBy( 0, shiftKeyState ? 10 : 1 );
+									restrictPointToBoxArea( animation->getFrameByIndex( currentFrame ).getAnchor(), animation->getFrameByIndex( currentFrame ).getBox() );
+								}
 							}
 							else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
 							{
@@ -728,16 +776,17 @@ int main( int argc, char ** argv )
 					if( currentFrame == i )
 					{
 						if( !toolActive && currentTool.compare( "box.frame" ) == 0 )
-							renderBoxInformation( fBox, origin );
+							renderBoxInformation( cAnimation->getFrameByIndex( i ).getBox(), origin );
 						
 						// Render anchor
 						Point aPt( cAnimation->getFrameByIndex( i ).getAnchor() );
-						aPt.move( fBox.getOrigin().getX() + applyZoom( aPt.getX() ), fBox.getOrigin().getY() + applyZoom( aPt.getY() ) );
+						aPt.move( origin.getX() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getX() + aPt.getX() ), origin.getY() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getY() + aPt.getY() ) );
 						aPt.render( Color( 0x00, 0xFF, 0x00 ), 5 * currentZoom / 100 );
 						
 						if( !toolActive && currentTool.compare( "anchor" ) == 0 )
-							renderPointInformation( aPt, fBox.getOrigin() );
+							renderPointInformation( cAnimation->getFrameByIndex( i ).getAnchor(), fBox.getOrigin() );
 						
+						/*
 						// Render bounding boxes
 						for( unsigned int iBox = 0 ; i < cAnimation->getFrameByIndex( i ).getBoundingBoxesCount() ; iBox++ )
 						{
@@ -779,29 +828,32 @@ int main( int argc, char ** argv )
 								if( !toolActive && currentTool.compare( "box.defence" ) == 0 )
 									renderBoxInformation( dBox, fBox.getOrigin() );
 							}
-						}
+						}*/
 					}
 				}
-			}
+				
+				// Render current tool
+				if( toolActive )
+				{
+					if( currentTool.compare( "anchor" ) == 0 )
+					{
+						Point frameOrigin( origin );
+						frameOrigin.moveBy( applyZoom( cAnimation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() ), applyZoom( cAnimation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() ) );
+						
+						renderPointInformation( toolBox.getOrigin(), frameOrigin );
+					}
+					/*else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
+					{
+						Color color;
 			
-			// Render current tool
-			if( toolActive )
-			{
-				if( currentTool.compare( "anchor" ) == 0 )
-				{
-					renderPointInformation( toolBox.getOrigin(), origin );
-				}
-				else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
-				{
-					Color color;
-				
-					if( currentTool.compare( "box.frame" ) == 0 ) color.setColor( "FFFFFF" );
-					else if( currentTool.compare( "box.bounding" ) == 0 ) color.setColor( "00FF00" );
-					else if( currentTool.compare( "box.attack" ) == 0 ) color.setColor( "FF0000" );
-					else if( currentTool.compare( "box.defence" ) == 0 ) color.setColor( "0000FF" );
-				
-					toolBox.render( color );
-					renderBoxInformation( toolBox, origin );
+						if( currentTool.compare( "box.frame" ) == 0 ) color.setColor( "FFFFFF" );
+						else if( currentTool.compare( "box.bounding" ) == 0 ) color.setColor( "00FF00" );
+						else if( currentTool.compare( "box.attack" ) == 0 ) color.setColor( "FF0000" );
+						else if( currentTool.compare( "box.defence" ) == 0 ) color.setColor( "0000FF" );
+			
+						toolBox.render( color );
+						renderBoxInformation( toolBox, origin );
+					}*/
 				}
 			}
 			
@@ -1180,9 +1232,9 @@ void renderPointInformation( Point& point, Point& relative )
 	int infoHeight = 0;
 	
 	stringstream pointInfo;
-	pointInfo << "x: " << revertZoom( point.getX() - relative.getX() ) << " y: " << revertZoom( point.getY() - relative.getY() );
+	pointInfo << "x: " << point.getX() << " y: " << point.getY();
 	Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, pointInfo.str() );
-	Font::get( "font0" )->render( point.getX() - infoWidth / 2, point.getY() + - infoHeight, pointInfo.str() );
+	Font::get( "font0" )->render( relative.getX() + applyZoom( point.getX() ) + (infoWidth / -2), relative.getY() + applyZoom( point.getY() ) - infoHeight, pointInfo.str() );
 }
 
 void renderBoxInformation( Box& box, Point& relative )
@@ -1191,16 +1243,33 @@ void renderBoxInformation( Box& box, Point& relative )
 	int infoHeight = 0;
 	
 	stringstream boxInfo;
-	boxInfo << "x: " << revertZoom( box.getOrigin().getX() - relative.getX() ) << " y: " << revertZoom( box.getOrigin().getY() - relative.getY() );
+	boxInfo << "x: " << box.getOrigin().getX() << " y: " << box.getOrigin().getY();
 	Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, boxInfo.str() );
-	Font::get( "font0" )->render( box.getOrigin().getX() + ((box.getWidth() - infoWidth) / 2), box.getOrigin().getY() + (box.getHeight() / 2) - infoHeight, boxInfo.str() );
+	Font::get( "font0" )->render( relative.getX() + applyZoom( box.getOrigin().getX() ) + ((applyZoom( box.getWidth() ) - infoWidth) / 2), relative.getY() + applyZoom( box.getOrigin().getY() ) + (applyZoom( box.getHeight() ) / 2) - infoHeight, boxInfo.str() );
 
 	infoWidth = 0;
 	infoHeight = 0;
 	boxInfo.str( "" );
-	boxInfo << revertZoom( box.getWidth() ) << " x " << revertZoom( box.getHeight() );
+	boxInfo << box.getWidth() << " x " << box.getHeight();
 	Font::get( "font0" )->renderSize( &infoWidth, &infoHeight, boxInfo.str() );
-	Font::get( "font0" )->render( box.getOrigin().getX() + ((box.getWidth() - infoWidth) / 2), box.getOrigin().getY() + (box.getHeight() / 2), boxInfo.str() );
+	Font::get( "font0" )->render( relative.getX() + applyZoom( box.getOrigin().getX() ) + ((applyZoom(box.getWidth()) - infoWidth) / 2), relative.getY() + applyZoom( box.getOrigin().getY() ) + (applyZoom( box.getHeight() ) / 2), boxInfo.str() );
+}
+
+void restrictPointToBoxArea( Point& point, Box& area )
+{
+	if( point.getX() < 0 )
+		point.setX( 0 );
+	else if( point.getX() > area.getWidth() )
+		point.setX( area.getWidth() );
+	
+	if( point.getY() < 0 )
+		point.setY( 0 );
+	else if( point.getY() > area.getHeight() )
+		point.setY( area.getHeight() );
+}
+
+void restrictBoxToBoxArea( Box& point, Box& area )
+{
 }
 
 void adjustSpriteToScreen()
