@@ -48,6 +48,7 @@ bool ctrlKeyState = false;
 bool altKeyState = false;
 
 // Global functions
+void initUserInterface();
 bool loadSprite( const string& filename );
 bool loadObject( const string& filename );
 void cleanObjectVariables();
@@ -85,6 +86,8 @@ bool saveFile( Element * element );
 bool prevAnimation( Element * element );
 bool nextAnimation( Element * element );
 
+// TODO: zoom only applied on show function to limit approximations
+
 // TODO: add z-index value to UserInterface element, and a tab index too
 // TODO: add disabled state to ui::Element
 
@@ -121,214 +124,14 @@ int main( int argc, char ** argv )
 	int currentScreenWidth = Screen::get()->getWidth();
 	Box actionPanel( currentScreenWidth - 300, 0, 300, Screen::get()->getHeight() );
 	
-	// h: 310 - Save & Load
-	editorUi.addElement( "btn_load", new Button( "font0", "Load" ) );
-	editorUi.getElement( "btn_load" )->getBox().setWidth( 137 );
-	editorUi.getElement( "btn_load" )->getBox().getOrigin().move( currentScreenWidth - 290, 310 );
-	editorUi.getElement( "btn_load" )->addEventHandler( "mouseup", loadFile );
-	panelButtons.push_back( "btn_load" );
+	initUserInterface();
 	
-	editorUi.addElement( "btn_save", new Button( "font0", "Save" ) );
-	editorUi.getElement( "btn_save" )->getBox().setWidth( 137 );
-	editorUi.getElement( "btn_save" )->getBox().getOrigin().move( currentScreenWidth - 147, 310 );
-	editorUi.getElement( "btn_save" )->addEventHandler( "mouseup", saveFile );
-	panelButtons.push_back( "btn_save" );
-	
-	// h: 340 - Animation selection
-	editorUi.addElement( "btn_prev_animation", new Button( "font0", "<" ) );
-	editorUi.getElement( "btn_prev_animation" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_prev_animation" )->getBox().getOrigin().move( currentScreenWidth - 290 , 340 );
-	editorUi.getElement( "btn_prev_animation" )->addEventHandler( "mouseup", prevAnimation );
-	panelButtons.push_back( "btn_prev_animation" );
-	
-	editorUi.addElement( "btn_next_animation", new Button( "font0", ">" ) );
-	editorUi.getElement( "btn_next_animation" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_next_animation" )->getBox().getOrigin().move( currentScreenWidth - 50, 340 );
-	editorUi.getElement( "btn_next_animation" )->addEventHandler( "mouseup", nextAnimation );
-	panelButtons.push_back( "btn_next_animation" );
-	
-	editorUi.addElement( "lbl_animation", new Label( "font0", "idle" ) );
-	editorUi.getElement( "lbl_animation" )->getBox().setWidth( 190 );
-	editorUi.getElement( "lbl_animation" )->getBox().getOrigin().move( currentScreenWidth - 245, 340 );
-	panelButtons.push_back( "lbl_animation" );
-	
-	// h: 370 - Speed selection
-	editorUi.addElement( "btn_increase_speed", new Button( "font0", "+" ) );
-	editorUi.getElement( "btn_increase_speed" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_increase_speed" )->getBox().getOrigin().move( currentScreenWidth - 50, 370 );
-	editorUi.getElement( "btn_increase_speed" )->addEventHandler( "mouseup", increaseSpeed );
-	panelButtons.push_back( "btn_increase_speed" );
-	
-	editorUi.addElement( "btn_decrease_speed", new Button( "font0", "~" ) );
-	editorUi.getElement( "btn_decrease_speed" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_decrease_speed" )->getBox().getOrigin().move( currentScreenWidth - 290 , 370 );
-	editorUi.getElement( "btn_decrease_speed" )->addEventHandler( "mouseup", decreaseSpeed );
-	panelButtons.push_back( "btn_decrease_speed" );
-	
-	editorUi.addElement( "lbl_speed", new Label( "font0", "100 fps" ) );
-	editorUi.getElement( "lbl_speed" )->getBox().setWidth( 190 );
-	editorUi.getElement( "lbl_speed" )->getBox().getOrigin().move( currentScreenWidth - 245, 370 );
-	panelButtons.push_back( "lbl_speed" );
-	
-	// h: 400 - Frame selection
-	editorUi.addElement( "btn_prev_frame", new Button( "font0", "<" ) );
-	editorUi.getElement( "btn_prev_frame" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_prev_frame" )->getBox().getOrigin().move( currentScreenWidth - 290, 400 );
-	editorUi.getElement( "btn_prev_frame" )->addEventHandler( "mouseup", prevFrame );
-	panelButtons.push_back( "btn_prev_frame" );
-	
-	editorUi.addElement( "btn_del_frame", new Button( "font0", "~" ) );
-	editorUi.getElement( "btn_del_frame" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_del_frame" )->getBox().getOrigin().move( currentScreenWidth - 245, 400 );
-	editorUi.getElement( "btn_del_frame" )->addEventHandler( "mouseup", deleteFrame );
-	panelButtons.push_back( "btn_del_frame" );
-	
-	editorUi.addElement( "btn_add_frame", new Button( "font0", "+" ) );
-	editorUi.getElement( "btn_add_frame" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_add_frame" )->getBox().getOrigin().move( currentScreenWidth - 95, 400 );
-	editorUi.getElement( "btn_add_frame" )->addEventHandler( "mouseup", addFrame );
-	panelButtons.push_back( "btn_add_frame" );
-	
-	editorUi.addElement( "btn_next_frame", new Button( "font0", ">" ) );
-	editorUi.getElement( "btn_next_frame" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_next_frame" )->getBox().getOrigin().move( currentScreenWidth - 50, 400 );
-	editorUi.getElement( "btn_next_frame" )->addEventHandler( "mouseup", nextFrame );
-	panelButtons.push_back( "btn_next_frame" );
-	
-	editorUi.addElement( "lbl_frame", new PushButton( "font0", "frame#0" ) );
-	editorUi.getElement( "lbl_frame" )->getBox().setWidth( 100 );
-	editorUi.getElement( "lbl_frame" )->getBox().getOrigin().move( currentScreenWidth - 200, 400 );
-	editorUi.getElement( "lbl_frame" )->addEventHandler( "mouseup", changeTool );
-	panelButtons.push_back( "lbl_frame" );
-	tools["lbl_frame"] = "box.frame";
-	
-	// h: 440 - Anchor &move selection
-	editorUi.addElement( "btn_move", new PushButton( "font0", "Move", true ) );
-	editorUi.getElement( "btn_move" )->getBox().setWidth( 137 );
-	editorUi.getElement( "btn_move" )->getBox().getOrigin().move( currentScreenWidth - 290, 440 );
-	editorUi.getElement( "btn_move" )->addEventHandler( "mouseup", changeTool );
-	panelButtons.push_back( "btn_move" );
-	tools["btn_move"] = "move";
-	
-	editorUi.addElement( "btn_anchor", new PushButton( "font0", "Set anchor" ) );
-	editorUi.getElement( "btn_anchor" )->getBox().setWidth( 137 );
-	editorUi.getElement( "btn_anchor" )->getBox().getOrigin().move( currentScreenWidth - 147, 440 );
-	editorUi.getElement( "btn_anchor" )->addEventHandler( "mouseup", changeTool );
-	panelButtons.push_back( "btn_anchor" );
-	tools["btn_anchor"] = "anchor";
-	
-	// h: 470 - Bounding box selection
-	editorUi.addElement( "btn_prev_boundingbox", new Button( "font0", "<" ) );
-	editorUi.getElement( "btn_prev_boundingbox" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_prev_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 290, 470 );
-	panelButtons.push_back( "btn_prev_boundingbox" );
-	
-	editorUi.addElement( "btn_del_boundingbox", new Button( "font0", "~" ) );
-	editorUi.getElement( "btn_del_boundingbox" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_del_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 245, 470 );
-	panelButtons.push_back( "btn_del_boundingbox" );
-	
-	editorUi.addElement( "btn_add_boundingbox", new Button( "font0", "+" ) );
-	editorUi.getElement( "btn_add_boundingbox" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_add_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 95, 470 );
-	panelButtons.push_back( "btn_add_boundingbox" );
-	
-	editorUi.addElement( "btn_next_boundingbox", new Button( "font0", ">" ) );
-	editorUi.getElement( "btn_next_boundingbox" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_next_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 50, 470 );
-	panelButtons.push_back( "btn_next_boundingbox" );
-	
-	editorUi.addElement( "lbl_boundingbox", new PushButton( "font0", "bounding#0" ) );
-	editorUi.getElement( "lbl_boundingbox" )->getBox().setWidth( 100 );
-	editorUi.getElement( "lbl_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 200, 470 );
-	editorUi.getElement( "lbl_boundingbox" )->addEventHandler( "mouseup", changeTool );
-	panelButtons.push_back( "lbl_boundingbox" );
-	tools["lbl_boundingbox"] = "box.bounding";
-
-	// h: 500 - Attack area selection
-	editorUi.addElement( "btn_prev_attackarea", new Button( "font0", "<" ) );
-	editorUi.getElement( "btn_prev_attackarea" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_prev_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 290, 500 );
-	panelButtons.push_back( "btn_prev_attackarea" );
-	
-	editorUi.addElement( "btn_del_attackarea", new Button( "font0", "~" ) );
-	editorUi.getElement( "btn_del_attackarea" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_del_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 245, 500 );
-	panelButtons.push_back( "btn_del_attackarea" );
-	
-	editorUi.addElement( "btn_add_attackarea", new Button( "font0", "+" ) );
-	editorUi.getElement( "btn_add_attackarea" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_add_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 95, 500 );
-	panelButtons.push_back( "btn_add_attackarea" );
-	
-	editorUi.addElement( "btn_next_attackarea", new Button( "font0", ">" ) );
-	editorUi.getElement( "btn_next_attackarea" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_next_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 50, 500 );
-	panelButtons.push_back( "btn_next_attackarea" );
-	
-	editorUi.addElement( "lbl_attackarea", new PushButton( "font0", "attack#0" ) );
-	editorUi.getElement( "lbl_attackarea" )->getBox().setWidth( 100 );
-	editorUi.getElement( "lbl_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 200, 500 );
-	editorUi.getElement( "lbl_attackarea" )->addEventHandler( "mouseup", changeTool );
-	panelButtons.push_back( "lbl_attackarea" );
-	tools["lbl_attackarea"] = "box.attack";
-	
-	// h: 530 - Defence area selection
-	editorUi.addElement( "btn_prev_defencearea", new Button( "font0", "<" ) );
-	editorUi.getElement( "btn_prev_defencearea" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_prev_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 290, 530 );
-	panelButtons.push_back( "btn_prev_defencearea" );
-	
-	editorUi.addElement( "btn_del_defencearea", new Button( "font0", "~" ) );
-	editorUi.getElement( "btn_del_defencearea" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_del_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 245, 530 );
-	panelButtons.push_back( "btn_del_defencearea" );
-	
-	editorUi.addElement( "btn_add_defencearea", new Button( "font0", "+" ) );
-	editorUi.getElement( "btn_add_defencearea" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_add_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 95, 530 );
-	panelButtons.push_back( "btn_add_defencearea" );
-	
-	editorUi.addElement( "btn_next_defencearea", new Button( "font0", ">" ) );
-	editorUi.getElement( "btn_next_defencearea" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_next_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 50, 530 );
-	panelButtons.push_back( "btn_next_defencearea" );
-	
-	editorUi.addElement( "lbl_defencearea", new PushButton( "font0", "defence#0" ) );
-	editorUi.getElement( "lbl_defencearea" )->getBox().setWidth( 100 );
-	editorUi.getElement( "lbl_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 200, 530 );
-	editorUi.getElement( "lbl_defencearea" )->addEventHandler( "mouseup", changeTool );
-	panelButtons.push_back( "lbl_defencearea" );
-	tools["lbl_defencearea"] = "box.defence";
-	
-	// h: 570 - Global zoom
-	editorUi.addElement( "btn_decrease_zoom", new Button( "font0", "~" ) );
-	editorUi.getElement( "btn_decrease_zoom" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_decrease_zoom" )->getBox().getOrigin().move( currentScreenWidth - 290 , 570 );
-	editorUi.getElement( "btn_decrease_zoom" )->addEventHandler( "mouseup", decreaseZoom );
-	panelButtons.push_back( "btn_decrease_zoom" );
-	
-	editorUi.addElement( "btn_increase_zoom", new Button( "font0", "+" ) );
-	editorUi.getElement( "btn_increase_zoom" )->getBox().setWidth( 40 );
-	editorUi.getElement( "btn_increase_zoom" )->getBox().getOrigin().move( currentScreenWidth - 50, 570 );
-	editorUi.getElement( "btn_increase_zoom" )->addEventHandler( "mouseup", increaseZoom );
-	panelButtons.push_back( "btn_increase_zoom" );
-	
-	editorUi.addElement( "lbl_zoom", new Label( "font0", "100%" ) );
-	editorUi.getElement( "lbl_zoom" )->getBox().setWidth( 190 );
-	editorUi.getElement( "lbl_zoom" )->getBox().getOrigin().move( currentScreenWidth - 245, 570 );
-	panelButtons.push_back( "lbl_zoom" );
-	
-	// Loading & saving status hidden labels
-	editorUi.addElement( "zlbl_loading", new Label( "font0", "Drop a XML or PNG file here\nSimply click here to cancel" ), true );
-	editorUi.getElement( "zlbl_loading" )->getBox().resize( currentScreenWidth, Screen::get()->getHeight() );
-	editorUi.getElement( "zlbl_loading" )->addEventHandler( "mousedown", cancelLoading );
-	
-	editorUi.addElement( "zlbl_saving", new Label( "font0", "Saving the XML file..." ), true );
-	editorUi.getElement( "zlbl_saving" )->getBox().resize( currentScreenWidth, Screen::get()->getHeight() );
-	
-	// TODO: DEBUG
+	// DEBUG case
 	loadSprite( "data/texture2.png" );
+	animations[animationsNames[currentAnimation]]->getFrameByIndex( currentFrame ).getAnchor().move( 512, 512 );
+	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 0, 0, 512, 512 ) ) );
+	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 512, 0, 512, 512 ) ) );
+	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 1024, 0, 512, 512 ) ) );
 	
 	while( running )
 	{
@@ -409,7 +212,7 @@ int main( int argc, char ** argv )
 							      || currentTool.compare( "box.defence" ) == 0 )
 							{
 								// Restrict to the current frame
-								Animation * annimation = animations[animationsNames[currentAnimation]];
+								Animation * animation = animations[animationsNames[currentAnimation]];
 								
 								if( animation != NULL )
 								{
@@ -466,7 +269,7 @@ int main( int argc, char ** argv )
 								      || currentTool.compare( "box.defnce" ) == 0 )
 								{
 									// Restrict to the current frame
-									Animation * annimation = animations[animationsNames[currentAnimation]];
+									Animation * animation = animations[animationsNames[currentAnimation]];
 									
 									if( animation != NULL )
 									{
@@ -930,7 +733,7 @@ int main( int argc, char ** argv )
 						
 						// Render anchor
 						Point aPt( cAnimation->getFrameByIndex( i ).getAnchor() );
-						aPt.move( origin.getX() + applyZoom( fBox.getOrigin().getX() ) + applyZoom( aPt.getX() ), origin.getY() + applyZoom( fBox.getOrigin().getY() ) + applyZoom( aPt.getY() ) );
+						aPt.move( fBox.getOrigin().getX() + applyZoom( aPt.getX() ), fBox.getOrigin().getY() + applyZoom( aPt.getY() ) );
 						aPt.render( Color( 0x00, 0xFF, 0x00 ), 5 * currentZoom / 100 );
 						
 						if( !toolActive && currentTool.compare( "anchor" ) == 0 )
@@ -940,7 +743,7 @@ int main( int argc, char ** argv )
 						for( unsigned int iBox = 0 ; i < cAnimation->getFrameByIndex( i ).getBoundingBoxesCount() ; iBox++ )
 						{
 							Box bBox( cAnimation->getFrameByIndex( i ).getBoundingBox( iBox ) );
-							bBox.getOrigin().move( origin.getX() + fBox.getOrigin().getX() + applyZoom( bBox.getOrigin().getX() ), origin.getY() + fBox.getOrigin().getY() + applyZoom( bBox.getOrigin().getY() ) );
+							bBox.getOrigin().move( fBox.getOrigin().getX() + applyZoom( bBox.getOrigin().getX() ), fBox.getOrigin().getY() + applyZoom( bBox.getOrigin().getY() ) );
 							bBox.render( Color( 0x00, 0xFF, 0x00 ) );
 							
 							if( iBox == currentBoundingBox )
@@ -954,7 +757,7 @@ int main( int argc, char ** argv )
 						for( unsigned int iAttack = 0 ; i < cAnimation->getFrameByIndex( i ).getAttackAreasCount() ; iAttack++ )
 						{
 							Box aBox( cAnimation->getFrameByIndex( i ).getAttackArea( iAttack ) );
-							aBox.getOrigin().move( origin.getX() + fBox.getOrigin().getX() + applyZoom( aBox.getOrigin().getX() ), origin.getY() + fBox.getOrigin().getY() + applyZoom( aBox.getOrigin().getY() ) );
+							aBox.getOrigin().move( fBox.getOrigin().getX() + applyZoom( aBox.getOrigin().getX() ), fBox.getOrigin().getY() + applyZoom( aBox.getOrigin().getY() ) );
 							aBox.render( Color( 0xFF, 0x00, 0x00 ) );
 							
 							if( iAttack == currentAttackArea )
@@ -969,7 +772,7 @@ int main( int argc, char ** argv )
 						for( unsigned int iDefence = 0 ; i < cAnimation->getFrameByIndex( i ).getDefenceAreasCount() ; iDefence++ )
 						{
 							Box dBox( cAnimation->getFrameByIndex( i ).getDefenceArea( iDefence ) );
-							dBox.getOrigin().move( origin.getX() + fBox.getOrigin().getX() + applyZoom( dBox.getOrigin().getX() ), origin.getY() + fBox.getOrigin().getY() + applyZoom( dBox.getOrigin().getY() ) );
+							dBox.getOrigin().move( fBox.getOrigin().getX() + applyZoom( dBox.getOrigin().getX() ), fBox.getOrigin().getY() + applyZoom( dBox.getOrigin().getY() ) );
 							dBox.render( Color( 0x00, 0x00, 0xFF ) );
 							
 							if( iDefence == currentDefenceArea )
@@ -1031,33 +834,42 @@ int main( int argc, char ** argv )
 						// Find animation area
 						for( unsigned int i = 0 ; i < animation->getFrameCount() ; i++ )
 						{
+							int width = animation->getFrameByIndex( i ).getBox().getWidth() - animation->getFrameByIndex( i ).getAnchor().getX();
+							int height = animation->getFrameByIndex( i ).getAnchor().getY();
+						
 							// Positive area
-							if( animation->getFrameByIndex( i ).getBox().getWidth() - animation->getFrameByIndex( i ).getAnchor().getX() > positiveArea.getWidth() ) positiveArea.setWidth( animation->getFrameByIndex( i ).getBox().getWidth() - animation->getFrameByIndex( i ).getAnchor().getX() );
-							if( animation->getFrameByIndex( i ).getBox().getHeight() - animation->getFrameByIndex( i ).getAnchor().getY() > positiveArea.getHeight() ) positiveArea.setHeight( animation->getFrameByIndex( i ).getBox().getHeight() - animation->getFrameByIndex( i ).getAnchor().getY() );
+							if( width > positiveArea.getWidth() )
+								positiveArea.setWidth( width );
+								
+							if( height > positiveArea.getHeight() )
+								positiveArea.setHeight( height );
 							
 							// Negative area
-							if( animation->getFrameByIndex( i ).getAnchor().getX() > negativeArea.getWidth() ) negativeArea.setWidth( animation->getFrameByIndex( i ).getAnchor().getX() );
-							if( animation->getFrameByIndex( i ).getAnchor().getY() > negativeArea.getHeight() ) negativeArea.setHeight( animation->getFrameByIndex( i ).getAnchor().getY() );
+							width = animation->getFrameByIndex( i ).getAnchor().getX();
+							height = animation->getFrameByIndex( i ).getBox().getHeight() - animation->getFrameByIndex( i ).getAnchor().getY();
+							
+							if( width > negativeArea.getWidth() )
+								 negativeArea.setWidth( width );
+								 
+							if( height > negativeArea.getHeight() )
+								negativeArea.setHeight( height );
 						}
 						
 						// Determine the zoom level
 						if( positiveArea.getWidth() + negativeArea.getWidth() > positiveArea.getHeight() + negativeArea.getHeight() )
-							animationZoom = (positiveArea.getWidth() + negativeArea.getWidth()) / 300.0;
+							animationZoom = static_cast<int>( 300.0 / static_cast<double>( positiveArea.getWidth() + negativeArea.getWidth() ) * 100.0 );
 						else
-							animationZoom = (positiveArea.getHeight() + negativeArea.getHeight()) / 300.0;
+							animationZoom = static_cast<int>( 300.0 / static_cast<double>( positiveArea.getHeight() + negativeArea.getHeight() ) * 100.0 );
 					}
 					
 					Frame * frame = animation->getFrame( ticks );
 				
 					if( frame != NULL )
 					{
-						// TODO: Temporary
-						//animationZoom = frame->getBox().getWidth() > frame->getBox().getHeight() ? static_cast<int>( 300.0 / static_cast<double>( frame->getBox().getWidth() ) * 100.0 ) : static_cast<int>( 300.0 / static_cast<double>( frame->getBox().getHeight() ) * 100.0 );
-	
 						SDL_Rect dstRect;
 					
-						dstRect.x = currentScreenWidth - 300;//applyZoom( frame->getAnchor().getX(), animationZoom );
-						dstRect.y = 0;//applyZoom( frame->getAnchor().getY(), animationZoom );
+						dstRect.x = currentScreenWidth - 300 + applyZoom( negativeArea.getWidth() - frame->getAnchor().getX(), animationZoom );
+						dstRect.y = applyZoom( positiveArea.getHeight() - frame->getAnchor().getY(), animationZoom );
 						dstRect.w = applyZoom( frame->getBox().getWidth(), animationZoom );
 						dstRect.h = applyZoom( frame->getBox().getHeight(), animationZoom );
 	
@@ -1065,22 +877,6 @@ int main( int argc, char ** argv )
 						frame->getBox().fillSDLRect( &srcRect );
 		
 						SDL_RenderCopy( Screen::get()->getRenderer(), sprite->getTexture(), &srcRect, &dstRect );
-						
-						// TODO: Compute local zoom based on each animation frame (get the max width & max height & take part of anchor point)
-						/*int frameZoom = 100;
-						SDL_Rect dstRect;
-						int anchorX = origin.getX();
-						int anchorY = origin.getY();
-					
-						dstRect.x = anchorX - (frame->getAnchor().getX() * animationZoom / 100.0);
-						dstRect.y = anchorY - (frame->getAnchor().getY() * animationZoom / 100.0);
-						dstRect.w = (frameZoom * frame->getBox().getWidth()) / 100;
-						dstRect.h = (frameZoom * frame->getBox().getHeight()) / 100;
-		
-						SDL_Rect srcRect;
-						frame->getBox().fillSDLRect( &srcRect );
-		
-						SDL_RenderCopy( Screen::get()->getRenderer(), sprite->getTexture(), &srcRect, &dstRect );*/
 					
 						// Render anchor
 					
@@ -1104,6 +900,217 @@ int main( int argc, char ** argv )
 	Screen::destroy();
 	
 	return 0;
+}
+
+void initUserInterface()
+{
+	int currentScreenWidth = Screen::get()->getWidth();
+	
+	// h: 310 - Save & Load
+	editorUi.addElement( "btn_load", new Button( "font0", "Load" ) );
+	editorUi.getElement( "btn_load" )->getBox().setWidth( 137 );
+	editorUi.getElement( "btn_load" )->getBox().getOrigin().move( currentScreenWidth - 290, 310 );
+	editorUi.getElement( "btn_load" )->addEventHandler( "mouseup", loadFile );
+	panelButtons.push_back( "btn_load" );
+	
+	editorUi.addElement( "btn_save", new Button( "font0", "Save" ) );
+	editorUi.getElement( "btn_save" )->getBox().setWidth( 137 );
+	editorUi.getElement( "btn_save" )->getBox().getOrigin().move( currentScreenWidth - 147, 310 );
+	editorUi.getElement( "btn_save" )->addEventHandler( "mouseup", saveFile );
+	panelButtons.push_back( "btn_save" );
+	
+	// h: 340 - Animation selection
+	editorUi.addElement( "btn_prev_animation", new Button( "font0", "<" ) );
+	editorUi.getElement( "btn_prev_animation" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_prev_animation" )->getBox().getOrigin().move( currentScreenWidth - 290 , 340 );
+	editorUi.getElement( "btn_prev_animation" )->addEventHandler( "mouseup", prevAnimation );
+	panelButtons.push_back( "btn_prev_animation" );
+	
+	editorUi.addElement( "btn_next_animation", new Button( "font0", ">" ) );
+	editorUi.getElement( "btn_next_animation" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_next_animation" )->getBox().getOrigin().move( currentScreenWidth - 50, 340 );
+	editorUi.getElement( "btn_next_animation" )->addEventHandler( "mouseup", nextAnimation );
+	panelButtons.push_back( "btn_next_animation" );
+	
+	editorUi.addElement( "lbl_animation", new Label( "font0", "idle" ) );
+	editorUi.getElement( "lbl_animation" )->getBox().setWidth( 190 );
+	editorUi.getElement( "lbl_animation" )->getBox().getOrigin().move( currentScreenWidth - 245, 340 );
+	panelButtons.push_back( "lbl_animation" );
+	
+	// h: 370 - Speed selection
+	editorUi.addElement( "btn_increase_speed", new Button( "font0", "+" ) );
+	editorUi.getElement( "btn_increase_speed" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_increase_speed" )->getBox().getOrigin().move( currentScreenWidth - 50, 370 );
+	editorUi.getElement( "btn_increase_speed" )->addEventHandler( "mouseup", increaseSpeed );
+	panelButtons.push_back( "btn_increase_speed" );
+	
+	editorUi.addElement( "btn_decrease_speed", new Button( "font0", "~" ) );
+	editorUi.getElement( "btn_decrease_speed" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_decrease_speed" )->getBox().getOrigin().move( currentScreenWidth - 290 , 370 );
+	editorUi.getElement( "btn_decrease_speed" )->addEventHandler( "mouseup", decreaseSpeed );
+	panelButtons.push_back( "btn_decrease_speed" );
+	
+	editorUi.addElement( "lbl_speed", new Label( "font0", "100 fps" ) );
+	editorUi.getElement( "lbl_speed" )->getBox().setWidth( 190 );
+	editorUi.getElement( "lbl_speed" )->getBox().getOrigin().move( currentScreenWidth - 245, 370 );
+	panelButtons.push_back( "lbl_speed" );
+	
+	// h: 400 - Frame selection
+	editorUi.addElement( "btn_prev_frame", new Button( "font0", "<" ) );
+	editorUi.getElement( "btn_prev_frame" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_prev_frame" )->getBox().getOrigin().move( currentScreenWidth - 290, 400 );
+	editorUi.getElement( "btn_prev_frame" )->addEventHandler( "mouseup", prevFrame );
+	panelButtons.push_back( "btn_prev_frame" );
+	
+	editorUi.addElement( "btn_del_frame", new Button( "font0", "~" ) );
+	editorUi.getElement( "btn_del_frame" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_del_frame" )->getBox().getOrigin().move( currentScreenWidth - 245, 400 );
+	editorUi.getElement( "btn_del_frame" )->addEventHandler( "mouseup", deleteFrame );
+	panelButtons.push_back( "btn_del_frame" );
+	
+	editorUi.addElement( "btn_add_frame", new Button( "font0", "+" ) );
+	editorUi.getElement( "btn_add_frame" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_add_frame" )->getBox().getOrigin().move( currentScreenWidth - 95, 400 );
+	editorUi.getElement( "btn_add_frame" )->addEventHandler( "mouseup", addFrame );
+	panelButtons.push_back( "btn_add_frame" );
+	
+	editorUi.addElement( "btn_next_frame", new Button( "font0", ">" ) );
+	editorUi.getElement( "btn_next_frame" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_next_frame" )->getBox().getOrigin().move( currentScreenWidth - 50, 400 );
+	editorUi.getElement( "btn_next_frame" )->addEventHandler( "mouseup", nextFrame );
+	panelButtons.push_back( "btn_next_frame" );
+	
+	editorUi.addElement( "lbl_frame", new PushButton( "font0", "frame#0" ) );
+	editorUi.getElement( "lbl_frame" )->getBox().setWidth( 100 );
+	editorUi.getElement( "lbl_frame" )->getBox().getOrigin().move( currentScreenWidth - 200, 400 );
+	editorUi.getElement( "lbl_frame" )->addEventHandler( "mouseup", changeTool );
+	panelButtons.push_back( "lbl_frame" );
+	tools["lbl_frame"] = "box.frame";
+	
+	// h: 440 - Anchor &move selection
+	editorUi.addElement( "btn_move", new PushButton( "font0", "Move", true ) );
+	editorUi.getElement( "btn_move" )->getBox().setWidth( 137 );
+	editorUi.getElement( "btn_move" )->getBox().getOrigin().move( currentScreenWidth - 290, 440 );
+	editorUi.getElement( "btn_move" )->addEventHandler( "mouseup", changeTool );
+	panelButtons.push_back( "btn_move" );
+	tools["btn_move"] = "move";
+	
+	editorUi.addElement( "btn_anchor", new PushButton( "font0", "Set anchor" ) );
+	editorUi.getElement( "btn_anchor" )->getBox().setWidth( 137 );
+	editorUi.getElement( "btn_anchor" )->getBox().getOrigin().move( currentScreenWidth - 147, 440 );
+	editorUi.getElement( "btn_anchor" )->addEventHandler( "mouseup", changeTool );
+	panelButtons.push_back( "btn_anchor" );
+	tools["btn_anchor"] = "anchor";
+	
+	// h: 470 - Bounding box selection
+	editorUi.addElement( "btn_prev_boundingbox", new Button( "font0", "<" ) );
+	editorUi.getElement( "btn_prev_boundingbox" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_prev_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 290, 470 );
+	panelButtons.push_back( "btn_prev_boundingbox" );
+	
+	editorUi.addElement( "btn_del_boundingbox", new Button( "font0", "~" ) );
+	editorUi.getElement( "btn_del_boundingbox" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_del_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 245, 470 );
+	panelButtons.push_back( "btn_del_boundingbox" );
+	
+	editorUi.addElement( "btn_add_boundingbox", new Button( "font0", "+" ) );
+	editorUi.getElement( "btn_add_boundingbox" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_add_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 95, 470 );
+	panelButtons.push_back( "btn_add_boundingbox" );
+	
+	editorUi.addElement( "btn_next_boundingbox", new Button( "font0", ">" ) );
+	editorUi.getElement( "btn_next_boundingbox" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_next_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 50, 470 );
+	panelButtons.push_back( "btn_next_boundingbox" );
+	
+	editorUi.addElement( "lbl_boundingbox", new PushButton( "font0", "bounding#0" ) );
+	editorUi.getElement( "lbl_boundingbox" )->getBox().setWidth( 100 );
+	editorUi.getElement( "lbl_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 200, 470 );
+	editorUi.getElement( "lbl_boundingbox" )->addEventHandler( "mouseup", changeTool );
+	panelButtons.push_back( "lbl_boundingbox" );
+	tools["lbl_boundingbox"] = "box.bounding";
+
+	// h: 500 - Attack area selection
+	editorUi.addElement( "btn_prev_attackarea", new Button( "font0", "<" ) );
+	editorUi.getElement( "btn_prev_attackarea" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_prev_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 290, 500 );
+	panelButtons.push_back( "btn_prev_attackarea" );
+	
+	editorUi.addElement( "btn_del_attackarea", new Button( "font0", "~" ) );
+	editorUi.getElement( "btn_del_attackarea" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_del_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 245, 500 );
+	panelButtons.push_back( "btn_del_attackarea" );
+	
+	editorUi.addElement( "btn_add_attackarea", new Button( "font0", "+" ) );
+	editorUi.getElement( "btn_add_attackarea" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_add_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 95, 500 );
+	panelButtons.push_back( "btn_add_attackarea" );
+	
+	editorUi.addElement( "btn_next_attackarea", new Button( "font0", ">" ) );
+	editorUi.getElement( "btn_next_attackarea" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_next_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 50, 500 );
+	panelButtons.push_back( "btn_next_attackarea" );
+	
+	editorUi.addElement( "lbl_attackarea", new PushButton( "font0", "attack#0" ) );
+	editorUi.getElement( "lbl_attackarea" )->getBox().setWidth( 100 );
+	editorUi.getElement( "lbl_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 200, 500 );
+	editorUi.getElement( "lbl_attackarea" )->addEventHandler( "mouseup", changeTool );
+	panelButtons.push_back( "lbl_attackarea" );
+	tools["lbl_attackarea"] = "box.attack";
+	
+	// h: 530 - Defence area selection
+	editorUi.addElement( "btn_prev_defencearea", new Button( "font0", "<" ) );
+	editorUi.getElement( "btn_prev_defencearea" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_prev_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 290, 530 );
+	panelButtons.push_back( "btn_prev_defencearea" );
+	
+	editorUi.addElement( "btn_del_defencearea", new Button( "font0", "~" ) );
+	editorUi.getElement( "btn_del_defencearea" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_del_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 245, 530 );
+	panelButtons.push_back( "btn_del_defencearea" );
+	
+	editorUi.addElement( "btn_add_defencearea", new Button( "font0", "+" ) );
+	editorUi.getElement( "btn_add_defencearea" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_add_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 95, 530 );
+	panelButtons.push_back( "btn_add_defencearea" );
+	
+	editorUi.addElement( "btn_next_defencearea", new Button( "font0", ">" ) );
+	editorUi.getElement( "btn_next_defencearea" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_next_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 50, 530 );
+	panelButtons.push_back( "btn_next_defencearea" );
+	
+	editorUi.addElement( "lbl_defencearea", new PushButton( "font0", "defence#0" ) );
+	editorUi.getElement( "lbl_defencearea" )->getBox().setWidth( 100 );
+	editorUi.getElement( "lbl_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 200, 530 );
+	editorUi.getElement( "lbl_defencearea" )->addEventHandler( "mouseup", changeTool );
+	panelButtons.push_back( "lbl_defencearea" );
+	tools["lbl_defencearea"] = "box.defence";
+	
+	// h: 570 - Global zoom
+	editorUi.addElement( "btn_decrease_zoom", new Button( "font0", "~" ) );
+	editorUi.getElement( "btn_decrease_zoom" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_decrease_zoom" )->getBox().getOrigin().move( currentScreenWidth - 290 , 570 );
+	editorUi.getElement( "btn_decrease_zoom" )->addEventHandler( "mouseup", decreaseZoom );
+	panelButtons.push_back( "btn_decrease_zoom" );
+	
+	editorUi.addElement( "btn_increase_zoom", new Button( "font0", "+" ) );
+	editorUi.getElement( "btn_increase_zoom" )->getBox().setWidth( 40 );
+	editorUi.getElement( "btn_increase_zoom" )->getBox().getOrigin().move( currentScreenWidth - 50, 570 );
+	editorUi.getElement( "btn_increase_zoom" )->addEventHandler( "mouseup", increaseZoom );
+	panelButtons.push_back( "btn_increase_zoom" );
+	
+	editorUi.addElement( "lbl_zoom", new Label( "font0", "100%" ) );
+	editorUi.getElement( "lbl_zoom" )->getBox().setWidth( 190 );
+	editorUi.getElement( "lbl_zoom" )->getBox().getOrigin().move( currentScreenWidth - 245, 570 );
+	panelButtons.push_back( "lbl_zoom" );
+	
+	// Loading & saving status hidden labels
+	editorUi.addElement( "zlbl_loading", new Label( "font0", "Drop a XML or PNG file here\nSimply click here to cancel" ), true );
+	editorUi.getElement( "zlbl_loading" )->getBox().resize( currentScreenWidth, Screen::get()->getHeight() );
+	editorUi.getElement( "zlbl_loading" )->addEventHandler( "mousedown", cancelLoading );
+	
+	editorUi.addElement( "zlbl_saving", new Label( "font0", "Saving the XML file..." ), true );
+	editorUi.getElement( "zlbl_saving" )->getBox().resize( currentScreenWidth, Screen::get()->getHeight() );
 }
 
 void cleanObjectVariables()
