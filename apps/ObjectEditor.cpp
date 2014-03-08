@@ -128,8 +128,7 @@ int main( int argc, char ** argv )
 	
 	// DEBUG case
 	loadSprite( "data/texture2.png" );
-	animations[animationsNames[currentAnimation]]->getFrameByIndex( currentFrame ).getAnchor().move( 512, 512 );
-	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 0, 0, 512, 512 ) ) );
+	animations[animationsNames[currentAnimation]]->getFrameByIndex( currentFrame ).getBox().resize( 512, 512 );
 	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 512, 0, 512, 512 ) ) );
 	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 1024, 0, 512, 512 ) ) );
 	
@@ -879,12 +878,36 @@ int main( int argc, char ** argv )
 						SDL_RenderCopy( Screen::get()->getRenderer(), sprite->getTexture(), &srcRect, &dstRect );
 					
 						// Render anchor
+						Point fAnchor( frame->getAnchor() );
+						fAnchor.move( currentScreenWidth - 300 + applyZoom( negativeArea.getWidth(), animationZoom ), applyZoom( positiveArea.getHeight(), animationZoom ) );
+						fAnchor.render( Color( 0x00, 0xFF, 0x00 ), applyZoom( 5, animationZoom ) );
 					
 						// Render bounding boxes
+						for( unsigned int iBox = 0 ; iBox < frame->getBoundingBoxesCount() ; iBox++ )
+						{
+							Box bBox( frame->getBoundingBox( iBox ) );
+							bBox.getOrigin().move( currentScreenWidth - 300 + applyZoom( negativeArea.getWidth() - frame->getAnchor().getX() + bBox.getOrigin().getX(), animationZoom ), applyZoom( positiveArea.getHeight() - frame->getAnchor().getY() + bBox.getOrigin().getY(), animationZoom ) );
+							bBox.resize( applyZoom( bBox.getWidth(), animationZoom ), applyZoom( bBox.getHeight(), animationZoom ) );
+							bBox.render( Color( 0x00, 0xFF, 0x00 ) );
+						}
 					
 						// Render attack areas
+						for( unsigned int iAttack = 0 ; iAttack < frame->getAttackAreasCount() ; iAttack++ )
+						{
+							Box aBox( frame->getAttackArea( iAttack ) );
+							aBox.getOrigin().move( currentScreenWidth - 300 + applyZoom( negativeArea.getWidth() - frame->getAnchor().getX() + aBox.getOrigin().getX(), animationZoom ), applyZoom( positiveArea.getHeight() - frame->getAnchor().getY() + aBox.getOrigin().getY(), animationZoom ) );
+							aBox.resize( applyZoom( aBox.getWidth(), animationZoom ), applyZoom( aBox.getHeight(), animationZoom ) );
+							aBox.render( Color( 0xFF, 0x00, 0x00 ) );
+						}
 					
 						// Render defence areas
+						for( unsigned int iDefence = 0 ; iDefence < frame->getDefenceAreasCount() ; iDefence++ )
+						{
+							Box dBox( frame->getDefenceArea( iDefence ) );
+							dBox.getOrigin().move( currentScreenWidth - 300 + applyZoom( negativeArea.getWidth() - frame->getAnchor().getX() + dBox.getOrigin().getX(), animationZoom ), applyZoom( positiveArea.getHeight() - frame->getAnchor().getY() + dBox.getOrigin().getY(), animationZoom ) );
+							dBox.resize( applyZoom( dBox.getWidth(), animationZoom ), applyZoom( dBox.getHeight(), animationZoom ) );
+							dBox.render( Color( 0x00, 0x00, 0xFF ) );
+						}
 					}
 				}
 			}
