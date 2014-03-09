@@ -60,7 +60,7 @@ int revertZoom( int value, int zoom = 0 );
 void renderBoxInformation( Box& box, Point& relative );
 void renderPointInformation( Point& point, Point& relative );
 void restrictPointToBoxArea( Point& point, Box& area );
-void restrictBoxToBoxArea( Box& point, Box& area );
+void restrictBoxToBoxArea( Box& box, Box& area );
 
 // Events
 bool changeTool( Element * element );
@@ -200,36 +200,38 @@ int main( int argc, char ** argv )
 						}
 						else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
 						{
-							toolBox.resize( lastEvent.motion.x - toolBox.getOrigin().getX(), lastEvent.motion.y - toolBox.getOrigin().getY() );
+							Animation * animation = animations[animationsNames[currentAnimation]];
 							
-							if( currentTool.compare( "box.frame" ) == 0 )
+							if( animation != NULL )
 							{
-								// Restrict to the current sprite
-								if( sprite != NULL )
+								if( currentTool.compare( "box.frame" ) == 0 )
 								{
-									if( toolBox.getOrigin().getX() + toolBox.getWidth() > origin.getX() + applyZoom( sprite->getWidth() ) ) toolBox.setWidth( origin.getX() + applyZoom( sprite->getWidth() ) - toolBox.getOrigin().getX() );
-									else if( toolBox.getOrigin().getX() + toolBox.getWidth() < origin.getX() ) toolBox.setWidth( origin.getX() - toolBox.getOrigin().getX() + 1 );
+									toolBox.resize( revertZoom( lastEvent.motion.x - origin.getX() ) - toolBox.getOrigin().getX(), revertZoom( lastEvent.motion.y - origin.getY() ) - toolBox.getOrigin().getY() );
 									
-									if( toolBox.getOrigin().getY() + toolBox.getHeight() > origin.getY() + applyZoom( sprite->getHeight() ) ) toolBox.setHeight( origin.getY() + applyZoom( sprite->getHeight() ) - toolBox.getOrigin().getY() );
-									else if( toolBox.getOrigin().getY() + toolBox.getHeight() < origin.getY() ) toolBox.setHeight( origin.getY() - toolBox.getOrigin().getY() + 1);
+									// Restrict to the current sprite
+									if( sprite != NULL )
+									{
+										Box spriteBox( 0, 0, sprite->getWidth(), sprite->getHeight() );
+										restrictBoxToBoxArea( toolBox, spriteBox );
+									}
 								}
-							}
 							
-							else if( currentTool.compare( "box.bounding" ) == 0
-							      || currentTool.compare( "box.attack" ) == 0
-							      || currentTool.compare( "box.defence" ) == 0 )
-							{
-								// Restrict to the current frame
-								Animation * animation = animations[animationsNames[currentAnimation]];
+								/*else if( currentTool.compare( "box.bounding" ) == 0
+									  || currentTool.compare( "box.attack" ) == 0
+									  || currentTool.compare( "box.defence" ) == 0 )
+								{
+									// Restrict to the current frame
+									Animation * animation = animations[animationsNames[currentAnimation]];
 								
-								if( animation != NULL )
-								{
-									if( toolBox.getOrigin().getX() + toolBox.getWidth() > animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getWidth() ) ) toolBox.setWidth( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getWidth() ) - toolBox.getOrigin().getX() );
-									else if( toolBox.getOrigin().getX() + toolBox.getWidth() < animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() ) toolBox.setWidth( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() - toolBox.getOrigin().getX() + 1 );
+									if( animation != NULL )
+									{
+										if( toolBox.getOrigin().getX() + toolBox.getWidth() > animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getWidth() ) ) toolBox.setWidth( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getWidth() ) - toolBox.getOrigin().getX() );
+										else if( toolBox.getOrigin().getX() + toolBox.getWidth() < animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() ) toolBox.setWidth( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() - toolBox.getOrigin().getX() + 1 );
 									
-									if( toolBox.getOrigin().getY() + toolBox.getHeight() > animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getHeight() ) ) toolBox.setHeight( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getHeight() ) - toolBox.getOrigin().getY() );
-									else if( toolBox.getOrigin().getY() + toolBox.getHeight() < animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() ) toolBox.setHeight( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() - toolBox.getOrigin().getY() + 1);
-								}
+										if( toolBox.getOrigin().getY() + toolBox.getHeight() > animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getHeight() ) ) toolBox.setHeight( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getHeight() ) - toolBox.getOrigin().getY() );
+										else if( toolBox.getOrigin().getY() + toolBox.getHeight() < animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() ) toolBox.setHeight( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() - toolBox.getOrigin().getY() + 1);
+									}
+								}*/
 							}
 						}
 					}
@@ -263,7 +265,7 @@ int main( int argc, char ** argv )
 							}
 							else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
 							{
-								toolBox.getOrigin().move( revertZoom( lastEvent.button.x ), revertZoom( lastEvent.button.y ) );
+								toolBox.getOrigin().move( revertZoom( lastEvent.button.x - origin.getX() ), revertZoom( lastEvent.button.y - origin.getY() ) );
 								toolBox.resize( 0, 0 );
 								toolActive = true;
 								
@@ -272,11 +274,8 @@ int main( int argc, char ** argv )
 									// Restrict to the current sprite
 									if( sprite != NULL )
 									{
-										/*if( toolBox.getOrigin().getX() < origin.getX() ) toolBox.getOrigin().setX( origin.getX() );
-										else if( toolBox.getOrigin().getX() > origin.getX() + applyZoom( sprite->getWidth() ) ) toolBox.getOrigin().setX( origin.getX() + applyZoom( sprite->getWidth() ) - 1 );
-										
-										if( toolBox.getOrigin().getY() < origin.getY() ) toolBox.getOrigin().setY( origin.getY() );
-										else if( toolBox.getOrigin().getY() > origin.getY() + applyZoom( sprite->getHeight() ) ) toolBox.getOrigin().setY( origin.getY() + applyZoom( sprite->getHeight() ) - 1 );*/
+										Box spriteBox( 0, 0, sprite->getWidth(), sprite->getHeight() );
+										restrictBoxToBoxArea( toolBox, spriteBox );
 									}
 								}
 								
@@ -288,13 +287,7 @@ int main( int argc, char ** argv )
 									Animation * animation = animations[animationsNames[currentAnimation]];
 									
 									if( animation != NULL )
-									{
-										if( toolBox.getOrigin().getX() + toolBox.getWidth() > animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getWidth() ) ) toolBox.setWidth( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getWidth() ) - toolBox.getOrigin().getX() );
-										else if( toolBox.getOrigin().getX() + toolBox.getWidth() < animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() ) toolBox.setWidth( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() - toolBox.getOrigin().getX() + 1 );
-										
-										if( toolBox.getOrigin().getY() + toolBox.getHeight() > animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getHeight() ) ) toolBox.setHeight( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getHeight() ) - toolBox.getOrigin().getY() );
-										else if( toolBox.getOrigin().getY() + toolBox.getHeight() < animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() ) toolBox.setHeight( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() - toolBox.getOrigin().getY() + 1);
-									}
+										restrictBoxToBoxArea( toolBox, animation->getFrameByIndex( currentFrame ).getBox() );
 								}
 							}
 						}
@@ -333,6 +326,19 @@ int main( int argc, char ** argv )
 								{
 									toolActive = false;
 									
+									// Negative width & height cases
+									if( toolBox.getWidth() < 0 )
+									{
+										toolBox.getOrigin().moveBy( toolBox.getWidth() - 1, 0 );
+										toolBox.setWidth( -1 * toolBox.getWidth() );
+									}
+									
+									if( toolBox.getHeight() < 0 )
+									{
+										toolBox.getOrigin().moveBy( 0, toolBox.getHeight() - 1 );
+										toolBox.setHeight( -1 * toolBox.getHeight() );
+									}
+									
 									if( currentTool.compare( "box.frame" ) == 0 )
 									{
 										// Set the frame
@@ -340,8 +346,8 @@ int main( int argc, char ** argv )
 										
 										if( animation != NULL )
 										{
-											animation->getFrameByIndex( currentFrame ).getBox().getOrigin().move( revertZoom( toolBox.getOrigin().getX() - origin.getX() ), revertZoom( toolBox.getOrigin().getY() - origin.getY() ) );
-											animation->getFrameByIndex( currentFrame ).getBox().resize( revertZoom( toolBox.getWidth() ), revertZoom( toolBox.getHeight() ) );
+											animation->getFrameByIndex( currentFrame ).getBox().getOrigin().move( toolBox.getOrigin().getX(), toolBox.getOrigin().getY() );
+											animation->getFrameByIndex( currentFrame ).getBox().resize( toolBox.getWidth(), toolBox.getHeight() );
 										}
 									}
 									else if( currentTool.compare( "box.bounding" ) == 0 )
@@ -458,7 +464,8 @@ int main( int argc, char ** argv )
 										else if( altKeyState )
 											animation->getFrameByIndex( currentFrame ).getBox().resizeBy( shiftKeyState ? -10 : -1, 0 );
 										
-										// TODO: Limit frame to be in the sprite area
+										Box spriteBox( 0, 0, sprite->getWidth(), sprite->getHeight() );
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getBox(), spriteBox );
 										
 									}
 									else if( currentTool.compare( "box.bounding" ) == 0 )
@@ -511,7 +518,8 @@ int main( int argc, char ** argv )
 										else if( altKeyState )
 											animation->getFrameByIndex( currentFrame ).getBox().resizeBy( shiftKeyState ? -10 : -1, 0 );
 										
-										// TODO: Limit frame to be in the sprite area
+										Box spriteBox( 0, 0, sprite->getWidth(), sprite->getHeight() );
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getBox(), spriteBox );
 									}
 									else if( currentTool.compare( "box.bounding" ) == 0 )
 									{
@@ -562,8 +570,9 @@ int main( int argc, char ** argv )
 										// Resize - action
 										else if( altKeyState )
 											animation->getFrameByIndex( currentFrame ).getBox().resizeBy( 0, shiftKeyState ? -10 : -1 );
-											
-										// TODO: Limit frame to be in the sprite area
+										
+										Box spriteBox( 0, 0, sprite->getWidth(), sprite->getHeight() );
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getBox(), spriteBox );
 									}
 									else if( currentTool.compare( "box.bounding" ) == 0 )
 									{
@@ -615,7 +624,8 @@ int main( int argc, char ** argv )
 										else if( altKeyState )
 											animation->getFrameByIndex( currentFrame ).getBox().resizeBy( 0, shiftKeyState ? -10 : -1 );
 
-										// TODO: Limit frame to be in the sprite area
+										Box spriteBox( 0, 0, sprite->getWidth(), sprite->getHeight() );
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getBox(), spriteBox );
 									}
 									else if( currentTool.compare( "box.bounding" ) == 0 )
 									{
@@ -720,7 +730,7 @@ int main( int argc, char ** argv )
 						{
 							currentZoom += 5;
 							
-							origin.moveBy( static_cast<int>( static_cast<double>( mouseX - origin.getX() ) * -5.0 / 100.0 ), static_cast<int>( static_cast<double>( mouseY - origin.getY() ) * -1.0 * static_cast<double>( currentZoom - prevZoom ) / 100.0 ) );
+							//origin.moveBy( static_cast<int>( static_cast<double>( mouseX - origin.getX() ) * -5.0 / 100.0 ), static_cast<int>( static_cast<double>( mouseY - origin.getY() ) * -1.0 * static_cast<double>( currentZoom - prevZoom ) / 100.0 ) );
 							
 							synchronizeLabels();
 						}
@@ -730,7 +740,7 @@ int main( int argc, char ** argv )
 							if( currentZoom < 5 )
 								currentZoom = 5;
 								
-							origin.moveBy( static_cast<int>( static_cast<double>( mouseX - origin.getX() ) * -5.0 / 100.0 ), static_cast<int>( static_cast<double>( mouseY - origin.getY() ) * -1.0 * static_cast<double>( prevZoom - currentZoom ) / 100.0 ) );
+							//origin.moveBy( static_cast<int>( static_cast<double>( mouseX - origin.getX() ) * -5.0 / 100.0 ), static_cast<int>( static_cast<double>( mouseY - origin.getY() ) * -1.0 * static_cast<double>( prevZoom - currentZoom ) / 100.0 ) );
 							
 							synchronizeLabels();
 						}
@@ -842,18 +852,27 @@ int main( int argc, char ** argv )
 						
 						renderPointInformation( toolBox.getOrigin(), frameOrigin );
 					}
-					/*else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
+					else if( currentTool.substr( 0, 3 ).compare( "box" ) == 0 )
 					{
 						Color color;
+						Box scaledBox;
 			
-						if( currentTool.compare( "box.frame" ) == 0 ) color.setColor( "FFFFFF" );
-						else if( currentTool.compare( "box.bounding" ) == 0 ) color.setColor( "00FF00" );
-						else if( currentTool.compare( "box.attack" ) == 0 ) color.setColor( "FF0000" );
-						else if( currentTool.compare( "box.defence" ) == 0 ) color.setColor( "0000FF" );
-			
-						toolBox.render( color );
-						renderBoxInformation( toolBox, origin );
-					}*/
+						if( currentTool.compare( "box.frame" ) == 0 )
+						{
+							scaledBox.getOrigin().move( origin.getX() + applyZoom( toolBox.getOrigin().getX() ), origin.getY() + applyZoom( toolBox.getOrigin().getY() ) );
+							color.setColor( "FFFFFF" );
+						}
+						else
+						{
+							if( currentTool.compare( "box.bounding" ) == 0 ) color.setColor( "00FF00" );
+							else if( currentTool.compare( "box.attack" ) == 0 ) color.setColor( "FF0000" );
+							else if( currentTool.compare( "box.defence" ) == 0 ) color.setColor( "0000FF" );
+						}
+						
+						scaledBox.resize( applyZoom( toolBox.getWidth() ), applyZoom( toolBox.getHeight() ) );
+						scaledBox.render( color );
+						renderBoxInformation( toolBox, currentTool.compare( "box.frame" ) == 0 ? origin : origin );
+					}
 				}
 			}
 			
@@ -1268,8 +1287,37 @@ void restrictPointToBoxArea( Point& point, Box& area )
 		point.setY( area.getHeight() );
 }
 
-void restrictBoxToBoxArea( Box& point, Box& area )
+void restrictBoxToBoxArea( Box& box, Box& area )
 {
+	if( box.getWidth() >= 0 )
+	{
+		if( box.getOrigin().getX() < 0 )
+			box.getOrigin().setX( 0 );
+		else if( box.getWidth() > area.getWidth() - box.getOrigin().getX() )
+			box.setWidth( area.getWidth() - box.getOrigin().getX() );
+	}
+	else
+	{
+		if( box.getOrigin().getX() + box.getWidth() < 0 )
+			box.setWidth( -1 * box.getOrigin().getX() + 1 );
+		else if( box.getOrigin().getX() > area.getWidth() )
+			box.getOrigin().setX( area.getWidth() );
+	}
+	
+	if( box.getHeight() >= 0 )
+	{
+		if( box.getOrigin().getY() < 0 )
+			box.getOrigin().setY( 0 );
+		else if( box.getHeight() > area.getHeight() - box.getOrigin().getY() )
+			box.setHeight( area.getHeight() - box.getOrigin().getY() );
+	}
+	else
+	{
+		if( box.getOrigin().getY() + box.getHeight() < 0 )
+			box.setHeight( -1 * box.getOrigin().getY() + 1 );
+		else if( box.getOrigin().getY() > area.getHeight() )
+			box.getOrigin().setY( area.getHeight() );
+	}
 }
 
 void adjustSpriteToScreen()
@@ -1511,9 +1559,10 @@ bool addFrame( Element * element )
 	{
 		Frame frame( animation->getFrameByIndex( animation->getFrameCount() - 1 ) );
 		
-		if( frame.getBox().getWidth() + frame.getBox().getOrigin().getX() <= sprite->getWidth() )
+		if( frame.getBox().getWidth() + frame.getBox().getOrigin().getX() < sprite->getWidth() )
 			frame.getBox().getOrigin().moveBy( frame.getBox().getWidth(), 0 );
-		else if( frame.getBox().getHeight() + frame.getBox().getOrigin().getY() <= sprite->getHeight() )
+			
+		else if( frame.getBox().getHeight() + frame.getBox().getOrigin().getY() < sprite->getHeight() )
 			frame.getBox().getOrigin().moveBy( -1 * frame.getBox().getOrigin().getX(), frame.getBox().getHeight() );
 			
 		animation->addFrame( frame );
@@ -1532,7 +1581,7 @@ bool deleteFrame( Element * element )
 	if( animation != NULL && animation->getFrameCount() > 1 )
 	{
 		animation->removeFrameByIndex( currentFrame );
-		currentFrame = animation->getFrameCount() - 1;
+		if( currentFrame > 0 ) currentFrame = currentFrame - 1;
 		synchronizeLabels();
 	}
 	
