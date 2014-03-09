@@ -216,22 +216,15 @@ int main( int argc, char ** argv )
 									}
 								}
 							
-								/*else if( currentTool.compare( "box.bounding" ) == 0
+								else if( currentTool.compare( "box.bounding" ) == 0
 									  || currentTool.compare( "box.attack" ) == 0
 									  || currentTool.compare( "box.defence" ) == 0 )
 								{
-									// Restrict to the current frame
-									Animation * animation = animations[animationsNames[currentAnimation]];
-								
-									if( animation != NULL )
-									{
-										if( toolBox.getOrigin().getX() + toolBox.getWidth() > animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getWidth() ) ) toolBox.setWidth( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getWidth() ) - toolBox.getOrigin().getX() );
-										else if( toolBox.getOrigin().getX() + toolBox.getWidth() < animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() ) toolBox.setWidth( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() - toolBox.getOrigin().getX() + 1 );
+									toolBox.resize( revertZoom( lastEvent.motion.x - origin.getX() ) - toolBox.getOrigin().getX() - animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX(), revertZoom( lastEvent.motion.y - origin.getY() ) - toolBox.getOrigin().getY() - animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() );
 									
-										if( toolBox.getOrigin().getY() + toolBox.getHeight() > animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getHeight() ) ) toolBox.setHeight( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + applyZoom( animation->getFrameByIndex( currentFrame ).getBox().getHeight() ) - toolBox.getOrigin().getY() );
-										else if( toolBox.getOrigin().getY() + toolBox.getHeight() < animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() ) toolBox.setHeight( animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() - toolBox.getOrigin().getY() + 1);
-									}
-								}*/
+									// Restrict to the current frame
+									restrictBoxToBoxArea( toolBox, animation->getFrameByIndex( currentFrame ).getBox() );
+								}
 							}
 						}
 					}
@@ -867,6 +860,8 @@ int main( int argc, char ** argv )
 							if( currentTool.compare( "box.bounding" ) == 0 ) color.setColor( "00FF00" );
 							else if( currentTool.compare( "box.attack" ) == 0 ) color.setColor( "FF0000" );
 							else if( currentTool.compare( "box.defence" ) == 0 ) color.setColor( "0000FF" );
+							
+							scaledBox.getOrigin().move( origin.getX() + applyZoom( cAnimation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + toolBox.getOrigin().getX() ), origin.getY() + applyZoom( cAnimation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + toolBox.getOrigin().getY() ) );
 						}
 						
 						scaledBox.resize( applyZoom( toolBox.getWidth() ), applyZoom( toolBox.getHeight() ) );
