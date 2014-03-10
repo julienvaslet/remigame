@@ -38,6 +38,10 @@ namespace graphics
 			void addBoundingBox( const Box& box );
 			void addAttackArea( const Box& box );
 			void addDefenceArea( const Box& box );
+			
+			void removeBoundingBox( int index );
+			void removeAttackArea( int index );
+			void removeDefenceArea( int index );
 	};
 }
 
