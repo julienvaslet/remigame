@@ -85,4 +85,49 @@ namespace graphics
 	{
 		this->defenceAreas.push_back( box );
 	}
+	
+	void Frame::removeBoundingBox( int index )
+	{
+		unsigned int i = 0;
+		vector<Box>::iterator it;
+		
+		for( it = this->boundingBoxes.begin() ; it != this->boundingBoxes.end() ; it++ )
+		{
+			if( i++ == index )
+				break;
+		}
+		
+		if( it != this->boundingBoxes.end() )
+			this->boundingBoxes.erase( it );
+	}
+	
+	void Frame::removeAttackArea( int index )
+	{
+		unsigned int i = 0;
+		vector<Box>::iterator it;
+		
+		for( it = this->attackAreas.begin() ; it != this->attackAreas.end() ; it++ )
+		{
+			if( i++ == index )
+				break;
+		}
+		
+		if( it != this->attackAreas.end() )
+			this->attackAreas.erase( it );
+	}
+	
+	void Frame::removeDefenceArea( int index )
+	{
+		unsigned int i = 0;
+		vector<Box>::iterator it;
+		
+		for( it = this->defenceAreas.begin() ; it != this->defenceAreas.end() ; it++ )
+		{
+			if( i++ == index )
+				break;
+		}
+		
+		if( it != this->defenceAreas.end() )
+			this->defenceAreas.erase( it );	
+	}
 }
