@@ -79,6 +79,24 @@ bool deleteFrame( Element * element );
 bool nextFrame( Element * element );
 bool prevFrame( Element * element );
 
+// Bounding Box Events
+bool addBoundingBox( Element * element );
+bool deleteBoundingBox( Element * element );
+bool nextBoundingBox( Element * element );
+bool prevBoundingBox( Element * element );
+
+// Attack Area Events
+bool addAttackArea( Element * element );
+bool deleteAttackArea( Element * element );
+bool nextAttackArea( Element * element );
+bool prevAttackArea( Element * element );
+
+// Defence Area Events
+bool addDefenceArea( Element * element );
+bool deleteDefenceArea( Element * element );
+bool nextDefenceArea( Element * element );
+bool prevDefenceArea( Element * element );
+
 // File Events
 bool loadFile( Element * element );
 bool cancelLoading( Element * element );
@@ -346,6 +364,22 @@ int main( int argc, char ** argv )
 									else if( currentTool.compare( "box.bounding" ) == 0 )
 									{
 										// Set the bounding box
+										Animation * animation = animations[animationsNames[currentAnimation]];
+										
+										if( animation != NULL )
+										{
+											if( currentBoundingBox < animation->getFrameByIndex( currentFrame ).getBoundingBoxesCount() )
+											{
+												animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).getOrigin().move( toolBox.getOrigin().getX(), toolBox.getOrigin().getY() );
+												animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).resize( toolBox.getWidth(), toolBox.getHeight() );
+											}
+											else
+											{
+												animation->getFrameByIndex( currentFrame ).addBoundingBox( toolBoox );
+												currentBoundingBox = animation->getFrameByIndex( currentFrame ).getBoundingBoxesCount() - 1;
+												synchronizeLabels();
+											}
+										}
 									}
 									else if( currentTool.compare( "box.attack" ) == 0 )
 									{
@@ -789,12 +823,13 @@ int main( int argc, char ** argv )
 						if( !toolActive && currentTool.compare( "anchor" ) == 0 )
 							renderPointInformation( cAnimation->getFrameByIndex( i ).getAnchor(), fBox.getOrigin() );
 						
-						/*
+						
 						// Render bounding boxes
 						for( unsigned int iBox = 0 ; i < cAnimation->getFrameByIndex( i ).getBoundingBoxesCount() ; iBox++ )
 						{
 							Box bBox( cAnimation->getFrameByIndex( i ).getBoundingBox( iBox ) );
-							bBox.getOrigin().move( fBox.getOrigin().getX() + applyZoom( bBox.getOrigin().getX() ), fBox.getOrigin().getY() + applyZoom( bBox.getOrigin().getY() ) );
+							bBox.getOrigin().move( origin.getX() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getX() + bBox.getOrigin().getX() ), origin.getY() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getY() + bBox.getOrigin().getY() ) );
+							bBox.resize( applyZoom( bBox.getWidth() ), applyZoom( bBox.getHeight() ) );
 							bBox.render( Color( 0x00, 0xFF, 0x00 ) );
 							
 							if( iBox == currentBoundingBox )
@@ -804,11 +839,12 @@ int main( int argc, char ** argv )
 							}
 						}
 						
-						// Render attack areas
+						/*// Render attack areas
 						for( unsigned int iAttack = 0 ; i < cAnimation->getFrameByIndex( i ).getAttackAreasCount() ; iAttack++ )
 						{
 							Box aBox( cAnimation->getFrameByIndex( i ).getAttackArea( iAttack ) );
-							aBox.getOrigin().move( fBox.getOrigin().getX() + applyZoom( aBox.getOrigin().getX() ), fBox.getOrigin().getY() + applyZoom( aBox.getOrigin().getY() ) );
+							aBox.getOrigin().move( origin.getX() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getX() + aBox.getOrigin().getX() ), origin.getY() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getY() + aBox.getOrigin().getY() ) );
+							aBox.resize( applyZoom( aBox.getWidth(), aBox.getHeight() ) );
 							aBox.render( Color( 0xFF, 0x00, 0x00 ) );
 							
 							if( iAttack == currentAttackArea )
@@ -823,7 +859,8 @@ int main( int argc, char ** argv )
 						for( unsigned int iDefence = 0 ; i < cAnimation->getFrameByIndex( i ).getDefenceAreasCount() ; iDefence++ )
 						{
 							Box dBox( cAnimation->getFrameByIndex( i ).getDefenceArea( iDefence ) );
-							dBox.getOrigin().move( fBox.getOrigin().getX() + applyZoom( dBox.getOrigin().getX() ), fBox.getOrigin().getY() + applyZoom( dBox.getOrigin().getY() ) );
+							dBox.getOrigin().move( origin.getX() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getX() + dBox.getOrigin().getX() ), origin.getY() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getY() + dBox.getOrigin().getY() ) );
+							dBox.resize( applyZoom( dBox.getWidth(), dBox.getHeight() ) );
 							dBox.render( Color( 0x00, 0x00, 0xFF ) );
 							
 							if( iDefence == currentDefenceArea )
@@ -1095,21 +1132,25 @@ void initUserInterface()
 	editorUi.addElement( "btn_prev_boundingbox", new Button( "font0", "<" ) );
 	editorUi.getElement( "btn_prev_boundingbox" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_prev_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 290, 470 );
+	editorUi.getElement( "btn_prev_boundingbox" )->addEventHandler( "mouseup", prevBoundingBox );
 	panelButtons.push_back( "btn_prev_boundingbox" );
 	
 	editorUi.addElement( "btn_del_boundingbox", new Button( "font0", "~" ) );
 	editorUi.getElement( "btn_del_boundingbox" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_del_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 245, 470 );
+	editorUi.getElement( "btn_del_boundingbox" )->addEventHandler( "mouseup", deleteBoundingBox );
 	panelButtons.push_back( "btn_del_boundingbox" );
 	
 	editorUi.addElement( "btn_add_boundingbox", new Button( "font0", "+" ) );
 	editorUi.getElement( "btn_add_boundingbox" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_add_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 95, 470 );
+	editorUi.getElement( "btn_add_boundingbox" )->addEventHandler( "mouseup", addBoundingBox );
 	panelButtons.push_back( "btn_add_boundingbox" );
 	
 	editorUi.addElement( "btn_next_boundingbox", new Button( "font0", ">" ) );
 	editorUi.getElement( "btn_next_boundingbox" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_next_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 50, 470 );
+	editorUi.getElement( "btn_next_boundingbox" )->addEventHandler( "mouseup", nextBoundingBox );
 	panelButtons.push_back( "btn_next_boundingbox" );
 	
 	editorUi.addElement( "lbl_boundingbox", new PushButton( "font0", "bounding#0" ) );
@@ -1123,21 +1164,25 @@ void initUserInterface()
 	editorUi.addElement( "btn_prev_attackarea", new Button( "font0", "<" ) );
 	editorUi.getElement( "btn_prev_attackarea" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_prev_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 290, 500 );
+	editorUi.getElement( "btn_prev_attackarea" )->addEventHandler( "mouseup", prevAttackArea );
 	panelButtons.push_back( "btn_prev_attackarea" );
 	
 	editorUi.addElement( "btn_del_attackarea", new Button( "font0", "~" ) );
 	editorUi.getElement( "btn_del_attackarea" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_del_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 245, 500 );
+	editorUi.getElement( "btn_del_attackarea" )->addEventHandler( "mouseup", deleteAttackArea );
 	panelButtons.push_back( "btn_del_attackarea" );
 	
 	editorUi.addElement( "btn_add_attackarea", new Button( "font0", "+" ) );
 	editorUi.getElement( "btn_add_attackarea" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_add_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 95, 500 );
+	editorUi.getElement( "btn_add_attackarea" )->addEventHandler( "mouseup", addAttackArea );
 	panelButtons.push_back( "btn_add_attackarea" );
 	
 	editorUi.addElement( "btn_next_attackarea", new Button( "font0", ">" ) );
 	editorUi.getElement( "btn_next_attackarea" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_next_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 50, 500 );
+	editorUi.getElement( "btn_next_attackarea" )->addEventHandler( "mouseup", nextAttackArea );
 	panelButtons.push_back( "btn_next_attackarea" );
 	
 	editorUi.addElement( "lbl_attackarea", new PushButton( "font0", "attack#0" ) );
@@ -1151,21 +1196,25 @@ void initUserInterface()
 	editorUi.addElement( "btn_prev_defencearea", new Button( "font0", "<" ) );
 	editorUi.getElement( "btn_prev_defencearea" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_prev_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 290, 530 );
+	editorUi.getElement( "btn_prev_defencearea" )->addEventHandler( "mouseup", prevDefenceArea );
 	panelButtons.push_back( "btn_prev_defencearea" );
 	
 	editorUi.addElement( "btn_del_defencearea", new Button( "font0", "~" ) );
 	editorUi.getElement( "btn_del_defencearea" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_del_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 245, 530 );
+	editorUi.getElement( "btn_del_defencearea" )->addEventHandler( "mouseup", deleteDefenceArea );
 	panelButtons.push_back( "btn_del_defencearea" );
 	
 	editorUi.addElement( "btn_add_defencearea", new Button( "font0", "+" ) );
 	editorUi.getElement( "btn_add_defencearea" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_add_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 95, 530 );
+	editorUi.getElement( "btn_add_defencearea" )->addEventHandler( "mouseup", addDefenceArea );
 	panelButtons.push_back( "btn_add_defencearea" );
 	
 	editorUi.addElement( "btn_next_defencearea", new Button( "font0", ">" ) );
 	editorUi.getElement( "btn_next_defencearea" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_next_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 50, 530 );
+	editorUi.getElement( "btn_next_defencearea" )->addEventHandler( "mouseup", nextDefenceArea );
 	panelButtons.push_back( "btn_next_defencearea" );
 	
 	editorUi.addElement( "lbl_defencearea", new PushButton( "font0", "defence#0" ) );
@@ -1587,7 +1636,7 @@ bool nextFrame( Element * element )
 {
 	Animation * animation = animations[animationsNames[currentAnimation]];
 	
-	if( animation != NULL  )
+	if( animation != NULL )
 	{
 		currentFrame++;
 		
@@ -1604,7 +1653,7 @@ bool prevFrame( Element * element )
 {
 	Animation * animation = animations[animationsNames[currentAnimation]];
 	
-	if( animation != NULL  )
+	if( animation != NULL )
 	{
 		if( currentFrame == 0 )
 			currentFrame = animation->getFrameCount() - 1;
@@ -1617,3 +1666,117 @@ bool prevFrame( Element * element )
 	return true;
 }
 
+
+// Bounding Box Events
+bool addBoundingBox( Element * element )
+{
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		if( currentBoundingBox < animation->getFrameByIndex( currentFrame ).getBoundingBoxesCount() )
+		{
+			currentBoundingBox++;
+			synchronizeLabels();
+		}
+	}
+	
+	return true;
+}
+
+bool deleteBoundingBox( Element * element )
+{
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		if( currentBoundingBox < animation->getFrameByIndex( currentFrame ).getBoundingBoxesCount() )
+		{
+			animation->getFrameByIndex( currentFrame )->removeBoundingBox( currentBoundingBox );
+			if( currentBoundingBox > 0 ) currentBoundingBox = currentBoundingBox - 1;
+		}
+		else
+			currentBoundingBox = animation->getFrameByIndex( currentFrame ).getBoundingBoxesCount() - 1;
+		
+		synchronizeLabels();
+	}
+	
+	return true;
+}
+
+bool nextBoundingBox( Element * element )
+{
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		currentBoundingBox++;
+		
+		if( currentBoundingBox >= animation->getBoundingBoxesCount() )
+			currentBoundingBox = 0;
+			
+		synchronizeLabels();
+	}
+	
+	
+	return true;
+}
+
+bool prevBoundingBox( Element * element )
+{
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		if( currentBoundingBox == 0 )
+			currentBoundingBox = animation->getBoundingBoxesCount() - 1;
+		else
+			currentBoundingBox--;
+			
+		synchronizeLabels();
+	}
+	
+	return true;
+}
+
+// Attack Area Events
+bool addAttackArea( Element * element )
+{
+	return true;
+}
+
+bool deleteAttackArea( Element * element )
+{
+	return true;
+}
+
+bool nextAttackArea( Element * element )
+{
+	return true;
+}
+
+bool prevAttackArea( Element * element )
+{
+	return true;
+}
+
+// Defence Area Events
+bool addDefenceArea( Element * element )
+{
+	return true;
+}
+
+bool deleteDefenceArea( Element * element )
+{
+	return true;
+}
+
+bool nextDefenceArea( Element * element )
+{
+	return true;
+}
+
+bool prevDefenceArea( Element * element )
+{
+	return true;
+}
