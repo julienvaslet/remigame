@@ -282,6 +282,7 @@ int main( int argc, char ** argv )
 								
 								if( currentTool.compare( "box.frame" ) == 0 )
 								{
+									
 									// Restrict to the current sprite
 									if( sprite != NULL )
 									{
@@ -292,13 +293,16 @@ int main( int argc, char ** argv )
 								
 								else if( currentTool.compare( "box.bounding" ) == 0
 								      || currentTool.compare( "box.attack" ) == 0
-								      || currentTool.compare( "box.defnce" ) == 0 )
+								      || currentTool.compare( "box.defence" ) == 0 )
 								{
 									// Restrict to the current frame
 									Animation * animation = animations[animationsNames[currentAnimation]];
 									
 									if( animation != NULL )
-										restrictBoxToBoxArea( toolBox, animation->getFrameByIndex( currentFrame ).getBox() );
+									{
+										toolBox.getOrigin().moveBy( -1 * animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX(), -1 * animation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() );
+										restrictPointToBoxArea( toolBox.getOrigin(), animation->getFrameByIndex( currentFrame ).getBox() );
+									}
 								}
 							}
 						}
@@ -375,7 +379,7 @@ int main( int argc, char ** argv )
 											}
 											else
 											{
-												animation->getFrameByIndex( currentFrame ).addBoundingBox( toolBoox );
+												animation->getFrameByIndex( currentFrame ).addBoundingBox( toolBox );
 												currentBoundingBox = animation->getFrameByIndex( currentFrame ).getBoundingBoxesCount() - 1;
 												synchronizeLabels();
 											}
@@ -384,10 +388,42 @@ int main( int argc, char ** argv )
 									else if( currentTool.compare( "box.attack" ) == 0 )
 									{
 										// Set the attack area
+										Animation * animation = animations[animationsNames[currentAnimation]];
+										
+										if( animation != NULL )
+										{
+											if( currentAttackArea < animation->getFrameByIndex( currentFrame ).getAttackAreasCount() )
+											{
+												animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).getOrigin().move( toolBox.getOrigin().getX(), toolBox.getOrigin().getY() );
+												animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).resize( toolBox.getWidth(), toolBox.getHeight() );
+											}
+											else
+											{
+												animation->getFrameByIndex( currentFrame ).addAttackArea( toolBox );
+												currentAttackArea = animation->getFrameByIndex( currentFrame ).getAttackAreasCount() - 1;
+												synchronizeLabels();
+											}
+										}
 									}
 									else if( currentTool.compare( "box.defence" ) == 0 )
 									{
-										// Set the defence
+										// Set the defence area
+										Animation * animation = animations[animationsNames[currentAnimation]];
+										
+										if( animation != NULL )
+										{
+											if( currentDefenceArea < animation->getFrameByIndex( currentFrame ).getDefenceAreasCount() )
+											{
+												animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).getOrigin().move( toolBox.getOrigin().getX(), toolBox.getOrigin().getY() );
+												animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).resize( toolBox.getWidth(), toolBox.getHeight() );
+											}
+											else
+											{
+												animation->getFrameByIndex( currentFrame ).addDefenceArea( toolBox );
+												currentDefenceArea = animation->getFrameByIndex( currentFrame ).getDefenceAreasCount() - 1;
+												synchronizeLabels();
+											}
+										}
 									}
 								}
 							}
@@ -497,12 +533,51 @@ int main( int argc, char ** argv )
 									}
 									else if( currentTool.compare( "box.bounding" ) == 0 )
 									{
+										// Move action
+										if( !altKeyState )
+											animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).getOrigin().moveBy( -1 * ( shiftKeyState ? 10 : 1 ), 0 );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).resizeBy( shiftKeyState ? 10 : 1, 0 );
+										
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).resizeBy( shiftKeyState ? -10 : -1, 0 );
+										
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ), animation->getFrameByIndex( currentFrame ).getBox() );
 									}
 									else if( currentTool.compare( "box.attack" ) == 0 )
 									{
+										// Move action
+										if( !altKeyState )
+											animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).getOrigin().moveBy( -1 * ( shiftKeyState ? 10 : 1 ), 0 );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).resizeBy( shiftKeyState ? 10 : 1, 0 );
+										
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).resizeBy( shiftKeyState ? -10 : -1, 0 );
+										
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ), animation->getFrameByIndex( currentFrame ).getBox() );
 									}
 									else if( currentTool.compare( "box.defence" ) == 0 )
 									{
+										// Move action
+										if( !altKeyState )
+											animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).getOrigin().moveBy( -1 * ( shiftKeyState ? 10 : 1 ), 0 );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).resizeBy( shiftKeyState ? 10 : 1, 0 );
+										
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).resizeBy( shiftKeyState ? -10 : -1, 0 );
+										
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ), animation->getFrameByIndex( currentFrame ).getBox() );
 									}
 								}
 							}
@@ -550,12 +625,51 @@ int main( int argc, char ** argv )
 									}
 									else if( currentTool.compare( "box.bounding" ) == 0 )
 									{
+										// Move action
+										if( !ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).getOrigin().moveBy( shiftKeyState ? 10 : 1, 0 );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).resizeBy( shiftKeyState ? 10 : 1, 0 );
+										
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).resizeBy( shiftKeyState ? -10 : -1, 0 );
+										
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ), animation->getFrameByIndex( currentFrame ).getBox() );
 									}
 									else if( currentTool.compare( "box.attack" ) == 0 )
 									{
+										// Move action
+										if( !ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).getOrigin().moveBy( shiftKeyState ? 10 : 1, 0 );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).resizeBy( shiftKeyState ? 10 : 1, 0 );
+										
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).resizeBy( shiftKeyState ? -10 : -1, 0 );
+										
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ), animation->getFrameByIndex( currentFrame ).getBox() );
 									}
 									else if( currentTool.compare( "box.defence" ) == 0 )
 									{
+										// Move action
+										if( !ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).getOrigin().moveBy( shiftKeyState ? 10 : 1, 0 );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).resizeBy( shiftKeyState ? 10 : 1, 0 );
+										
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).resizeBy( shiftKeyState ? -10 : -1, 0 );
+										
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ), animation->getFrameByIndex( currentFrame ).getBox() );
 									}
 								}
 							}
@@ -603,12 +717,51 @@ int main( int argc, char ** argv )
 									}
 									else if( currentTool.compare( "box.bounding" ) == 0 )
 									{
+										// Move action
+										if( !altKeyState )
+											animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).getOrigin().moveBy( 0, -1 * ( shiftKeyState ? 10 : 1 ) );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).resizeBy( 0, shiftKeyState ? 10 : 1 );
+											
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).resizeBy( 0, shiftKeyState ? -10 : -1 );
+										
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ), animation->getFrameByIndex( currentFrame ).getBox() );
 									}
 									else if( currentTool.compare( "box.attack" ) == 0 )
 									{
+										// Move action
+										if( !altKeyState )
+											animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).getOrigin().moveBy( 0, -1 * ( shiftKeyState ? 10 : 1 ) );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).resizeBy( 0, shiftKeyState ? 10 : 1 );
+											
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).resizeBy( 0, shiftKeyState ? -10 : -1 );
+										
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ), animation->getFrameByIndex( currentFrame ).getBox() );
 									}
 									else if( currentTool.compare( "box.defence" ) == 0 )
 									{
+										// Move action
+										if( !altKeyState )
+											animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).getOrigin().moveBy( 0, -1 * ( shiftKeyState ? 10 : 1 ) );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).resizeBy( 0, shiftKeyState ? 10 : 1 );
+											
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).resizeBy( 0, shiftKeyState ? -10 : -1 );
+										
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ), animation->getFrameByIndex( currentFrame ).getBox() );
 									}
 								}
 							}
@@ -656,12 +809,51 @@ int main( int argc, char ** argv )
 									}
 									else if( currentTool.compare( "box.bounding" ) == 0 )
 									{
+										// Move action
+										if( !ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).getOrigin().moveBy( 0, shiftKeyState ? 10 : 1 );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).resizeBy( 0, shiftKeyState ? 10 : 1 );
+										
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ).resizeBy( 0, shiftKeyState ? -10 : -1 );
+
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getBoundingBox( currentBoundingBox ), animation->getFrameByIndex( currentFrame ).getBox() );
 									}
 									else if( currentTool.compare( "box.attack" ) == 0 )
 									{
+										// Move action
+										if( !ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).getOrigin().moveBy( 0, shiftKeyState ? 10 : 1 );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).resizeBy( 0, shiftKeyState ? 10 : 1 );
+										
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ).resizeBy( 0, shiftKeyState ? -10 : -1 );
+
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getAttackArea( currentAttackArea ), animation->getFrameByIndex( currentFrame ).getBox() );
 									}
 									else if( currentTool.compare( "box.defence" ) == 0 )
 									{
+										// Move action
+										if( !ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).getOrigin().moveBy( 0, shiftKeyState ? 10 : 1 );
+									
+										// Resize + action
+										if( ctrlKeyState )
+											animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).resizeBy( 0, shiftKeyState ? 10 : 1 );
+										
+										// Resize - action
+										else if( altKeyState )
+											animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ).resizeBy( 0, shiftKeyState ? -10 : -1 );
+
+										restrictBoxToBoxArea( animation->getFrameByIndex( currentFrame ).getDefenceArea( currentDefenceArea ), animation->getFrameByIndex( currentFrame ).getBox() );
 									}
 								}
 							}
@@ -748,7 +940,7 @@ int main( int argc, char ** argv )
 				{
 					if( altKeyState )
 					{
-						int prevZoom = currentZoom;
+						//int prevZoom = currentZoom;
 						int mouseX = 0;
 						int mouseY = 0;
 						SDL_GetMouseState( &mouseX, &mouseY );
@@ -825,7 +1017,7 @@ int main( int argc, char ** argv )
 						
 						
 						// Render bounding boxes
-						for( unsigned int iBox = 0 ; i < cAnimation->getFrameByIndex( i ).getBoundingBoxesCount() ; iBox++ )
+						for( unsigned int iBox = 0 ; iBox < cAnimation->getFrameByIndex( i ).getBoundingBoxesCount() ; iBox++ )
 						{
 							Box bBox( cAnimation->getFrameByIndex( i ).getBoundingBox( iBox ) );
 							bBox.getOrigin().move( origin.getX() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getX() + bBox.getOrigin().getX() ), origin.getY() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getY() + bBox.getOrigin().getY() ) );
@@ -835,40 +1027,39 @@ int main( int argc, char ** argv )
 							if( iBox == currentBoundingBox )
 							{
 								if( !toolActive && currentTool.compare( "box.bounding" ) == 0 )
-									renderBoxInformation( bBox, fBox.getOrigin() );
+									renderBoxInformation( cAnimation->getFrameByIndex( i ).getBoundingBox( iBox ), fBox.getOrigin() );
 							}
 						}
 						
-						/*// Render attack areas
-						for( unsigned int iAttack = 0 ; i < cAnimation->getFrameByIndex( i ).getAttackAreasCount() ; iAttack++ )
+						// Render attack areas
+						for( unsigned int iAttack = 0 ; iAttack < cAnimation->getFrameByIndex( i ).getAttackAreasCount() ; iAttack++ )
 						{
 							Box aBox( cAnimation->getFrameByIndex( i ).getAttackArea( iAttack ) );
 							aBox.getOrigin().move( origin.getX() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getX() + aBox.getOrigin().getX() ), origin.getY() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getY() + aBox.getOrigin().getY() ) );
-							aBox.resize( applyZoom( aBox.getWidth(), aBox.getHeight() ) );
+							aBox.resize( applyZoom( aBox.getWidth() ), applyZoom( aBox.getHeight() ) );
 							aBox.render( Color( 0xFF, 0x00, 0x00 ) );
 							
 							if( iAttack == currentAttackArea )
 							{
 								if( !toolActive && currentTool.compare( "box.attack" ) == 0 )
-									renderBoxInformation( aBox, fBox.getOrigin() );
+									renderBoxInformation( cAnimation->getFrameByIndex( i ).getAttackArea( iAttack ), fBox.getOrigin() );
 							}
 						}
-			
 						
 						// Render defence areas
-						for( unsigned int iDefence = 0 ; i < cAnimation->getFrameByIndex( i ).getDefenceAreasCount() ; iDefence++ )
+						for( unsigned int iDefence = 0 ; iDefence < cAnimation->getFrameByIndex( i ).getDefenceAreasCount() ; iDefence++ )
 						{
 							Box dBox( cAnimation->getFrameByIndex( i ).getDefenceArea( iDefence ) );
 							dBox.getOrigin().move( origin.getX() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getX() + dBox.getOrigin().getX() ), origin.getY() + applyZoom( cAnimation->getFrameByIndex( i ).getBox().getOrigin().getY() + dBox.getOrigin().getY() ) );
-							dBox.resize( applyZoom( dBox.getWidth(), dBox.getHeight() ) );
+							dBox.resize( applyZoom( dBox.getWidth() ), applyZoom( dBox.getHeight() ) );
 							dBox.render( Color( 0x00, 0x00, 0xFF ) );
 							
 							if( iDefence == currentDefenceArea )
 							{
 								if( !toolActive && currentTool.compare( "box.defence" ) == 0 )
-									renderBoxInformation( dBox, fBox.getOrigin() );
+									renderBoxInformation( cAnimation->getFrameByIndex( i ).getDefenceArea( iDefence ), fBox.getOrigin() );
 							}
-						}*/
+						}
 					}
 				}
 				
@@ -886,6 +1077,7 @@ int main( int argc, char ** argv )
 					{
 						Color color;
 						Box scaledBox;
+						Point relative( origin );
 			
 						if( currentTool.compare( "box.frame" ) == 0 )
 						{
@@ -899,11 +1091,12 @@ int main( int argc, char ** argv )
 							else if( currentTool.compare( "box.defence" ) == 0 ) color.setColor( "0000FF" );
 							
 							scaledBox.getOrigin().move( origin.getX() + applyZoom( cAnimation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() + toolBox.getOrigin().getX() ), origin.getY() + applyZoom( cAnimation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() + toolBox.getOrigin().getY() ) );
+							relative.moveBy( applyZoom( cAnimation->getFrameByIndex( currentFrame ).getBox().getOrigin().getX() ), applyZoom( cAnimation->getFrameByIndex( currentFrame ).getBox().getOrigin().getY() ) );
 						}
 						
 						scaledBox.resize( applyZoom( toolBox.getWidth() ), applyZoom( toolBox.getHeight() ) );
 						scaledBox.render( color );
-						renderBoxInformation( toolBox, currentTool.compare( "box.frame" ) == 0 ? origin : origin );
+						renderBoxInformation( toolBox, relative );
 					}
 				}
 			}
@@ -1666,7 +1859,6 @@ bool prevFrame( Element * element )
 	return true;
 }
 
-
 // Bounding Box Events
 bool addBoundingBox( Element * element )
 {
@@ -1692,11 +1884,13 @@ bool deleteBoundingBox( Element * element )
 	{
 		if( currentBoundingBox < animation->getFrameByIndex( currentFrame ).getBoundingBoxesCount() )
 		{
-			animation->getFrameByIndex( currentFrame )->removeBoundingBox( currentBoundingBox );
+			animation->getFrameByIndex( currentFrame ).removeBoundingBox( currentBoundingBox );
 			if( currentBoundingBox > 0 ) currentBoundingBox = currentBoundingBox - 1;
 		}
-		else
+		else if( animation->getFrameByIndex( currentFrame ).getBoundingBoxesCount() > 0 )
 			currentBoundingBox = animation->getFrameByIndex( currentFrame ).getBoundingBoxesCount() - 1;
+		else
+			currentBoundingBox = 0;
 		
 		synchronizeLabels();
 	}
@@ -1712,12 +1906,11 @@ bool nextBoundingBox( Element * element )
 	{
 		currentBoundingBox++;
 		
-		if( currentBoundingBox >= animation->getBoundingBoxesCount() )
+		if( currentBoundingBox >= animation->getFrameByIndex( currentFrame ).getBoundingBoxesCount() )
 			currentBoundingBox = 0;
 			
 		synchronizeLabels();
 	}
-	
 	
 	return true;
 }
@@ -1729,7 +1922,7 @@ bool prevBoundingBox( Element * element )
 	if( animation != NULL )
 	{
 		if( currentBoundingBox == 0 )
-			currentBoundingBox = animation->getBoundingBoxesCount() - 1;
+			currentBoundingBox = animation->getFrameByIndex( currentFrame ).getBoundingBoxesCount() - 1;
 		else
 			currentBoundingBox--;
 			
@@ -1742,41 +1935,145 @@ bool prevBoundingBox( Element * element )
 // Attack Area Events
 bool addAttackArea( Element * element )
 {
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		if( currentAttackArea < animation->getFrameByIndex( currentFrame ).getAttackAreasCount() )
+		{
+			currentAttackArea++;
+			synchronizeLabels();
+		}
+	}
+	
 	return true;
 }
 
 bool deleteAttackArea( Element * element )
 {
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		if( currentAttackArea < animation->getFrameByIndex( currentFrame ).getAttackAreasCount() )
+		{
+			animation->getFrameByIndex( currentFrame ).removeAttackArea( currentAttackArea );
+			if( currentAttackArea > 0 ) currentAttackArea = currentAttackArea - 1;
+		}
+		else if( animation->getFrameByIndex( currentFrame ).getAttackAreasCount() > 0 )
+			currentAttackArea = animation->getFrameByIndex( currentFrame ).getAttackAreasCount() - 1;
+		else
+			currentAttackArea = 0;
+		
+		synchronizeLabels();
+	}
+	
 	return true;
 }
 
 bool nextAttackArea( Element * element )
 {
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		currentAttackArea++;
+		
+		if( currentAttackArea >= animation->getFrameByIndex( currentFrame ).getAttackAreasCount() )
+			currentAttackArea = 0;
+			
+		synchronizeLabels();
+	}
+	
 	return true;
 }
 
 bool prevAttackArea( Element * element )
 {
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		if( currentAttackArea == 0 )
+			currentAttackArea = animation->getFrameByIndex( currentFrame ).getAttackAreasCount() - 1;
+		else
+			currentAttackArea--;
+			
+		synchronizeLabels();
+	}
+	
 	return true;
 }
 
 // Defence Area Events
 bool addDefenceArea( Element * element )
 {
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		if( currentDefenceArea < animation->getFrameByIndex( currentFrame ).getDefenceAreasCount() )
+		{
+			currentDefenceArea++;
+			synchronizeLabels();
+		}
+	}
+	
 	return true;
 }
 
 bool deleteDefenceArea( Element * element )
 {
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		if( currentDefenceArea < animation->getFrameByIndex( currentFrame ).getDefenceAreasCount() )
+		{
+			animation->getFrameByIndex( currentFrame ).removeDefenceArea( currentDefenceArea );
+			if( currentDefenceArea > 0 ) currentDefenceArea = currentDefenceArea - 1;
+		}
+		else if( animation->getFrameByIndex( currentFrame ).getDefenceAreasCount() > 0 )
+			currentDefenceArea = animation->getFrameByIndex( currentFrame ).getDefenceAreasCount() - 1;
+		else
+			currentDefenceArea = 0;
+		
+		synchronizeLabels();
+	}
+	
 	return true;
 }
 
 bool nextDefenceArea( Element * element )
 {
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		currentDefenceArea++;
+		
+		if( currentDefenceArea >= animation->getFrameByIndex( currentFrame ).getDefenceAreasCount() )
+			currentDefenceArea = 0;
+			
+		synchronizeLabels();
+	}
+	
 	return true;
 }
 
 bool prevDefenceArea( Element * element )
 {
+	Animation * animation = animations[animationsNames[currentAnimation]];
+	
+	if( animation != NULL )
+	{
+		if( currentDefenceArea == 0 )
+			currentDefenceArea = animation->getFrameByIndex( currentFrame ).getAttackAreasCount() - 1;
+		else
+			currentDefenceArea--;
+			
+		synchronizeLabels();
+	}
+	
 	return true;
 }
