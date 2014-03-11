@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <string>
+#include <fstream>
 #include <sstream>
 #include <vector>
 #include <cmath>
@@ -105,8 +106,6 @@ bool saveFile( Element * element );
 // Animation Events
 bool prevAnimation( Element * element );
 bool nextAnimation( Element * element );
-
-// TODO: zoom only applied on show function to limit approximations
 
 // TODO: add z-index value to UserInterface element, and a tab index too
 // TODO: add disabled state to ui::Element
@@ -1645,6 +1644,20 @@ bool loadFile( Element * element )
 
 bool saveFile( Element * element )
 {
+	for( vector<string>::iterator it = panelButtons.begin() ; it != panelButtons.end() ; it++ )
+		editorUi.hideElement( *it );
+	
+	savingState = true;
+	editorUi.showElement( "zlbl_saving" );
+	
+	// save
+	
+	for( vector<string>::iterator it = panelButtons.begin() ; it != panelButtons.end() ; it++ )
+		editorUi.showElement( *it );
+						
+	editorUi.hideElement( "zlbl_saving" );
+	savingState = false;
+
 	return true;
 }
 
@@ -1752,8 +1765,195 @@ bool loadSprite( const string& filename )
 
 bool loadObject( const string& filename )
 {
-	cout << "[ObjectEditor] Object loading not supported." << endl;
-	return false;
+	bool success = true;
+	ifstream file( filename );
+
+	if( file.is_open() )
+	{
+		stringstream ss;
+		ss << file.rdbuf();
+
+		parser::NodeParser nParser( ss.str() );
+		node::Node * root = nParser.parse();
+
+		if( root != NULL )
+		{
+			node::Node * object = root->find( "object" );
+
+			if( object != NULL )
+			{
+				if( object->hasAttr( "sprite" ) )
+				{
+					Sprite * nSprite = new Sprite( object->attr( "sprite" ) );
+				
+					if( nSprite->isLoaded() )
+					{
+						cleanObjectVariables();
+						sprite = nSprite;
+						
+						objectFilename = filename;
+						spriteFilename = object->attr( "sprite" );
+						
+						adjustSpriteToScreen();
+						
+						// Initialize each animation with one frame
+						Frame defaultFrame( Box( 0, 0, sprite->getWidth(), sprite->getHeight() ) );
+						
+						for( vector<string>::iterator it = animationsNames.begin() ; it != animationsNames.end() ; it++ )
+						{
+							animations[*it] = new Animation();
+							animations[*it]->setSpeed( 100 );
+							animations[*it]->addFrame( defaultFrame );
+						}
+						
+						// Browse animations
+						node::Node * animation = object->childAt( 0 );
+						
+						while( animation != NULL )
+						{
+							if( animation->getType() == node::Node::Tag && animation->getName() == "animation" )
+							{
+								Animation * anim = NULL;
+								
+								map<string, Animation *>::iterator itAnimation = animations.find( animation->attr( "name" ) );
+								
+								if( itAnimation != animations.end() )
+									anim = it->second;
+								else
+								{
+									animationsNames.push_back( animation->attr( "name" ) );
+									animations[animation->attr( "name" )] = new Animation();
+									animations[animation->attr( "name" )]->setSpeed( 100 );
+									animations[animation->attr( "name" )]->addFrame( defaultFrame );
+								}
+								
+								if( animation->isIntegerAttr( "speed" ) )
+									anim->setSpeed( static_cast<unsigned int>( animation->integerAttr( "speed" ) ) );
+								
+								// Browse frames
+								node::Node * frame = animation->childAt( 0 );
+								bool firstFrame = true;
+								
+								while( frame != NULL )
+								{
+									if( frame->getType() == node::Node::Tag && frame->getName() == "frame" )
+									{
+										Frame oFrame;
+										oFrame.getAnchor().move( 0, frame->isIntegerAttr( "height" ) ? frame->integerAttr( "height" ) : 0 );
+										oFrame.getBox().getOrigin().move( frame->isIntegerAttr( "x" ) ? frame->integerAttr( "x" ) : 0, frame->isIntegerAttr( "y" ) ? frame->integerAttr( "y" ) : 0 );
+										oFrame.getBox().resize( frame->isIntegerAttr( "width" ) ? frame->integerAttr( "width" ) : 0, frame->isIntegerAttr( "height" ) ? frame->integerAttr( "height" ) : 0 );
+										
+										node::Node * frameChild = frame->childAt( 0 );
+
+										while( frameChild != NULL )
+										{
+											if( frameChild->getType() == node::Node::Tag )
+											{
+												if( frameChild->getName() == "anchor" )
+												{
+													if( frameChild->isIntegerAttr( "x" ) )
+														oFrame.getAnchor().setX( frameChild->integerAttr( "x" ) );
+										
+													if( frameChild->isIntegerAttr( "y" ) )
+														oFrame.getAnchor().setY( frameChild->integerAttr( "y" ) );
+												}
+												else if( frameChild->getName() == "bounding-box" )
+												{
+													Box boundingBox;
+													
+													if( frameChild->isIntegerAttr( "x" ) )
+														boundingBox.getOrigin().setX( frameChild->integerAttr( "x" ) );
+													
+													if( frameChild->isIntegerAttr( "y" ) )
+														boundingBox.getOrigin().setY( frameChild->integerAttr( "y" ) );
+													
+													if( frameChild->isIntegerAttr( "width" ) )
+														boundingBox.setWidth( frameChild->integerAttr( "width" ) );
+													
+													if( frameChild->isIntegerAttr( "height" ) )
+														boundingBox.setHeight( frameChild->integerAttr( "height" ) );
+													
+													oFrame.addBoundingBox( boundingBox );
+												}
+												else if( frameChild->getName() == "attack-area" )
+												{
+													Box attackArea;
+													
+													if( frameChild->isIntegerAttr( "x" ) )
+														attackArea.getOrigin().setX( frameChild->integerAttr( "x" ) );
+													
+													if( frameChild->isIntegerAttr( "y" ) )
+														attackArea.getOrigin().setY( frameChild->integerAttr( "y" ) );
+													
+													if( frameChild->isIntegerAttr( "width" ) )
+														attackArea.setWidth( frameChild->integerAttr( "width" ) );
+													
+													if( frameChild->isIntegerAttr( "height" ) )
+														attackArea.setHeight( frameChild->integerAttr( "height" ) );
+													
+													oFrame.addAttackArea( attackArea );
+												}
+												else if( frameChild->getName() == "defence-area" )
+												{
+													Box defenceArea;
+													
+													if( frameChild->isIntegerAttr( "x" ) )
+														defenceArea.getOrigin().setX( frameChild->integerAttr( "x" ) );
+													
+													if( frameChild->isIntegerAttr( "y" ) )
+														defenceArea.getOrigin().setY( frameChild->integerAttr( "y" ) );
+													
+													if( frameChild->isIntegerAttr( "width" ) )
+														defenceArea.setWidth( frameChild->integerAttr( "width" ) );
+													
+													if( frameChild->isIntegerAttr( "height" ) )
+														defenceArea.setHeight( frameChild->integerAttr( "height" ) );
+													
+													oFrame.addDefenceArea( defenceArea );
+												}
+											}
+											
+											frameChild = frameChild->next();
+										}
+
+										
+										if( firstFrame )
+										{
+											firstFrame = false;
+											anim->removeFrameByIndex( 0 );
+										}
+										
+										anim->addFrame( oFrame );
+									}
+									
+									frame = frame->next();
+								}
+							}
+							
+							animation = animation->next();
+						}
+						
+						synchronizeLabels();
+					}
+					else
+					{
+						success = false;
+						delete nSprite;
+					}
+				}
+				else
+					success = false;
+			}
+			else
+				success = false;
+		}
+		else
+			success = false;
+	}
+	else
+		success = false;
+	
+	return success;
 }
 
 // Speed Events
