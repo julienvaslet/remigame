@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 
+#include <data/parser/NodeParser.h>
+
 #include <graphics/Screen.h>
 #include <graphics/Font.h>
 #include <graphics/Box.h>
@@ -21,6 +23,7 @@
 using namespace graphics;
 using namespace ui;
 using namespace std;
+using namespace data;
 
 // Object's variables
 string spriteFilename = "";
@@ -146,10 +149,11 @@ int main( int argc, char ** argv )
 	initUserInterface();
 	
 	// DEBUG case
-	loadSprite( "data/texture2.png" );
+	loadObject( "data/object.xml" );
+	/*loadSprite( "data/texture2.png" );
 	animations[animationsNames[currentAnimation]]->getFrameByIndex( currentFrame ).getBox().resize( 512, 512 );
 	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 512, 0, 512, 512 ) ) );
-	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 1024, 0, 512, 512 ) ) );
+	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 1024, 0, 512, 512 ) ) );*/
 	
 	while( running )
 	{
@@ -1766,7 +1770,7 @@ bool loadSprite( const string& filename )
 bool loadObject( const string& filename )
 {
 	bool success = true;
-	ifstream file( filename );
+	ifstream file( filename.c_str() );
 
 	if( file.is_open() )
 	{
@@ -1813,18 +1817,21 @@ bool loadObject( const string& filename )
 						{
 							if( animation->getType() == node::Node::Tag && animation->getName() == "animation" )
 							{
+								cout << "[Object Editor] Found animation \"" <<  animation->attr( "name" ) << "\"." << endl;
 								Animation * anim = NULL;
 								
 								map<string, Animation *>::iterator itAnimation = animations.find( animation->attr( "name" ) );
 								
 								if( itAnimation != animations.end() )
-									anim = it->second;
+									anim = itAnimation->second;
 								else
 								{
 									animationsNames.push_back( animation->attr( "name" ) );
 									animations[animation->attr( "name" )] = new Animation();
 									animations[animation->attr( "name" )]->setSpeed( 100 );
 									animations[animation->attr( "name" )]->addFrame( defaultFrame );
+									
+									anim = animations[animation->attr( "name" )];
 								}
 								
 								if( animation->isIntegerAttr( "speed" ) )
@@ -1937,21 +1944,34 @@ bool loadObject( const string& filename )
 					}
 					else
 					{
+						cout << "[Object Editor] Can not load sprite \"" << object->attr( "sprite" ) << "\"." << endl;
 						success = false;
 						delete nSprite;
 					}
 				}
 				else
+				{
+					cout << "[Object Editor] Can not find \"sprite\" attribute." << endl;
 					success = false;
+				}
 			}
 			else
+			{
+				cout << "[Object Editor] Can not find <object> tag." << endl;
 				success = false;
+			}
 		}
 		else
+		{
+			cout << "[Object Editor] Can not parse file as XML." << endl;
 			success = false;
+		}
 	}
 	else
+	{
+		cout << "[Object Editor] Can not open file \"" << filename << "\"." << endl;
 		success = false;
+	}
 	
 	return success;
 }
