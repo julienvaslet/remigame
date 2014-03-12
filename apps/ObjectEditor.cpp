@@ -148,13 +148,6 @@ int main( int argc, char ** argv )
 	
 	initUserInterface();
 	
-	// DEBUG case
-	//loadObject( "data/object.xml" );
-	loadSprite( "data/texture2.png" );
-	animations[animationsNames[currentAnimation]]->getFrameByIndex( currentFrame ).getBox().resize( 512, 512 );
-	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 512, 0, 512, 512 ) ) );
-	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 1024, 0, 512, 512 ) ) );
-	
 	while( running )
 	{
 		while( SDL_PollEvent( &lastEvent ) )
@@ -1665,111 +1658,112 @@ bool saveFile( Element * element )
 		node::Node * animation = new node::Node( node::Node::Tag, "animation" );
 		animation->attr( "name", it->first );
 		
+		ss.str( "" );
 		ss << it->second->getSpeed();
 		animation->attr( "speed", ss.str() );
 		
 		// Browsing frames
-		for( unsigned int iFrame = 0 ; iFrame < it->second->getFrameCount() ; it++ )
+		for( unsigned int iFrame = 0 ; iFrame < it->second->getFrameCount() ; iFrame++ )
 		{
 			node::Node * frame = new node::Node( node::Node::Tag, "frame" );
 			
 			// Frame box
 			ss.str( "" );
-			ss << it->second->getFrameByIndex( iFrame )->getBox()->getOrigin()->getX();
+			ss << it->second->getFrameByIndex( iFrame ).getBox().getOrigin().getX();
 			frame->attr( "x", ss.str() );
 			
 			ss.str( "" );
-			ss << it->second->getFrameByIndex( iFrame )->getBox()->getOrigin()->getY();
+			ss << it->second->getFrameByIndex( iFrame ).getBox().getOrigin().getY();
 			frame->attr( "y", ss.str() );
 			
 			ss.str( "" );
-			ss << it->second->getFrameByIndex( iFrame )->getBox()->getWidth();
+			ss << it->second->getFrameByIndex( iFrame ).getBox().getWidth();
 			frame->attr( "width", ss.str() );
 			
 			ss.str( "" );
-			ss << it->second->getFrameByIndex( iFrame )->getBox()->getHeight();
+			ss << it->second->getFrameByIndex( iFrame ).getBox().getHeight();
 			frame->attr( "height", ss.str() );
 			
 			// Anchor
 			node::Node * anchor = new node::Node( node::Node::Tag, "anchor" );
 			
 			ss.str( "" );
-			ss << it->second->getFrameByIndex( iFrame )->getAnchor()->getX();
+			ss << it->second->getFrameByIndex( iFrame ).getAnchor().getX();
 			anchor->attr( "x", ss.str() );
 			
 			ss.str( "" );
-			ss << it->second->getFrameByIndex( iFrame )->getAnchor()->getY();
+			ss << it->second->getFrameByIndex( iFrame ).getAnchor().getY();
 			anchor->attr( "y", ss.str() );
 			
 			frame->append( anchor );
 			
 			// Bounding boxes
-			for( unsigned int iBounding = 0 ; i < it->second->getFrameByIndex( iFrame )->getBoundingBoxesCount() ; iBounding++ )
+			for( unsigned int iBounding = 0 ; iBounding < it->second->getFrameByIndex( iFrame ).getBoundingBoxesCount() ; iBounding++ )
 			{
 				node::Node * bounding = new node::Node( node::Node::Tag, "bounding-box" );
 				
 				ss.str( "" );
-				ss << it->second->getFrameByIndex( iFrame )->getBoundingBox( iBounding )->getOrigin()->getX();
+				ss << it->second->getFrameByIndex( iFrame ).getBoundingBox( iBounding ).getOrigin().getX();
 				bounding->attr( "x", ss.str() );
 				
 				ss.str( "" );
-				ss << it->second->getFrameByIndex( iFrame )->getBoundingBox( iBounding )->getOrigin()->getY();
+				ss << it->second->getFrameByIndex( iFrame ).getBoundingBox( iBounding ).getOrigin().getY();
 				bounding->attr( "y", ss.str() );
 				
 				ss.str( "" );
-				ss << it->second->getFrameByIndex( iFrame )->getBoundingBox( iBounding )->getWidth();
+				ss << it->second->getFrameByIndex( iFrame ).getBoundingBox( iBounding ).getWidth();
 				bounding->attr( "width", ss.str() );
 				
 				ss.str( "" );
-				ss << it->second->getFrameByIndex( iFrame )->getBoundingBox( iBounding )->getHeight();
+				ss << it->second->getFrameByIndex( iFrame ).getBoundingBox( iBounding ).getHeight();
 				bounding->attr( "height", ss.str() );
 				
 				frame->append( bounding );
 			}
 			
 			// Attack areas
-			for( unsigned int iAttack = 0 ; i < it->second->getFrameByIndex( iFrame )->getAttackAreasCount() ; iAttack++ )
+			for( unsigned int iAttack = 0 ; iAttack < it->second->getFrameByIndex( iFrame ).getAttackAreasCount() ; iAttack++ )
 			{
 				node::Node * attack = new node::Node( node::Node::Tag, "attack-area" );
 				
 				ss.str( "" );
-				ss << it->second->getFrameByIndex( iFrame )->getAttackArea( iAttack )->getOrigin()->getX();
+				ss << it->second->getFrameByIndex( iFrame ).getAttackArea( iAttack ).getOrigin().getX();
 				attack->attr( "x", ss.str() );
 				
 				ss.str( "" );
-				ss << it->second->getFrameByIndex( iFrame )->getAttackArea( iAttack )->getOrigin()->getY();
+				ss << it->second->getFrameByIndex( iFrame ).getAttackArea( iAttack ).getOrigin().getY();
 				attack->attr( "y", ss.str() );
 				
 				ss.str( "" );
-				ss << it->second->getFrameByIndex( iFrame )->getAttackArea( iAttack )->getWidth();
+				ss << it->second->getFrameByIndex( iFrame ).getAttackArea( iAttack ).getWidth();
 				attack->attr( "width", ss.str() );
 				
 				ss.str( "" );
-				ss << it->second->getFrameByIndex( iFrame )->getAttackArea( iAttack )->getHeight();
+				ss << it->second->getFrameByIndex( iFrame ).getAttackArea( iAttack ).getHeight();
 				attack->attr( "height", ss.str() );
 				
 				frame->append( attack );
 			}
 			
 			// Defence areas
-			for( unsigned int iDefence = 0 ; i < it->second->getFrameByIndex( iFrame )->getDefenceAreasCount() ; iDefence++ )
+			for( unsigned int iDefence = 0 ; iDefence < it->second->getFrameByIndex( iFrame ).getDefenceAreasCount() ; iDefence++ )
 			{
 				node::Node * defence = new node::Node( node::Node::Tag, "defence-area" );
 				
 				ss.str( "" );
-				ss << it->second->getFrameByIndex( iFrame )->getDefenceArea( iDefence )->getOrigin()->getX();
+				ss << it->second->getFrameByIndex( iFrame ).getDefenceArea( iDefence ).getOrigin().getX();
 				defence->attr( "x", ss.str() );
 				
 				ss.str( "" );
-				ss << it->second->getFrameByIndex( iFrame )->getDefenceArea( iDefence )->getOrigin()->getY();
+				ss << it->second->getFrameByIndex( iFrame ).getDefenceArea( iDefence ).getOrigin().getY();
 				defence->attr( "y", ss.str() );
 				
 				ss.str( "" );
-				ss << it->second->getFrameByIndex( iFrame )->getDefenceArea( iDefence )->getWidth();
+				ss << it->second->getFrameByIndex( iFrame ).getDefenceArea( iDefence ).getWidth();
 				defence->attr( "width", ss.str() );
 				
 				ss.str( "" );
-				ss << it->second->getFrameByIndex( iFrame )->getDefenceArea( iDefence )->getHeight();
+				ss << it->second->getFrameByIndex( iFrame ).getDefenceArea( iDefence ).getHeight();
 				defence->attr( "height", ss.str() );
 				
 				frame->append( defence );
@@ -1782,7 +1776,7 @@ bool saveFile( Element * element )
 	}
 	
 	ofstream file;
-	file.open( objectFilename );
+	file.open( objectFilename.c_str() );
 	
 	if( file.is_open() )
 	{
@@ -1790,7 +1784,7 @@ bool saveFile( Element * element )
 		file.close();
 	}
 	else
-		cout << "[ObjectEditor] Can not open file \"" << objectFilename << ""\" to save object." << endl;
+		cout << "[ObjectEditor] Can not open file \"" << objectFilename << "\" to save object." << endl;
 
 	delete object;
 	
