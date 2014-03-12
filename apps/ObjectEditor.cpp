@@ -149,11 +149,11 @@ int main( int argc, char ** argv )
 	initUserInterface();
 	
 	// DEBUG case
-	loadObject( "data/object.xml" );
-	/*loadSprite( "data/texture2.png" );
+	//loadObject( "data/object.xml" );
+	loadSprite( "data/texture2.png" );
 	animations[animationsNames[currentAnimation]]->getFrameByIndex( currentFrame ).getBox().resize( 512, 512 );
 	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 512, 0, 512, 512 ) ) );
-	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 1024, 0, 512, 512 ) ) );*/
+	animations[animationsNames[currentAnimation]]->addFrame( Frame( Box( 1024, 0, 512, 512 ) ) );
 	
 	while( running )
 	{
