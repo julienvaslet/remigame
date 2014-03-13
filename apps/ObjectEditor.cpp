@@ -59,6 +59,7 @@ void cleanObjectVariables();
 void adjustSpriteToScreen();
 void synchronizeLabel( const string& name, const string& value );
 void synchronizeLabels();
+void changeZoom( Point& relative, int delta );
 int applyZoom( int value, int zoom = 0 );
 int revertZoom( int value, int zoom = 0 );
 void renderBoxInformation( Box& box, Point& relative );
@@ -147,6 +148,8 @@ int main( int argc, char ** argv )
 	Box actionPanel( currentScreenWidth - 300, 0, 300, Screen::get()->getHeight() );
 	
 	initUserInterface();
+	
+	loadSprite( "data/texture2.png" );
 	
 	while( running )
 	{
@@ -940,25 +943,12 @@ int main( int argc, char ** argv )
 						int mouseX = 0;
 						int mouseY = 0;
 						SDL_GetMouseState( &mouseX, &mouseY );
+						Point mouse( mouseX, mouseY );
 						
 						if( lastEvent.wheel.y > 0 )
-						{
-							currentZoom += 5;
-							
-							//origin.moveBy( static_cast<int>( static_cast<double>( mouseX - origin.getX() ) * -5.0 / 100.0 ), static_cast<int>( static_cast<double>( mouseY - origin.getY() ) * -1.0 * static_cast<double>( currentZoom - prevZoom ) / 100.0 ) );
-							
-							synchronizeLabels();
-						}
+							changeZoom( mouse, 5 );
 						else if( lastEvent.wheel.y < 0 )
-						{
-							currentZoom -= 5;
-							if( currentZoom < 5 )
-								currentZoom = 5;
-								
-							//origin.moveBy( static_cast<int>( static_cast<double>( mouseX - origin.getX() ) * -5.0 / 100.0 ), static_cast<int>( static_cast<double>( mouseY - origin.getY() ) * -1.0 * static_cast<double>( prevZoom - currentZoom ) / 100.0 ) );
-							
-							synchronizeLabels();
-						}
+							changeZoom( mouse, -5 );
 					}
 					
 					break;
@@ -1609,21 +1599,39 @@ void synchronizeLabels()
 	synchronizeLabel( "lbl_zoom", ss.str() );
 }
 
+void changeZoom( Point& relative, int delta )
+{	
+	Point point( revertZoom( relative.getX() - origin.getX() ), revertZoom( relative.getY() - origin.getY() ) );
+	
+	currentZoom += delta;
+	
+	if( currentZoom < 5 )
+		currentZoom = 5;
+		
+	point.move( applyZoom( point.getX() ) + origin.getX(), applyZoom( point.getY() ) + origin.getY() );
+	
+	origin.moveBy( relative.getX() - point.getX(), relative.getY() - point.getY() );
+	
+	if( Screen::get()->getWidth() - 300 >= applyZoom( sprite->getWidth() ) )
+		origin.setX( ((Screen::get()->getWidth() - 300) / 2)- (applyZoom( sprite->getWidth() ) / 2) );
+	
+	if( Screen::get()->getHeight() >= applyZoom( sprite->getHeight() ) )
+		origin.setY( (Screen::get()->getHeight() / 2)- (applyZoom( sprite->getHeight() ) / 2) );
+		
+	synchronizeLabels();
+}
+
 bool decreaseZoom( Element * element )
 {
-	currentZoom -= 5;
-	
-	if( currentZoom <= 0 )
-		currentZoom = 5;
-	
-	synchronizeLabels();
+	Point relative( (Screen::get()->getWidth() - 300) / 2, Screen::get()->getHeight() / 2 );
+	changeZoom( relative, -5 );
 	return true;
 }
 
 bool increaseZoom( Element * element )
 {
-	currentZoom += 5;
-	synchronizeLabels();
+	Point relative( (Screen::get()->getWidth() - 300) / 2, Screen::get()->getHeight() / 2 );
+	changeZoom( relative, 5 );
 	return true;
 }
 
