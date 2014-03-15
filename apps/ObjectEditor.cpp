@@ -139,17 +139,22 @@ int main( int argc, char ** argv )
 	
 	// Set animations
 	animationsNames.push_back( "idle" );
+	animationsNames.push_back( "stuck" );
 	animationsNames.push_back( "run" );
 	animationsNames.push_back( "jump" );
+	animationsNames.push_back( "be-hit" );
+	animationsNames.push_back( "protect" );
+	animationsNames.push_back( "walk-protected" );
 	animationsNames.push_back( "attack" );
-	animationsNames.push_back( "defence" );
+	animationsNames.push_back( "attack-reverse" );
+	animationsNames.push_back( "big-attack" );
+	animationsNames.push_back( "be-dead" );
+	animationsNames.push_back( "fall" );
 	
 	int currentScreenWidth = Screen::get()->getWidth();
 	Box actionPanel( currentScreenWidth - 300, 0, 300, Screen::get()->getHeight() );
 	
 	initUserInterface();
-	
-	loadSprite( "data/texture2.png" );
 	
 	while( running )
 	{

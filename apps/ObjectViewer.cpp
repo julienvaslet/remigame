@@ -57,9 +57,17 @@ int main( int argc, char ** argv )
 	unsigned int currentAnimation = 0;
 	vector<string> animations;
 	animations.push_back( "idle" );
-	animations.push_back( "walk" );
+	animations.push_back( "stuck" );
 	animations.push_back( "run" );
 	animations.push_back( "jump" );
+	animations.push_back( "be-hit" );
+	animations.push_back( "protect" );
+	animations.push_back( "walk-protected" );
+	animations.push_back( "attack" );
+	animations.push_back( "attack-reverse" );
+	animations.push_back( "big-attack" );
+	animations.push_back( "be-dead" );
+	animations.push_back( "fall" );
 
 	while( running )
 	{
