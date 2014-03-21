@@ -10,7 +10,8 @@ namespace data
 	{
 		NodeParser::NodeParser( const string& content )
 		{
-			vector<string> parsedSymbols = this->readSymbols( content, "<>=\"/-!", " \t\n\r" );
+			string charSymbols = "<>=\"/-!";
+			vector<string> parsedSymbols = this->readSymbols( content, charSymbols.c_str(), " \t\n\r" );
 			
 			#ifdef DEBUG0
 			cout << "[NodeParser] Loaded (" << parsedSymbols.size() << " symbols)." << endl;
@@ -97,12 +98,12 @@ namespace data
 				}
 		
 				// composed-name
-				else if( *it != " " )
+				else if( *it != " " && charSymbols.find( *it ) == string::npos )
 				{
 					if( ++it != parsedSymbols.end() && *it == "-" )
 					{
 						++it;
-						if( *it != "-" && *it != " " )
+						if( *it != "-" && *it != " " && charSymbols.find( *it ) == string::npos )
 						{
 							it -= 2;
 							string name = *it;
