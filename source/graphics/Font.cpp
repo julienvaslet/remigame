@@ -251,6 +251,8 @@ namespace graphics
 	
 	void Font::renderSize( int * x, int * y, const char * text )
 	{
+		int maxX = 0;
+		int currentX = 0;
 		int i = 0;
 		bool first = true;
 		
@@ -260,7 +262,7 @@ namespace graphics
 			
 			if( it != this->characters.end() )
 			{
-				*x += it->second.getBox().getWidth();
+				currentX += it->second.getBox().getWidth();
 				
 				if( first )
 				{
@@ -269,10 +271,22 @@ namespace graphics
 				}
 			}
 			else if( text[i] == '\n' )
+			{
 				first = true;
+				
+				if( maxX < currentX )
+					maxX = currentX;
+					
+				currentX = 0;
+			}
 
 			i++;
 		}
+		
+		if( maxX == 0 || maxX < currentX )
+			*x += currentX;
+		else
+			*x += maxX;
 	}
 	
 	int Font::renderWidth( const string& text )

@@ -1254,7 +1254,7 @@ void initUserInterface()
 	editorUi.getElement( "btn_increase_speed" )->addEventHandler( "mouseup", increaseSpeed );
 	panelButtons.push_back( "btn_increase_speed" );
 	
-	editorUi.addElement( "btn_decrease_speed", new Button( "font0", "~" ) );
+	editorUi.addElement( "btn_decrease_speed", new Button( "font0", "-" ) );
 	editorUi.getElement( "btn_decrease_speed" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_decrease_speed" )->getBox().getOrigin().move( currentScreenWidth - 290 , 370 );
 	editorUi.getElement( "btn_decrease_speed" )->addEventHandler( "mouseup", decreaseSpeed );
@@ -1272,7 +1272,7 @@ void initUserInterface()
 	editorUi.getElement( "btn_prev_frame" )->addEventHandler( "mouseup", prevFrame );
 	panelButtons.push_back( "btn_prev_frame" );
 	
-	editorUi.addElement( "btn_del_frame", new Button( "font0", "~" ) );
+	editorUi.addElement( "btn_del_frame", new Button( "font0", "-" ) );
 	editorUi.getElement( "btn_del_frame" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_del_frame" )->getBox().getOrigin().move( currentScreenWidth - 245, 400 );
 	editorUi.getElement( "btn_del_frame" )->addEventHandler( "mouseup", deleteFrame );
@@ -1319,7 +1319,7 @@ void initUserInterface()
 	editorUi.getElement( "btn_prev_boundingbox" )->addEventHandler( "mouseup", prevBoundingBox );
 	panelButtons.push_back( "btn_prev_boundingbox" );
 	
-	editorUi.addElement( "btn_del_boundingbox", new Button( "font0", "~" ) );
+	editorUi.addElement( "btn_del_boundingbox", new Button( "font0", "-" ) );
 	editorUi.getElement( "btn_del_boundingbox" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_del_boundingbox" )->getBox().getOrigin().move( currentScreenWidth - 245, 470 );
 	editorUi.getElement( "btn_del_boundingbox" )->addEventHandler( "mouseup", deleteBoundingBox );
@@ -1351,7 +1351,7 @@ void initUserInterface()
 	editorUi.getElement( "btn_prev_attackarea" )->addEventHandler( "mouseup", prevAttackArea );
 	panelButtons.push_back( "btn_prev_attackarea" );
 	
-	editorUi.addElement( "btn_del_attackarea", new Button( "font0", "~" ) );
+	editorUi.addElement( "btn_del_attackarea", new Button( "font0", "-" ) );
 	editorUi.getElement( "btn_del_attackarea" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_del_attackarea" )->getBox().getOrigin().move( currentScreenWidth - 245, 500 );
 	editorUi.getElement( "btn_del_attackarea" )->addEventHandler( "mouseup", deleteAttackArea );
@@ -1383,7 +1383,7 @@ void initUserInterface()
 	editorUi.getElement( "btn_prev_defencearea" )->addEventHandler( "mouseup", prevDefenceArea );
 	panelButtons.push_back( "btn_prev_defencearea" );
 	
-	editorUi.addElement( "btn_del_defencearea", new Button( "font0", "~" ) );
+	editorUi.addElement( "btn_del_defencearea", new Button( "font0", "-" ) );
 	editorUi.getElement( "btn_del_defencearea" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_del_defencearea" )->getBox().getOrigin().move( currentScreenWidth - 245, 530 );
 	editorUi.getElement( "btn_del_defencearea" )->addEventHandler( "mouseup", deleteDefenceArea );
@@ -1409,7 +1409,7 @@ void initUserInterface()
 	tools["lbl_defencearea"] = "box.defence";
 	
 	// h: 570 - Global zoom
-	editorUi.addElement( "btn_decrease_zoom", new Button( "font0", "~" ) );
+	editorUi.addElement( "btn_decrease_zoom", new Button( "font0", "-" ) );
 	editorUi.getElement( "btn_decrease_zoom" )->getBox().setWidth( 40 );
 	editorUi.getElement( "btn_decrease_zoom" )->getBox().getOrigin().move( currentScreenWidth - 290 , 570 );
 	editorUi.getElement( "btn_decrease_zoom" )->addEventHandler( "mouseup", decreaseZoom );
