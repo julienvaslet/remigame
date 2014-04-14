@@ -15,16 +15,16 @@ using namespace std;
 
 namespace graphics
 {
-	Object::Object() : origin(0,0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
+	Object::Object() : origin(0,0), speedModulation(0), zoom(100), invertedHorizontalAxis(false), invertedVerticalAxis(false), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
 	{
 	}
 	
-	Object::Object( const char * filename ) : origin(0,0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
+	Object::Object( const char * filename ) : origin(0,0), speedModulation(0), zoom(100), invertedHorizontalAxis(false), invertedVerticalAxis(false), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
 	{
 		this->load( filename );
 	}
 	
-	Object::Object( const string& filename ) : origin(0,0), speedModulation(0), zoom(100), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
+	Object::Object( const string& filename ) : origin(0,0), speedModulation(0), zoom(100), invertedHorizontalAxis(false), invertedVerticalAxis(false), sprite(NULL), currentAnimation(NULL), anchorPointRenderingState(false), boundingBoxesRenderingState(false), attackAreasRenderingState(false), defenceAreasRenderingState(false)
 	{
 		this->load( filename.c_str() );
 	}
@@ -327,7 +327,8 @@ namespace graphics
 				SDL_Rect srcRect;
 				frame->getBox().fillSDLRect( &srcRect );
 	
-				SDL_RenderCopy( Screen::get()->getRenderer(), this->sprite->getTexture(), &srcRect, &dstRect );
+				// WARN: Vertical flipping not handled
+				SDL_RenderCopyEx( Screen::get()->getRenderer(), this->sprite->getTexture(), &srcRect, &dstRect, 0.0, NULL, this->invertedHorizontalAxis ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE );
 				
 				// Render the anchor point (green)
 				if( this->anchorPointRenderingState )
@@ -421,6 +422,26 @@ namespace graphics
 	void Object::setDefenceAreasRenderingState( bool state )
 	{
 		this->defenceAreasRenderingState = state;
+	}
+	
+	void Object::invertHorizontalAxis( bool status )
+	{
+		this->invertedHorizontalAxis = status;
+	}
+	
+	bool Object::isHorizontalAxisInverted()
+	{
+		return this->invertedHorizontalAxis;
+	}
+	
+	void Object::invertVerticalAxis( bool status )
+	{
+		this->invertedVerticalAxis = status;
+	}
+	
+	bool Object::isVerticalAxisInverted()
+	{
+		return this->invertedVerticalAxis;
 	}
 }
 

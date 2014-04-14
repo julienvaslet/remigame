@@ -20,6 +20,8 @@ namespace graphics
 			Point origin;
 			int speedModulation;
 			int zoom;
+			bool invertedHorizontalAxis;
+			bool invertedVerticalAxis;
 			
 			Sprite * sprite;
 			Animation * currentAnimation;
@@ -46,6 +48,11 @@ namespace graphics
 			void setSpeedModulation( int modulation );
 			int getSpeedModulation();
 			int getAnimationSpeed();
+			
+			void invertHorizontalAxis( bool status );
+			bool isHorizontalAxisInverted();
+			void invertVerticalAxis( bool status );
+			bool isVerticalAxisInverted();
 			
 			int getZoom();
 			void setZoom( int zoom );

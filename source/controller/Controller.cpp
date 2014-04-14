@@ -217,6 +217,15 @@ namespace controller
 		}
 	}
 	
+	void Controller::tickEvent( unsigned int timestamp )
+	{
+		for( map<SDL_JoystickID, Controller *>::iterator itController = Controller::controllers.begin() ; itController != Controller::controllers.end() ; itController++ )
+		{
+			if( itController->second != NULL && itController->second->player != NULL )
+				itController->second->player->handleEvent( Mapping::NOBTN, Mapping::STATE_RELEASED, timestamp );
+		}
+	}
+	
 	void Controller::handleEvent( const SDL_Event * event )
 	{
 		map<SDL_JoystickID, Controller *>::iterator itController = Controller::controllers.end();

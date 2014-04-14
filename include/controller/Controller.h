@@ -43,6 +43,7 @@ namespace controller
 			static void scan();
 			static void destroy();
 			static void handleEvent( const SDL_Event * event );
+			static void tickEvent( unsigned int timestamp );
 			static unsigned int getControllersCount();
 			static Controller * getFreeController();
 			

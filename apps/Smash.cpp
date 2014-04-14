@@ -71,6 +71,7 @@ int main( int argc, char ** argv )
 	bool running = true;
 	SDL_Event lastEvent;
 	unsigned int lastDrawTicks = 0;
+	unsigned int lastTickEvent = 0;
 
 	stringstream framesPerSecondText;
 	int framesPerSecond = 0;
@@ -120,6 +121,12 @@ int main( int argc, char ** argv )
 		}
 
 		unsigned int ticks = SDL_GetTicks();
+		
+		if( ticks - lastTickEvent > 15 )
+		{
+			lastTickEvent = ticks;
+			Controller::tickEvent( lastTickEvent );
+		}
 		
 		if( ticks - lastDrawTicks > 15 )
 		{

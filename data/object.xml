@@ -1,5 +1,5 @@
 <object sprite="data/texture2.png">
-	<animation name="idle" speed="100">
+	<animation name="run" speed="100">
 		<frame x="0" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
 			<bounding-box x="175" y="110" width="252" height="360" />
@@ -22,13 +22,13 @@
 			<defence-area x="457" y="115" width="50" height="50" />
 		</frame>
 	</animation>
-	<animation name="walk" speed="1000">
+	<animation name="idle" speed="0">
 		<frame x="1024" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
 			<bounding-box x="0" y="0" width="512" height="512" />
 		</frame>
 	</animation>
-	<animation name="run" speed="1000">
+	<animation name="walk" speed="1000">
 		<frame x="512" y="0" width="512" height="512">
 			<anchor x="230" y="468" />
 			<bounding-box x="0" y="0" width="512" height="512" />
