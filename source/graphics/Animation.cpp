@@ -6,7 +6,7 @@
 
 namespace graphics
 {
-	Animation::Animation() : speed(0), speedModulation(0), lastRender(0), lastFrameRendered(0)
+	Animation::Animation() : speed(0), speedModulation(0), lastRender(0), lastFrameRendered(0), times(0), timesCallback(NULL)
 	{
 	}
 	
@@ -26,6 +26,17 @@ namespace graphics
 			
 				if( step > 0 )
 				{
+					if( timesCallback != NULL )
+					{
+						if( this->lastFrameRendered + step >= this->frames.size() )
+						{
+							if( this->times == 0 )
+								this->timesCallback->handleEvent( Mapping::NOBTN, Mapping::STATE_RELEASED, time );
+							else
+								this->times--;
+						}
+					}
+					
 					this->lastFrameRendered = (this->lastFrameRendered + step) % this->frames.size();
 					this->lastRender = time;
 				}
@@ -52,8 +63,16 @@ namespace graphics
 		this->speedModulation = modulation;
 	}
 	
+	void Animation::setTimes( unsigned int times, Player * callback )
+	{
+		this->times = times;
+		this->timesCallback = callback;
+	}
+	
 	void Animation::reset()
 	{
+		this->times = 0;
+		this->timesCallback = 0;
 		this->lastRender = 0;
 		this->lastFrameRendered = 0;
 		this->speedModulation = 0;

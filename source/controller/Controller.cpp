@@ -222,7 +222,7 @@ namespace controller
 		for( map<SDL_JoystickID, Controller *>::iterator itController = Controller::controllers.begin() ; itController != Controller::controllers.end() ; itController++ )
 		{
 			if( itController->second != NULL && itController->second->player != NULL )
-				itController->second->player->handleEvent( Mapping::NOBTN, Mapping::STATE_RELEASED, timestamp );
+				itController->second->player->handleEvent( Mapping::NOBTN, Mapping::STATE_PUSHED, timestamp );
 		}
 	}
 	
@@ -350,5 +350,10 @@ namespace controller
 			
 			this->player = player;
 		}
+	}
+	
+	Player * Controller::getPlayer()
+	{
+		return this->player;
 	}
 }

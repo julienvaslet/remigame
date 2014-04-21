@@ -51,6 +51,7 @@ namespace controller
 			short int getState( Mapping::Button button );
 			unsigned int getStateTimestamp( Mapping::Button button );
 			void setPlayer( Player * player );
+			Player * getPlayer();
 	};
 };
 

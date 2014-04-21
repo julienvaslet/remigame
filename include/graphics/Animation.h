@@ -2,10 +2,12 @@
 #define	_GRAPHICS_ANIMATION_H	1
 
 #include <graphics/Frame.h>
+#include <game/Player.h>
 #include <string>
 #include <vector>
 
 using namespace std;
+using namespace game;
 
 namespace graphics
 {
@@ -16,6 +18,8 @@ namespace graphics
 			int speedModulation;
 			unsigned int lastRender;
 			unsigned int lastFrameRendered;
+			unsigned int times;
+			Player * timesCallback;
 			vector<Frame> frames;
 	
 		public:
@@ -25,6 +29,7 @@ namespace graphics
 			Frame * getFrame( unsigned int time );
 			unsigned int getSpeed();
 			
+			void setTimes( unsigned int times, Player * player );
 			void setSpeed( unsigned int speed );
 			void setSpeedModulation( int modulation );
 			void addFrame( const Frame& frame );

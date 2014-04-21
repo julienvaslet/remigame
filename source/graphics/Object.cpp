@@ -5,6 +5,7 @@
 #endif
 
 #include <data/parser/NodeParser.h>
+#include <game/Player.h>
 
 #include <fstream>
 #include <sstream>
@@ -12,6 +13,7 @@
 
 using namespace data;
 using namespace std;
+using namespace game;
 
 namespace graphics
 {
@@ -279,7 +281,7 @@ namespace graphics
 		return this->sprite->isLoaded();
 	}
 		
-	bool Object::setAnimation( const string& name )
+	bool Object::setAnimation( const string& name, unsigned int times, Player * callback )
 	{
 		bool changed = true;
 		
@@ -290,6 +292,7 @@ namespace graphics
 			this->currentAnimation = it->second;
 			this->currentAnimation->reset();
 			this->currentAnimation->setSpeedModulation( this->speedModulation );
+			this->currentAnimation->setTimes( times, callback );
 			
 			#ifdef DEBUG0
 			cout << "[Object#" << this << "] Animation \"" << it->first << "\" selected." << endl;

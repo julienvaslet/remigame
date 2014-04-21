@@ -44,7 +44,7 @@ namespace graphics
 			bool load( const char * filename );
 			virtual void render( unsigned int time );
 			
-			bool setAnimation( const string& name );
+			bool setAnimation( const string& name, unsigned int times = 0, Player * callback = NULL );
 			void setSpeedModulation( int modulation );
 			int getSpeedModulation();
 			int getAnimationSpeed();
